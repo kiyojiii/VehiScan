@@ -1,20 +1,51 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <div class="float-start">
-                    Add New User
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users | Create</title>
+</head>
+
+<body>
+    @extends('layouts.app')
+
+    @section('content')
+<!-- Page Content -->
+<div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0 font-size-18">Create New User</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Users</a></li>
+                                    <li class="breadcrumb-item active">Create New User</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="float-end">
-                    <a href="{{ route('users.index') }}" class="btn btn-primary btn-sm">&larr; Back</a>
-                </div>
-            </div>
+                <!-- end page title -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">  
             <div class="card-body">
-                <form action="{{ route('users.store') }}" method="post">
+                    <form action="{{ route('users.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
+
+                    <div class="mb-3 row">
+                        <label for="photo" class="col-md-4 col-form-label text-md-end text-start">Profile Photo</label>
+                        <div class="col-md-6">
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*" required>
+                        </div>
+                    </div>
 
                     <div class="mb-3 row">
                         <label for="name" class="col-md-4 col-form-label text-md-end text-start">Name</label>
@@ -87,7 +118,15 @@
 
                 </form>
             </div>
-        </div>
+            </div>
+                    </div>
+                </div>
+
+            </div> <!-- container-fluid -->
+        </div><!-- End Page-content -->
     </div>
-</div>    
+    <!-- end main content-->
 @endsection
+
+</body>
+</html>
