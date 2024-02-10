@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('position_designation');
             $table->string('scan_or_photo_of_id');
             $table->string('approval_status');
+            $table->string('reason');
             $table->timestamps();
 
             $table->foreign('vehicle_id')->references('id')->on('vehicles')->onDelete('cascade');

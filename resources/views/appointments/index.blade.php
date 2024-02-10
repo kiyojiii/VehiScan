@@ -134,11 +134,37 @@
                 serverSide: true,
                 ajax: "{{ url('appointments') }}",
                 columns: [
-                    { data: 'id',name: 'id' },
+                    { data: 'id', name: 'id' },
                     { data: 'appointment', name: 'appointment' },
-                    { data: 'created_at', name: 'created_at' },
+                    { 
+                        data: 'created_at', 
+                        name: 'created_at',
+                        render: function(data) {
+                            // Convert data to JavaScript Date object
+                            var date = new Date(data);
+
+                            // Get hours, minutes, and AM/PM
+                            var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+                            var minutes = date.getMinutes();
+                            var ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+                            // Add leading zero if needed
+                            hours = hours < 10 ? '0' + hours : hours;
+                            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+                            // Get month, day, and year
+                            var month = date.toLocaleString('default', { month: 'long' });
+                            var day = date.getDate();
+                            var year = date.getFullYear();
+
+                            // Format the date
+                            var formattedDate = month + ' ' + day + ', ' + year + ' at ' + hours + ':' + minutes + ' ' + ampm;
+                            return formattedDate;
+                        }
+                    },
                     { data: 'action', name: 'action', orderable: false },
                 ],
+
                 order: [[0, 'desc']]
             });
         });

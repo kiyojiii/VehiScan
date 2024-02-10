@@ -17,8 +17,10 @@ class Applicant extends Model
         'appointment_id',
         'status_id',
         'vehicle_id',
+        'user_id',
         'office_department_agency',
         'position_designation',
+        'reason',
         'scan_or_photo_of_id',
         'approval_status',
     ];
@@ -26,12 +28,12 @@ class Applicant extends Model
     // Relationships
     public function appointment()
     {
-        return $this->belongsTo(Appointment::class);
+        return $this->belongsTo(Appointment::class, 'appointment_id');
     }
 
     public function status()
     {
-        return $this->belongsTo(Status::class, 'status_id');
+        return $this->belongsTo(Statuses::class, 'status_id');
     }
 
     public function vehicle()

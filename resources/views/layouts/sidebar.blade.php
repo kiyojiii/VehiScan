@@ -43,6 +43,15 @@
                 <li class="menu-title" key="t-apps">Data</li>
 
                 <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx bx-detail"></i>
+                        <span key="t-blog">Owners</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('owners.index') }}" key="t-blog-list">Manage Owners</a></li>
+                    </ul>
+
+                <li>
                     <a href="{{ route('appointments.index') }}" class="waves-effect">
                         <i class="bx bx-spreadsheet"></i>
                         <span key="t-guests">Appointments</span>
@@ -63,7 +72,7 @@
                     </a>
                 </li>
 
-
+                
                 <!-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="bx bx-detail"></i>

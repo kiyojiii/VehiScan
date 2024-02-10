@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ViolationController;
+use App\Http\Controllers\OwnerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,22 +32,31 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::middleware(['auth'])->group(function () {
     #APPOINTMENTS
-    Route::get('appointments', [App\Http\Controllers\AppointmentController::class, 'index'])->name('appointments.index');
-    Route::post('appointments/store', [App\Http\Controllers\AppointmentController::class, 'store']);
-    Route::post('appointments/edit', [App\Http\Controllers\AppointmentController::class, 'edit']);
-    Route::post('appointments/delete', [App\Http\Controllers\AppointmentController::class, 'destroy']);
+    Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::post('appointments/store', [AppointmentController::class, 'store']);
+    Route::post('appointments/edit', [AppointmentController::class, 'edit']);
+    Route::post('appointments/delete', [AppointmentController::class, 'destroy']);
 
     #ROLE STATUS
-    Route::get('status', [App\Http\Controllers\StatusController::class, 'index'])->name('status.index');
-    Route::post('status/store', [App\Http\Controllers\StatusController::class, 'store']);
-    Route::post('status/edit', [App\Http\Controllers\StatusController::class, 'edit']);
-    Route::post('status/delete', [App\Http\Controllers\StatusController::class, 'destroy']);
+    Route::get('status', [StatusController::class, 'index'])->name('status.index');
+    Route::post('status/store', [StatusController::class, 'store']);
+    Route::post('status/edit', [StatusController::class, 'edit']);
+    Route::post('status/delete', [StatusController::class, 'destroy']);
 
     #VIOLATION
-    Route::get('violations', [App\Http\Controllers\ViolationController::class, 'index'])->name('violations.index');
-    Route::post('violations/store', [App\Http\Controllers\ViolationController::class, 'store']);
-    Route::post('violations/edit', [App\Http\Controllers\ViolationController::class, 'edit']);
-    Route::post('violations/delete', [App\Http\Controllers\ViolationController::class, 'destroy']);
+    Route::get('violations', [ViolationController::class, 'index'])->name('violations.index');
+    Route::post('violations/store', [ViolationController::class, 'store']);
+    Route::post('violations/edit', [ViolationController::class, 'edit']);
+    Route::post('violations/delete', [ViolationController::class, 'destroy']);
+
+    #OWNER / APPLICANTS
+    Route::get('owners', [OwnerController::class, 'index'])->name('owners.index');
+    Route::get('/fetchAll', [OwnerController::class, 'fetchAll'])->name('fetchAll');
+    Route::post('owners/store', [OwnerController::class, 'store'])->name('owners.store');
+    Route::get('owners/edit', [OwnerController::class, 'edit'])->name('owners.edit');
+    Route::post('owners/update', [OwnerController::class, 'update'])->name('owners.update');
+    Route::delete('owners/delete', [OwnerController::class, 'delete'])->name('owners.delete');
+    Route::get('owners/show/{id}', [OwnerController::class, 'show'])->name('owners.show');
 });
 
 
