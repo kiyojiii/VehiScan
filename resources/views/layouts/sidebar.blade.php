@@ -44,12 +44,23 @@
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
+                        <i class="bx bxs-user-badge"></i>
                         <span key="t-blog">Owners</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('owners.index') }}" key="t-blog-list">Manage Owners</a></li>
                     </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx bx-car"></i>
+                        <span key="t-blog">Vehicles</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('vehicles.index') }}" key="t-blog-list">Manage Vehicles</a></li>
+                    </ul>
+                </li>
 
                 <li>
                     <a href="{{ route('appointments.index') }}" class="waves-effect">
@@ -71,67 +82,6 @@
                         <span key="t-guests">Violations</span>
                     </a>
                 </li>
-
-                
-                <!-- <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog">Vehicles</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="" key="t-blog-list">Manage Vehicles</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog">Owners</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="" key="t-blog-list">Manage Owners</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog">Drivers</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="" key="t-blog-list">Manage Drivers</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog">Role Status</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="" key="t-blog-list">Manage Role Status</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog">Time</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="" key="t-blog-list">Manage Time</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog">Violations</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="" key="t-blog-list">Manage Drivers</a></li>
-                    </ul>
-                </li> -->
 
                 <li class="menu-title" key="t-apps">Permissions</li>
 

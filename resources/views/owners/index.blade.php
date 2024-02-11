@@ -91,14 +91,24 @@
                                                     <div class="col-md">
                                                         <label for="fname">First Name</label>
                                                         <input type="text" name="fname" class="form-control" placeholder="First Name" required>
+                                                        @error('fname')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-md">
-                                                        <label for="mi">Middle Initial</label>
-                                                        <input type="text" name="mi" class="form-control" placeholder="Middle Initial" required>
+                                                        <label for="mi">Middle Initial (Letter Only)</label>
+                                                        <input type="text" name="mi" id="add_mi" class="form-control" placeholder="Middle Initial" maxlength="1" required>
+                                                        @error('mi')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
+
                                                     <div class="col-md">
                                                         <label for="lname">Last Name</label>
                                                         <input type="text" name="lname" class="form-control" placeholder="Last Name" required>
+                                                        @error('lname')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
 
@@ -108,14 +118,23 @@
                                                     <div class="col-md">
                                                         <label for="paddress">Present Address</label>
                                                         <input type="text" name="paddress" class="form-control" placeholder="Present Address" required>
+                                                        @error('paddress')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-md">
                                                         <label for="email">Email Address</label>
                                                         <input type="text" name="email" class="form-control" placeholder="Email Address" required>
+                                                        @error('email')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-md">
-                                                        <label for="contact">Contact Number</label>
-                                                        <input type="text" name="contact" class="form-control" placeholder="Contact" required>
+                                                        <label for="contact">Contact Number (11 Digits)</label>
+                                                        <input type="text" name="contact" id="add_contact" class="form-control" placeholder="Contact" pattern="[0-9]{11}" title="Please enter 11 numbers only" required>
+                                                        @error('contact')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
 
@@ -125,6 +144,9 @@
                                                     <div class="col-md">
                                                         <label for="position">Position & Designation</label>
                                                         <input type="text" name="position" class="form-control" placeholder="Position & Designation" required>     
+                                                        @error('position')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
 
                                                     <div class="col-md">
@@ -139,6 +161,9 @@
                                                                 @endforelse
                                                             </select>
                                                         </div>
+                                                        @error('appointment')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
 
                                                     <div class="col-md">
@@ -153,12 +178,18 @@
                                                                 @endforelse
                                                             </select>
                                                         </div>
+                                                        @error('role_status')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
 
                                                     <div class="col-md">
                                                         <label for="department">Office/Department/Agency</label>
                                                         <input type="text" name="department" class="form-control" placeholder="Office/Department/Agency" required>
-                                                    </div>
+                                                        @error('department')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>              
                                                 </div>
 
                                                 <!-- Photo & Approval Status -->
@@ -167,17 +198,26 @@
                                                     <div class="col-md">
                                                         <label for="scan_or_photo_of_id">Photo</label>
                                                         <input type="file" name="scan_or_photo_of_id" class="form-control" required>
+                                                        @error('scan_or_photo_of_id')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
-                                                    <div class="col-md">
+                                                    <div class="col-md-2">
                                                         <label for="approval">Approval Status</label>
                                                         <select name="approval" class="form-control" id="approvalStatus" required>
                                                             <option value="Approved" selected>Approved</option>
                                                             <option value="Rejected">Rejected</option>
                                                         </select>
+                                                        @error('approval')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                     <div class="col-md" id="reasonField" style="display: none;">
                                                         <label for="reason">Reason for Rejection</label>
                                                         <input type="text" name="reason" class="form-control" placeholder="Reason for Rejection">
+                                                        @error('reason')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                             </div>
@@ -217,7 +257,7 @@
                                                         <input type="text" name="fname" id="fname" class="form-control" placeholder="First Name" required>
                                                     </div>
                                                     <div class="col-md">
-                                                        <label for="mi">Middle Initial</label>
+                                                        <label for="mi">Middle Initial (Letter Only)</label>
                                                         <input type="text" name="mi" id="mi" class="form-control" placeholder="Middle Initial" required>
                                                     </div>
                                                     <div class="col-md">
@@ -238,7 +278,7 @@
                                                         <input type="text" name="email" id="email" class="form-control" placeholder="Email Address" required>
                                                     </div>
                                                     <div class="col-md">
-                                                        <label for="contact">Contact Number</label>
+                                                        <label for="contact">Contact Number (11 Digits)</label>
                                                         <input type="text" name="contact" id="contact" class="form-control" placeholder="Contact" required>
                                                     </div>
                                                 </div>
@@ -288,46 +328,22 @@
                                                 <!-- Photo & Approval Status -->
                                                 <h5 class="mt-4">Photo & Approval Status</h5>
                                                 <div class="row">
-                                                    <div class="col-md">
+                                                    <div class="col-md-4">
                                                         <label for="scan_or_photo_of_id">Photo</label>
                                                         <input type="file" name="scan_or_photo_of_id" class="form-control">
                                                     </div>
-                                                    <div class="col-md">
+                                                    <div class="col-md-2">
                                                         <label for="approval">Approval Status</label>
                                                         <select name="approval" id="approval" class="form-control" required>
                                                             <option value="Approved" selected>Approved</option>
                                                             <option value="Rejected">Rejected</option>
                                                         </select>
                                                     </div>
+                                                    <div class="col-md-6">
+                                                    <label for="reason">Reason for Rejection</label>
+                                                    <input type="text" name="reason" id="reason" class="form-control" placeholder="Reason for rejection">
                                                 </div>
-                                                <div class="col-md" id="reasonField" style="display: none;">
-        <label for="reason">Reason for Rejection</label>
-        <input type="text" name="reason" id="reason" class="form-control" placeholder="Reason for rejection">
-    </div>
-
-<script>
-    // Function to toggle visibility of reason input field based on selected approval status
-    $(document).ready(function() {
-        // Check the initial approval status when the page loads
-        toggleReasonField($('#approval').val());
-
-        // Listen for changes in the approval status dropdown
-        $('#approval').on('change', function() {
-            // Toggle the visibility of reason input field based on the selected approval status
-            toggleReasonField($(this).val());
-        });
-
-        // Function to toggle the visibility of reason input field
-        function toggleReasonField(approvalStatus) {
-            if (approvalStatus === 'Rejected') {
-                $('#reasonField').show();
-            } else {
-                $('#reasonField').hide();
-            }
-        }
-    });
-</script>
-
+                                                </div>
                                             </div>
                                                 <div class="my-2" id="scan_or_photo_of_id"></div>
                                                 <div class="modal-footer">
@@ -359,6 +375,30 @@
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
+
+    <!-- Accept Only 11 Numbers in Contact -->
+    <script>
+        document.getElementById('add_contact').addEventListener('input', function(event) {
+            // Remove non-numeric characters
+            this.value = this.value.replace(/\D/g, '');
+            
+            // Limit input to 11 characters
+            if (this.value.length > 11) {
+                this.value = this.value.slice(0, 11);
+            }
+        });
+    </script>
+
+    <!-- Accept Only 1 Letter in MI -->
+    <script>
+        document.getElementById('add_mi').addEventListener('input', function(event) {
+            if (this.value.length > 1) {
+                this.value = this.value.slice(0, 1);
+            }
+        });
+    </script>
+
+    <!-- Show Reason if Rejected -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const approvalStatus = document.getElementById("approvalStatus");
@@ -409,8 +449,8 @@
                     contentType: false,
                     processData: false,
                     dataType: 'json',
-                    success: function(response){
-                        if (response.status == 200){
+                    success: function(response) {
+                        if (response.status == 200) {
                             fetchAllOwners();
                             // Close the modal
                             $("#addOwnerModal").modal('hide');
@@ -419,15 +459,34 @@
                                 "Owner Added Successfully",
                                 "success"
                             )
-                        } 
+                        } else {
+                            // Show error message using SweetAlert
+                            Swal.fire(
+                                "Error",
+                                response.message,
+                                "error"
+                            )
+                        }
                         $("#add_owner_btn").text('Add Owner');
                         $("#add_owner_form")[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                            // Parse JSON response to extract specific error message and display it using SweetAlert
+                            const response = JSON.parse(xhr.responseText);
+                            const errorMessage = response.message;
+                            Swal.fire(
+                                "Error",
+                                errorMessage,
+                                "error"
+                            );
+                        $("#add_owner_btn").text('Add Owner');
                     }
                 });
             });
 
+
             // edit owner ajax request
-            $(document).on('click', '.editIcon', function(e){
+            $(document).on('click', '.editIcon', function(e) {
                 e.preventDefault();
                 let id = $(this).attr('id');
                 $.ajax({
@@ -437,7 +496,7 @@
                         id: id,
                         _token: '{{ csrf_token() }}'
                     },
-                    success: function(response){
+                    success: function(response) {
                         $("#fname").val(response.first_name);
                         $("#mi").val(response.middle_initial);
                         $("#lname").val(response.last_name);
@@ -449,40 +508,60 @@
                         $("#department").val(response.office_department_agency);
                         $("#position").val(response.position_designation);
                         $("#approval").val(response.approval_status);
+                        $("#reason").val(response.reason);
                         $("#scan_or_photo_of_id").html(
                             `<img src="storage/images/${response.scan_or_photo_of_id}" width="100" class="img-fluid img-thumbnail">`);
                         $("#owner_id").val(response.id);
                         $("#owner_photo").val(response.scan_or_photo_of_id);
+                    },
+                    error: function(xhr, status, error) {
+                        // Show error message using SweetAlert if there's an error with the request
+                        Swal.fire(
+                            "Error",
+                            "An error occurred while fetching owner data.",
+                            "error"
+                        );
                     }
                 });
             });
-            
+
             // update owner ajax request
-            $("#edit_owner_form").submit(function(e){
+            $("#edit_owner_form").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
                 $("#edit_owner_btn").text('Updating...');
                 $.ajax({
-                url: '{{ route('owners.update') }}',
-                method: 'post',
-                data: fd,
-                cache: false,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response){
-                    if (response.status == 200){
-                        fetchAllOwners();
-                        // Close the modal
-                        $("#editOwnerModal").modal('hide');
-                        Swal.fire(
-                            "Updated",
-                            "Owner Updated Successfully",
-                            "success"
-                        )
-                    }
-                    $("#edit_owner_btn").text('Update Owner');
-                    $("#edit_owner_form")[0].reset();
+                    url: '{{ route('owners.update') }}',
+                    method: 'post',
+                    data: fd,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 200) {
+                            fetchAllOwners();
+                            // Close the modal
+                            $("#editOwnerModal").modal('hide');
+                            Swal.fire(
+                                "Updated",
+                                "Owner Updated Successfully",
+                                "success"
+                            );
+                        }
+                        $("#edit_owner_btn").text('Update Owner');
+                        $("#edit_owner_form")[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                            // Parse JSON response to extract specific error message and display it using SweetAlert
+                            const response = JSON.parse(xhr.responseText);
+                            const errorMessage = response.message;
+                            Swal.fire(
+                                "Error",
+                                errorMessage,
+                                "error"
+                            );
+                        $("#edit_owner_btn").text('Update Owner');
                     }
                 });
             });
@@ -513,7 +592,7 @@
                             if (response.status === 'success') {
                                 Swal.fire(
                                     'Deleted!',
-                                    'Your file has been deleted.',
+                                    'Owner Deleted Successfully',
                                     'success'
                                 );
                                 fetchAllOwners();

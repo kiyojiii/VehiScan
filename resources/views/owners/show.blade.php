@@ -101,16 +101,16 @@
                                                         <!-- Row 1: Contact Information -->
                                                         <h4>Contact Information</h4>
                                                         <!-- Row 2: Present Address -->
-                                                        <h6>Present Address</h6>
+                                                        <h6>Present Address:</h6>
                                                         <p>{{ $owners->present_address }}</p>
                                                         <!-- Row 3: Email Address and Contact Number -->
                                                         <div class="row">
                                                             <div class="col">
-                                                                <h6>Email Address</h6>
+                                                                <h6>Email Address:</h6>
                                                                 <p>{{ $owners->email_address }}</p>
                                                             </div>
                                                             <div class="col">
-                                                                <h6>Contact Number</h6>
+                                                                <h6>Contact Number:</h6>
                                                                 <p>{{ $owners->contact_number }}</p>
                                                             </div>
                                                         </div>
@@ -119,7 +119,7 @@
                                                         <!-- Row 5: Appointment and Role Status -->
                                                         <div class="row">
                                                             <div class="col">
-                                                                <h6>Appointment</h6>
+                                                                <h6>Appointment:</h6>
                                                                 @php
                                                                 $appointment = App\Models\Appointment::find($owners->appointment_id);
                                                                 @endphp
@@ -130,7 +130,7 @@
                                                                 @endif
                                                             </div>
                                                             <div class="col">
-                                                                <h6>Role Status</h6>
+                                                                <h6>Role Status:</h6>
                                                                 @php
                                                                 $role_status = App\Models\Statuses::find($owners->status_id);
                                                                 @endphp
@@ -144,15 +144,25 @@
                                                         <!-- Row 6: Position & Designation and Office/Department/Agency -->
                                                         <div class="row">
                                                             <div class="col">
-                                                                <h6>Position & Designation</h6>
+                                                                <h6>Position & Designation:</h6>
                                                                 <p>{{ $owners->position_designation }}</p>
                                                             </div>
                                                             <div class="col">
-                                                                <h6>Office/Department/Agency</h6>
+                                                                <h6>Office/Department/Agency:</h6>
                                                                 <p>{{ $owners->office_department_agency }}</p>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div>      
+                                                        <blockquote class="p-4 border-light border rounded mb-4">
+                                                            <div class="d-flex">
+                                                                <div class="me-3">
+                                                                    <i class="bx bxs-quote-alt-left text-dark font-size-24"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <p class="mb-0"> <h6>Reason for Rejection:</h6> {{ $owners->reason }}</p>
+                                                                </div>
+                                                            </div>                        
+                                                        </blockquote>
                                                     <hr>
                                                     <!-- Row 11: Photo ID -->
                                                     <div class="my-5">

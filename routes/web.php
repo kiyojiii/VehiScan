@@ -10,6 +10,8 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ViolationController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\DriverController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +59,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('owners/update', [OwnerController::class, 'update'])->name('owners.update');
     Route::delete('owners/delete', [OwnerController::class, 'delete'])->name('owners.delete');
     Route::get('owners/show/{id}', [OwnerController::class, 'show'])->name('owners.show');
+
+    #VEHICLE
+    Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+
+    #DRIVER
+    Route::get('drivers', [DriverController::class, 'index'])->name('drivers.index');
 });
 
 

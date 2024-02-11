@@ -2,11 +2,11 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <script>document.write(new Date().getFullYear())</script> © Skote.
+                <script>document.write(new Date().getFullYear())</script> © VehiScan.
             </div>
             <div class="col-sm-6">
                 <div class="text-sm-end d-none d-sm-block">
-                    Designed & Developed by Sam Smith, Nissi Cup Noodles, Juicille, Antoinette, Clint
+                    Designed & Developed by CJV
                 </div>
             </div>
         </div>

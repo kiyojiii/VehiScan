@@ -17,7 +17,7 @@ class OwnerController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     public function index()
     {
         $role_status = Statuses::all();
@@ -65,18 +65,19 @@ class OwnerController extends Controller
         }
     }
 
-       // insert a new owner ajax request
-       public function store(Request $request) {
+    // insert a new owner ajax request
+    public function store(Request $request)
+    {
         try {
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'fname' => 'required|string|max:255',
-                'mi' => 'required|string|max:255',
+                'mi' => 'required|string|size:1',
                 'lname' => 'required|string|max:255',
                 'paddress' => 'required|string|max:255',
-                'email' => 'required|email',
-                'contact' => 'required|string|max:255',
-                'appointment' => 'required|string|max:255', 
+                'email' => 'required|email|unique:applicants,email_address,' . $request->owner_id, // Use ignore rule to exclude the current record
+                'contact' => 'required|string|numeric|digits_between:1,11',
+                'appointment' => 'required|string|max:255',
                 'role_status' => 'required|string|max:255',
                 'department' => 'required|string|max:255',
                 'position' => 'required|string|max:255',
@@ -92,11 +93,10 @@ class OwnerController extends Controller
                     'message' => $validator->errors()->first()
                 ], 400);
             }
-            
 
             // Get the currently authenticated user's ID
             $user_id = auth()->id();
-    
+
             // Process file upload
             if ($request->hasFile('scan_or_photo_of_id')) {
                 $file = $request->file('scan_or_photo_of_id');
@@ -105,13 +105,13 @@ class OwnerController extends Controller
             } else {
                 throw new \Exception('Photo file is required.');
             }
-    
+
             // Create new applicant data with user_id
             $ownerData = [
                 'user_id' => $user_id,
-                'first_name' => $request->fname, 
+                'first_name' => $request->fname,
                 'middle_initial' => $request->mi,
-                'last_name' => $request->lname, 
+                'last_name' => $request->lname,
                 'present_address' => $request->paddress,
                 'email_address' => $request->email,
                 'contact_number' => $request->contact,
@@ -120,13 +120,13 @@ class OwnerController extends Controller
                 'office_department_agency' => $request->department,
                 'position_designation' => $request->position,
                 'approval_status' => $request->approval,
-                'reason' => $request->reason,
+                'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
                 'scan_or_photo_of_id' => $fileName,
             ];
-    
+
             // Create the applicant record
             Applicant::create($ownerData);
-    
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Applicant created successfully.'
@@ -139,50 +139,100 @@ class OwnerController extends Controller
         }
     }
 
-    public function edit(Request $request){
+    public function edit(Request $request)
+    {
         $id = $request->id;
         $owner = Applicant::find($id);
         return response()->json($owner);
     }
 
-    public function update(Request $request) {
-        $fileName = '';
-        $owner = Applicant::find($request->owner_id);
-        if ($request->hasFile('scan_or_photo_of_id')) {
-            $file = $request->file('scan_or_photo_of_id');
-            $fileName = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/images', $fileName);
-            if ($owner->scan_or_photo_of_id) {
-                Storage::delete('public/images/' . $owner->scan_or_photo_of_id);
+    public function update(Request $request)
+    {
+        try {
+            
+            // Before validating the request, modify the reason field if approval is "Approved"
+            $request->merge([
+                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
+            ]);
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'fname' => 'required|string|max:255',
+                'mi' => 'required|string|size:1',
+                'lname' => 'required|string|max:255',
+                'paddress' => 'required|string|max:255',
+                'email' => 'required|email|unique:applicants,email_address,' . $request->owner_id, // Use ignore rule to exclude the current record
+                'contact' => 'required|string|numeric|digits_between:1,11',
+                'appointment' => 'required|string|max:255',
+                'role_status' => 'required|string|max:255',
+                'department' => 'required|string|max:255',
+                'position' => 'required|string|max:255',
+                'approval' => 'required|string|max:255',
+                'reason' => 'nullable|string|max:255',
+                'scan_or_photo_of_id' => 'nullable|image|max:2048', // Assuming it's an image file
+            ]);            
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
             }
-        } else {
-            $fileName = $request->owner_photo;
+
+            $fileName = '';
+
+            // Retrieve the owner record
+            $owner = Applicant::find($request->owner_id);
+
+            // Process file upload
+            if ($request->hasFile('scan_or_photo_of_id')) {
+                $file = $request->file('scan_or_photo_of_id');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/images', $fileName);
+                // Delete the old file if it exists
+                if ($owner->scan_or_photo_of_id) {
+                    Storage::delete('public/images/' . $owner->scan_or_photo_of_id);
+                }
+            } else {
+                $fileName = $request->owner_photo;
+            }
+
+            // Update owner data
+            $ownerData = [
+                'first_name' => $request->fname,
+                'middle_initial' => $request->mi,
+                'last_name' => $request->lname,
+                'present_address' => $request->paddress,
+                'email_address' => $request->email,
+                'contact_number' => $request->contact,
+                'appointment_id' => $request->appointment,
+                'status_id' => $request->role_status,
+                'office_department_agency' => $request->department,
+                'position_designation' => $request->position,
+                'approval_status' => $request->approval,
+                'reason' => $request->reason,
+                'scan_or_photo_of_id' => $fileName,
+            ];
+
+            $owner->update($ownerData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Owner updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
         }
-
-        $ownerData = [
-            'first_name' => $request->fname, 
-            'middle_initial' => $request->mi,
-            'last_name' => $request->lname, 
-            'present_address' => $request->paddress,
-            'email_address' => $request->email,
-            'contact_number' => $request->contact,
-            'appointment_id' => $request->appointment,
-            'status_id' => $request->role_status,
-            'office_department_agency' => $request->department,
-            'position_designation' => $request->position,
-            'approval_status' => $request->approval,
-            'scan_or_photo_of_id' => $fileName,
-        ];
-
-        $owner->update($ownerData);
-        return response()->json([
-            'status' => 200,
-        ]);
-
     }
 
     // delete an owner ajax request
-    public function delete(Request $request){
+    public function delete(Request $request)
+    {
         $id = $request->id;
         $owner = Applicant::find($id);
         if (!$owner) {
@@ -204,8 +254,9 @@ class OwnerController extends Controller
             ], 500);
         }
     }
-    
-    public function show($id){
+
+    public function show($id)
+    {
         $owners = Applicant::find($id);
         return view('owners.show', compact('owners'));
     }
