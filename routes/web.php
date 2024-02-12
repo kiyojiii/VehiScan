@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
 
     #OWNER / APPLICANTS
     Route::get('owners', [OwnerController::class, 'index'])->name('owners.index');
-    Route::get('/fetchAll', [OwnerController::class, 'fetchAll'])->name('fetchAll');
+    Route::get('/fetchAllOwner', [OwnerController::class, 'fetchAllOwner'])->name('fetchAllOwner');
     Route::post('owners/store', [OwnerController::class, 'store'])->name('owners.store');
     Route::get('owners/edit', [OwnerController::class, 'edit'])->name('owners.edit');
     Route::post('owners/update', [OwnerController::class, 'update'])->name('owners.update');
@@ -65,6 +65,13 @@ Route::middleware(['auth'])->group(function () {
 
     #DRIVER
     Route::get('drivers', [DriverController::class, 'index'])->name('drivers.index');
+    Route::get('/fetchAllDriver', [DriverController::class, 'fetchAllDriver'])->name('fetchAllDriver');
+    Route::post('drivers/store', [DriverController::class, 'store'])->name('drivers.store');
+    Route::get('drivers/edit', [DriverController::class, 'edit'])->name('drivers.edit');
+    Route::post('drivers/update', [DriverController::class, 'update'])->name('drivers.update');
+    Route::delete('drivers/delete', [DriverController::class, 'delete'])->name('drivers.delete');
+    Route::get('drivers/show/{id}', [DriverController::class, 'show'])->name('drivers.show');
+
 });
 
 

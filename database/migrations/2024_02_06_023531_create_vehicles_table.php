@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('owner_address');
             $table->string('plate_number');
             $table->string('vehicle_make');
-            $table->string('front_and_side_photos');
+            $table->string('front_photo');
+            $table->string('side_photo');
             $table->string('year_model');
             $table->string('color');
             $table->string('body_type');

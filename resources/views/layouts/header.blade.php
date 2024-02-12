@@ -26,10 +26,10 @@
 
                         <a href="index.html" class="logo logo-light">
                             <span class="logo-sm">
-                                <img src="<?php echo url('theme')?>/dist/assets/images/logo-light.svg" alt="" height="22">
+                                <img src="<?php echo url('theme')?>/dist/assets/images/logo-light.svg" alt="" height="22"> //LOGO
                             </span>
                             <span class="logo-lg">
-                                <img src="#" alt="" height="19">
+                                <img src="<?php echo url('theme')?>/dist/assets/images/logo-light.png" alt="" height="19"> //LOGO
                             </span>
                         </a>
                     </div>

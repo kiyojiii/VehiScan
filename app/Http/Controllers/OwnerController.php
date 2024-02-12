@@ -25,7 +25,7 @@ class OwnerController extends Controller
         return view('owners.index', compact('role_status', 'appointments'));
     }
 
-    public function fetchAll()
+    public function fetchAllOwner()
     {
         $owner = Applicant::all();
         $output = '';
@@ -241,7 +241,7 @@ class OwnerController extends Controller
                 'message' => 'Owner not found'
             ], 404);
         }
-        if (Storage::delete('public/images/applicants/' . $owner->scan_or_photo_of_id)) {
+        if (Storage::delete('public/images/' . $owner->scan_or_photo_of_id)) {
             $owner->delete();
             return response()->json([
                 'status' => 'success',

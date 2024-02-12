@@ -54,6 +54,16 @@
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx bx-id-card"></i>
+                        <span key="t-blog">Drivers</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('drivers.index') }}" key="t-blog-list">Manage Drivers</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="bx bx-car"></i>
                         <span key="t-blog">Vehicles</span>
                     </a>

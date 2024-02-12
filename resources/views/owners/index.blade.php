@@ -340,9 +340,9 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-6">
-                                                    <label for="reason">Reason for Rejection</label>
-                                                    <input type="text" name="reason" id="reason" class="form-control" placeholder="Reason for rejection">
-                                                </div>
+                                                        <label for="reason">Reason for Rejection</label>
+                                                        <input type="text" name="reason" id="reason" class="form-control" placeholder="Reason for rejection">
+                                                    </div>
                                                 </div>
                                             </div>
                                                 <div class="my-2" id="scan_or_photo_of_id"></div>
@@ -622,7 +622,7 @@
 
             function fetchAllOwners() {
                 $.ajax({
-                    url: '{{ route('fetchAll') }}',
+                    url: '{{ route('fetchAllOwner') }}',
                     method: 'get',
                     success: function(response) {
                         $("#show_all_owners").html(response);
