@@ -24,6 +24,7 @@ class Vehicle extends Model
         'color',
         'body_type',
         'approval_status',
+        'reason',   
     ];
 
     // Relationships

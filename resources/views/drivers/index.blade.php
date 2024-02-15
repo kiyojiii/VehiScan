@@ -164,6 +164,100 @@
                             </div>
                             <!-- End Modal -->
 
+                            <!-- Edit Modal -->
+                            <div class="modal fade" id="editDriverModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Driver</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <form action="javascript:void(0)" id="edit_driver_form" name="edit_driver_form" method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                <input type="hidden" name="driver_id" id="driver_id">
+                                                <input type="hidden" name="dlicense_photo" id="dlicense_photo">
+                                                <input type="hidden" name="adlicense_photo" id="adlicense_photo">
+                                                <!-- Driver's Info -->
+                                                <h5>Driver's Info</h5>
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <label for="dname">Driver Name</label>
+                                                        <input type="text" name="dname" id="dname" class="form-control" placeholder="Driver Name">
+                                                        @error('dname')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <label for="driver_license_image">Driver's License</label>
+                                                        <input type="file" name="driver_license_image" class="form-control">
+                                                        @error('driver_license_image')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="my-2" id="driver_license_image"></div>
+                                                </div>
+
+                                                <!-- Authorized Driver's Info -->
+                                                <h5 class="mt-4">Authorized Driver's Info</h5>
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <label for="adname">Authorized Driver Name</label>
+                                                        <input type="text" name="adname" id="adname" class="form-control" placeholder="Authorized Driver Name">
+                                                        @error('adname')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <label for="adaddress">Authorized Driver Address</label>
+                                                        <input type="text" name="adaddress" id="adaddress" class="form-control" placeholder="Authorized Driver Address">
+                                                        @error('adaddress')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <label for="authorized_driver_license_image">Authorized Driver's License</label>
+                                                        <input type="file" name="authorized_driver_license_image" class="form-control">
+                                                        @error('authorized_driver_license_image')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="my-2" id="authorized_driver_license_image"></div>
+                                                    <div class="col-md-2">
+                                                        <label for="approval">Approval Status</label>
+                                                        <select name="approval" class="form-control" id="approval">
+                                                            <option value="Approved" selected>Approved</option>
+                                                            <option value="Rejected">Rejected</option>
+                                                        </select>
+                                                        @error('approval')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-md" id="reasonField">
+                                                        <label for="reason">Reason for Rejection</label>
+                                                        <input type="text" name="reason" id="reason" class="form-control" placeholder="Reason for Rejection">
+                                                        @error('reason')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" id="edit_driver_btn" class="btn btn-primary" id="btn-save">Edit Driver</button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Modal -->
+
 
 
                         </div><!--end card-->
@@ -222,7 +316,7 @@
     <script>
         $(function() {
 
-            // add new owner ajax request
+            // add new driver ajax request
             $("#add_driver_form").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
@@ -270,53 +364,49 @@
                 });
             });
 
-                // edit owner ajax request
+                // edit driver ajax request
                 $(document).on('click', '.editIcon', function(e) {
                 e.preventDefault();
                 let id = $(this).attr('id');
                 $.ajax({
-                    url: '{{ route('owners.edit') }}',
+                    url: '{{ route('drivers.edit') }}',
                     method: 'get',
                     data: {
                         id: id,
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        $("#fname").val(response.first_name);
-                        $("#mi").val(response.middle_initial);
-                        $("#lname").val(response.last_name);
-                        $("#paddress").val(response.present_address);
-                        $("#email").val(response.email_address);
-                        $("#contact").val(response.contact_number);
-                        $("#appointment").val(response.appointment_id);
-                        $("#role_status").val(response.status_id);
-                        $("#department").val(response.office_department_agency);
-                        $("#position").val(response.position_designation);
+                        $("#dname").val(response.driver_name);
+                        $("#adname").val(response.authorized_driver_name);
+                        $("#adaddress").val(response.authorized_driver_address);
                         $("#approval").val(response.approval_status);
                         $("#reason").val(response.reason);
-                        $("#scan_or_photo_of_id").html(
-                            `<img src="storage/images/${response.scan_or_photo_of_id}" width="100" class="img-fluid img-thumbnail">`);
-                        $("#owner_id").val(response.id);
-                        $("#owner_photo").val(response.scan_or_photo_of_id);
+                        $("#driver_license_image").html(
+                            `<img src="storage/images/drivers/${response.driver_license_image}" width="100" class="img-fluid img-thumbnail">`);
+                        $("#authorized_driver_license_image").html(
+                            `<img src="storage/images/drivers/${response.authorized_driver_license_image}" width="100" class="img-fluid img-thumbnail">`);
+                        $("#driver_id").val(response.id);
+                        $("#dlicense_photo").val(response.driver_license_image);
+                        $("#adlicense_photo").val(response.authorized_driver_license_image)
                     },
                     error: function(xhr, status, error) {
                         // Show error message using SweetAlert if there's an error with the request
                         Swal.fire(
                             "Error",
-                            "An error occurred while fetching owner data.",
+                            "An error occurred while fetching driver data.",
                             "error"
                         );
                     }
                 });
             });
 
-            // update owner ajax request
-            $("#edit_owner_form").submit(function(e) {
+            // update driver ajax request
+            $("#edit_driver_form").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
-                $("#edit_owner_btn").text('Updating...');
+                $("#edit_driver_btn").text('Updating...');
                 $.ajax({
-                    url: '{{ route('owners.update') }}',
+                    url: '{{ route('drivers.update') }}',
                     method: 'post',
                     data: fd,
                     cache: false,
@@ -325,17 +415,17 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == 200) {
-                            fetchAllOwners();
+                            fetchAllDrivers();
                             // Close the modal
-                            $("#editOwnerModal").modal('hide');
+                            $("#editDriverModal").modal('hide');
                             Swal.fire(
                                 "Updated",
-                                "Owner Updated Successfully",
+                                "Driver Updated Successfully",
                                 "success"
                             );
                         }
-                        $("#edit_owner_btn").text('Update Owner');
-                        $("#edit_owner_form")[0].reset();
+                        $("#edit_driver_btn").text('Update Driver');
+                        $("#edit_driver_form")[0].reset();
                     },
                     error: function(xhr, status, error) {
                             // Parse JSON response to extract specific error message and display it using SweetAlert
@@ -346,10 +436,61 @@
                                 errorMessage,
                                 "error"
                             );
-                        $("#edit_owner_btn").text('Update Owner');
+                        $("#edit_driver_btn").text('Update Driver');
                     }
                 });
             });
+
+            // delete driver ajax request
+            $(document).on('click', '.deleteIcon', function(e) {
+            e.preventDefault();
+            let id = $(this).attr('id');
+            let csrf = '{{ csrf_token() }}';
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('drivers.delete') }}',
+                        method: 'delete',
+                        data: {
+                            id: id,
+                            _token: csrf
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Driver Deleted Successfully',
+                                    'success'
+                                );
+                                fetchAllDrivers();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to delete driver: ' + error,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
 
                 // Fetch all drivers via AJAX and initialize DataTable
                 fetchAllDrivers();

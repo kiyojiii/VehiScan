@@ -83,7 +83,7 @@ class OwnerController extends Controller
                 'position' => 'required|string|max:255',
                 'approval' => 'required|string|max:255',
                 'reason' => 'nullable|string|max:255',
-                'scan_or_photo_of_id' => 'required|image|max:2048', // Assuming it's an image file
+                'scan_or_photo_of_id' => 'image|max:2048', // Assuming it's an image file
             ]);
 
             // If validation fails, return error response

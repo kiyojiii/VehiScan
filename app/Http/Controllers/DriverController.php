@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Models\Driver;
 
 class DriverController extends Controller
@@ -15,7 +16,8 @@ class DriverController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(){
+    public function index()
+    {
         return view('drivers.index');
     }
 
@@ -63,83 +65,193 @@ class DriverController extends Controller
         }
     }
 
-     // insert a new driver ajax request
-     public function store(Request $request)
-     {
-         try {
-             // Validate incoming request data
-             $validator = Validator::make($request->all(), [
-                 'dname' => 'required|string|max:255',
-                 'driver_license_image' => 'required|image|max:2048', // Assuming it's an image file
-                 'adname' => 'required|string|max:255',
-                 'adaddress' => 'required|string|max:255',
-                 'authorized_driver_license_image' => 'required|image|max:2048', // Assuming it's an image file
-                 'approval' => 'required|string|max:255',
-                 'reason' => 'nullable|string|max:255',
-             ]);
- 
-             // If validation fails, return error response
-             if ($validator->fails()) {
-                 return response()->json([
-                     'status' => 400,
-                     'message' => $validator->errors()->first()
-                 ], 400);
-             }
- 
-             // Get the currently authenticated user's ID
-             $user_id = auth()->id();
- 
-             // Process file upload
-             if ($request->hasFile('driver_license_image')) {
-                 $dlfile = $request->file('driver_license_image');
-                 $dlfileName = time() . '.' . $dlfile->getClientOriginalExtension();
-                 $dlfile->storeAs('public/images/drivers', $dlfileName); //php artisan storage:link
-             } else {
-                 throw new \Exception('Photo file is required.');
-             }
+    // insert a new driver ajax request
+    public function store(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
+                'driver_license_image' => 'required|image|max:2048',
+                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
+                'adaddress' => 'string|max:255',
+                'authorized_driver_license_image' => 'image|max:2048',
+                'approval' => 'required|string|max:255',
+                'reason' => 'nullable|string|max:255',
+            ]);
 
-            // Process file upload
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Get the currently authenticated user's ID
+            $user_id = auth()->id();
+
+            // Generate unique file names using UUIDs
+            $dlfileName = Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension();
+            $adlfileName = Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension();
+
+            // Store driver license image
+            $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
+
+            // Store authorized driver license image
+            $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+
+            // Create new applicant data with user_id and unique file names
+            $driverData = [
+                'user_id' => $user_id,
+                'driver_name' => $request->dname,
+                'driver_license_image' => $dlfileName,
+                'authorized_driver_license_image' => $adlfileName,
+                'authorized_driver_name' => $request->adname,
+                'authorized_driver_address' => $request->adaddress,
+                'approval_status' => $request->approval,
+                'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
+            ];
+
+            // Create the applicant record
+            Driver::create($driverData);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Driver created successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function edit(Request $request)
+    {
+        $id = $request->id;
+        $driver = Driver::find($id);
+        return response()->json($driver);
+    }
+
+    public function update(Request $request)
+    {
+        try {
+
+            // Before validating the request, modify the reason field if approval is "Approved"
+            $request->merge([
+                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
+            ]);
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'dname' => 'required|string|max:255',
+                'driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'adname' => 'string|max:255',
+                'adaddress' => 'string|max:255',
+                'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'approval' => 'required|string|max:255',
+                'reason' => 'nullable|string|max:255',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the driver record
+            $driver = Driver::find($request->driver_id);
+
+            // Process file upload for driver's license image
+            if ($request->hasFile('driver_license_image')) {
+                $dlfile = $request->file('driver_license_image');
+                $dlfileName = Str::uuid() . '.' . $dlfile->getClientOriginalExtension();
+                $dlfile->storeAs('public/images/drivers', $dlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->driver_license_image);
+                }
+            } else {
+                $dlfileName = $driver->driver_license_image;
+            }
+
+            // Process file upload for authorized driver's license image
             if ($request->hasFile('authorized_driver_license_image')) {
                 $adlfile = $request->file('authorized_driver_license_image');
-                $adlfileName = time() . '.' . $adlfile->getClientOriginalExtension();
+                $adlfileName = Str::uuid() . '.' . $adlfile->getClientOriginalExtension();
                 $adlfile->storeAs('public/images/drivers', $adlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->authorized_driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->authorized_driver_license_image);
+                }
             } else {
-                throw new \Exception('Photo file is required.');
+                $adlfileName = $driver->authorized_driver_license_image;
             }
- 
-             // Create new applicant data with user_id
-             $driverData = [
-                 'user_id' => $user_id,
-                 'driver_name' => $request->dname,
-                 'driver_license_image' => $dlfileName,
-                 'authorized_driver_license_image' => $adlfileName,
-                 'authorized_driver_name' => $request->adname,
-                 'authorized_driver_address' => $request->adaddress,
-                 'approval_status' => $request->approval,
-                 'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
-             ];
- 
-             // Create the applicant record
-             Driver::create($driverData);
- 
-             return response()->json([
-                 'status' => 200,
-                 'message' => 'Driver created successfully.'
-             ]);
-         } catch (\Exception $e) {
-             return response()->json([
-                 'status' => 500,
-                 'message' => 'Error: ' . $e->getMessage()
-             ], 500);
-         }
-     }
 
-     public function edit(Request $request)
-     {
-         $id = $request->id;
-         $driver = Driver::find($id);
-         return response()->json($driver);
-     }
- 
+            // Update driver data
+            $driverData = [
+                'driver_name' => $request->dname,
+                'authorized_driver_name' => $request->adname,
+                'authorized_driver_address' => $request->adaddress,
+                'approval_status' => $request->approval,
+                'reason' => $request->reason,
+                'driver_license_image' => $dlfileName,
+                'authorized_driver_license_image' => $adlfileName,
+            ];
+
+            $driver->update($driverData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Driver updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // delete an driver ajax request
+    public function delete(Request $request)
+    {
+        $id = $request->id;
+        $driver = Driver::find($id);
+        if (!$driver) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Driver not found'
+            ], 404);
+        }
+
+        // Delete driver license image
+        if ($driver->driver_license_image) {
+            Storage::delete('public/images/drivers/' . $driver->driver_license_image);
+        }
+
+        // Delete authorized driver license image
+        if ($driver->authorized_driver_license_image) {
+            Storage::delete('public/images/drivers/' . $driver->authorized_driver_license_image);
+        }
+
+        // Now delete the driver record
+        $driver->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Driver deleted successfully'
+        ]);
+    }
+
+    public function show($id)
+    {
+        $drivers = Driver::find($id);
+        return view('drivers.show', compact('drivers'));
+    }
 }
-

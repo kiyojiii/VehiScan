@@ -566,7 +566,7 @@
                 });
             });
 
-            // delete employee ajax request
+            // delete driver ajax request
             $(document).on('click', '.deleteIcon', function(e) {
             e.preventDefault();
             let id = $(this).attr('id');
