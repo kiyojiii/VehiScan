@@ -48,7 +48,7 @@ class VehicleController extends Controller
                     <td class="text-center">
                       <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                     </td>
-                    <td>' . $vehicle->approval_status . '</td>
+                    <td>' . $vehicle->registration_status . '</td>
                     <td>
                         <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                         <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
@@ -84,6 +84,7 @@ class VehicleController extends Controller
         'side_photo' => 'required|image|max:2048',
         'approval' => 'required|string|max:255',
         'reason' => 'nullable|string|max:255',
+        'registration_status' => 'required|string|max:255',
       ]);
 
       // If validation fails, return error response
@@ -131,6 +132,7 @@ class VehicleController extends Controller
         'side_photo' => $spfileName,
         'approval_status' => $request->approval,
         'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
+        'registration_status' => $request->registration_status,
       ];
 
       // Create the vehicle record
@@ -182,6 +184,9 @@ class VehicleController extends Controller
         'side_photo' => 'image|max:2048',
         'approval' => 'string|max:255',
         'reason' => 'nullable|string|max:255',
+        'registration_status' => 'required|string|max:255',
+        'serial_number' => 'required|string|max:255',
+        'id_number' => 'required|string|max:255',
       ]);
 
       // If validation fails, return error response
@@ -245,6 +250,7 @@ class VehicleController extends Controller
         'body_type' => $request->body_type,
         'approval_status' => $request->approval,
         'reason' => $request->reason,
+        'registration_status' => $request->registration_status,
       ]);
 
       // Return success response
@@ -316,7 +322,8 @@ class VehicleController extends Controller
 
   public function show($id)
   {
+      $drivers = Driver::find($id);
       $vehicles = Vehicle::find($id);
-      return view('vehicles.show', compact('vehicles'));
+      return view('vehicles.show', compact('drivers', 'vehicles'));
   }
 }

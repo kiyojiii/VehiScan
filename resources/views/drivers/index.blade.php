@@ -138,6 +138,7 @@
                                                         <select name="approval" class="form-control" id="approvalStatus" required>
                                                             <option value="Approved" selected>Approved</option>
                                                             <option value="Rejected">Rejected</option>
+                                                            <option value="Pending">Pending</option>
                                                         </select>
                                                         @error('approval')
                                                             <div class="text-danger">{{ $message }}</div>
@@ -232,6 +233,7 @@
                                                         <select name="approval" class="form-control" id="approval">
                                                             <option value="Approved" selected>Approved</option>
                                                             <option value="Rejected">Rejected</option>
+                                                            <option value="Pending">Pending</option>
                                                         </select>
                                                         @error('approval')
                                                             <div class="text-danger">{{ $message }}</div>

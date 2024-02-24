@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Vehicle extends Model
 {
     protected $fillable = [
+        'user_id',
         'driver_id',
         'violation_id',
         'time_status_id',
@@ -25,6 +26,7 @@ class Vehicle extends Model
         'body_type',
         'approval_status',
         'reason',   
+        'registration_status',
     ];
 
     // Relationships

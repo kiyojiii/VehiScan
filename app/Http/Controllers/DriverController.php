@@ -113,7 +113,7 @@ class DriverController extends Controller
                 'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
             ];
 
-            // Create the applicant record
+            // Create the driver record
             Driver::create($driverData);
 
             return response()->json([

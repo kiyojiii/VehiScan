@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Owner</title>
+    <title>VehiScan | Rejected - Applicants-Partner/Supplier-Rejected</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -36,12 +36,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Owner List</h4>
+                            <h4 class="mb-sm-0 font-size-18">Rejected Applicant Partner/Supplier List</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Owner</a></li>
-                                    <li class="breadcrumb-item active">Owner List</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Applicants</a></li>
+                                    <li class="breadcrumb-item active">Rejected Applicant Partner/Supplier List</li>
                                 </ol>
                             </div>
 
@@ -61,14 +61,14 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Owner Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Rejected Applicant Partner/Supplier Lists</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Owner</a>
+                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Applicant</a>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-body" id="show_all_owners">
+                            <div class="card-body" id="show_all_rejected_partner_applicants">
                                 <h1 class="text-center text-secondary my-5"> Loading... </h1>
                             </div>
 
@@ -234,7 +234,6 @@
                                                         <select name="approval" class="form-control" id="approvalStatus" required>
                                                             <option value="Approved" selected>Approved</option>
                                                             <option value="Rejected">Rejected</option>
-                                                            <option value="Pending">Pending</option>
                                                         </select>
                                                         @error('approval')
                                                             <div class="text-danger">{{ $message }}</div>
@@ -392,7 +391,6 @@
                                                         <select name="approval" id="approval" class="form-control" required>
                                                             <option value="Approved" selected>Approved</option>
                                                             <option value="Rejected">Rejected</option>
-                                                            <option value="Pending">Pending</option>
                                                         </select>
                                                     </div>
                                                     <div class="col-md-6">
@@ -491,203 +489,20 @@
 
     <script>
         $(function() {
-
-            // add new owner ajax request
-            $("#add_owner_form").submit(function(e) {
-                e.preventDefault();
-                const fd = new FormData(this);
-                $("#add_owner_btn").text('Adding...');
-                $.ajax({
-                    url: '{{ route('owners.store') }}',
-                    method: 'post',
-                    data: fd,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status == 200) {
-                            fetchAllOwners();
-                            // Close the modal
-                            $("#addOwnerModal").modal('hide');
-                            Swal.fire(
-                                "Successful",
-                                "Owner Added Successfully",
-                                "success"
-                            )
-                        } else {
-                            // Show error message using SweetAlert
-                            Swal.fire(
-                                "Error",
-                                response.message,
-                                "error"
-                            )
-                        }
-                        $("#add_owner_btn").text('Add Owner');
-                        $("#add_owner_form")[0].reset();
-                    },
-                    error: function(xhr, status, error) {
-                            // Parse JSON response to extract specific error message and display it using SweetAlert
-                            const response = JSON.parse(xhr.responseText);
-                            const errorMessage = response.message;
-                            Swal.fire(
-                                "Error",
-                                errorMessage,
-                                "error"
-                            );
-                        $("#add_owner_btn").text('Add Owner');
-                    }
-                });
-            });
-
-
-            // edit owner ajax request
-            $(document).on('click', '.editIcon', function(e) {
-                e.preventDefault();
-                let id = $(this).attr('id');
-                $.ajax({
-                    url: '{{ route('owners.edit') }}',
-                    method: 'get',
-                    data: {
-                        id: id,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        $("#vehicle_details").val(response.vehicle_id);
-                        $("#fname").val(response.first_name);
-                        $("#mi").val(response.middle_initial);
-                        $("#lname").val(response.last_name);
-                        $("#paddress").val(response.present_address);
-                        $("#email").val(response.email_address);
-                        $("#contact").val(response.contact_number);
-                        $("#appointment").val(response.appointment_id);
-                        $("#role_status").val(response.status_id);
-                        $("#department").val(response.office_department_agency);
-                        $("#position").val(response.position_designation);
-                        $("#approval").val(response.approval_status);
-                        $("#reason").val(response.reason);
-                        $("#serial_number").val(response.serial_number);
-                        $("#id_number").val(response.id_number);
-                        $("#scan_or_photo_of_id").html(
-                            `<img src="storage/images/${response.scan_or_photo_of_id}" width="100" class="img-fluid img-thumbnail">`);
-                        $("#owner_id").val(response.id);
-                        $("#owner_photo").val(response.scan_or_photo_of_id);
-                    },
-                    error: function(xhr, status, error) {
-                        // Show error message using SweetAlert if there's an error with the request
-                        Swal.fire(
-                            "Error",
-                            "An error occurred while fetching owner data.",
-                            "error"
-                        );
-                    }
-                });
-            });
-
-            // update owner ajax request
-            $("#edit_owner_form").submit(function(e) {
-                e.preventDefault();
-                const fd = new FormData(this);
-                $("#edit_owner_btn").text('Updating...');
-                $.ajax({
-                    url: '{{ route('owners.update') }}',
-                    method: 'post',
-                    data: fd,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status == 200) {
-                            fetchAllOwners();
-                            // Close the modal
-                            $("#editOwnerModal").modal('hide');
-                            Swal.fire(
-                                "Updated",
-                                "Owner Updated Successfully",
-                                "success"
-                            );
-                        }
-                        $("#edit_owner_btn").text('Update Owner');
-                        $("#edit_owner_form")[0].reset();
-                    },
-                    error: function(xhr, status, error) {
-                            // Parse JSON response to extract specific error message and display it using SweetAlert
-                            const response = JSON.parse(xhr.responseText);
-                            const errorMessage = response.message;
-                            Swal.fire(
-                                "Error",
-                                errorMessage,
-                                "error"
-                            );
-                        $("#edit_owner_btn").text('Update Owner');
-                    }
-                });
-            });
-
-            // delete driver ajax request
-            $(document).on('click', '.deleteIcon', function(e) {
-            e.preventDefault();
-            let id = $(this).attr('id');
-            let csrf = '{{ csrf_token() }}';
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '{{ route('owners.delete') }}',
-                        method: 'delete',
-                        data: {
-                            id: id,
-                            _token: csrf
-                        },
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                Swal.fire(
-                                    'Deleted!',
-                                    'Owner Deleted Successfully',
-                                    'success'
-                                );
-                                fetchAllOwners();
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    response.message,
-                                    'error'
-                                );
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire(
-                                'Error!',
-                                'Failed to delete owner: ' + error,
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        });
-
-
             // fetch all owner ajax request
-            fetchAllOwners();
+            fetchAllRejectedPartnerApplicants();
 
-            function fetchAllOwners() {
+            function fetchAllRejectedPartnerApplicants() {
                 $.ajax({
-                    url: '{{ route('fetchAllOwner') }}',
+                    url: '{{ route('fetchAllRejectedPartnerApplicant') }}',
                     method: 'get',
                     success: function(response) {
-                        $("#show_all_owners").html(response);
+                        $("#show_all_rejected_partner_applicants").html(response);
                         $("table").DataTable({
-                            order:[0, 'desc']
-                        });
+                        order: [0, 'desc'], // Order by the first column in descending order
+                        lengthMenu: [5, 10, 25, 50], // Display options to show 5, 10, 25, or 50 records per page
+                        pageLength: 5 // Initially display 5 records per page
+                    });
                     }
                 });
             }

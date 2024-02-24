@@ -23,6 +23,8 @@ class Applicant extends Model
         'reason',
         'scan_or_photo_of_id',
         'approval_status',
+        'serial_number',
+        'id_number',
     ];
 
     // Relationships
@@ -38,8 +40,8 @@ class Applicant extends Model
 
     public function vehicle()
     {
-        return $this->hasOne(Vehicle::class, 'vehicle_id');
-    }
+        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+    }    
 
     public function driver()
     {

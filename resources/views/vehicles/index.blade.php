@@ -126,10 +126,22 @@
                                                 <input type="text" class="form-control" name="body_type">
                                             </div>
                                             <div class="col-md-2">
+                                                <label for="registration_status">Status</label>
+                                                <select name="registration_status" class="form-control">
+                                                    <option value="Active" selected>Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                                @error('registration_status')   
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-2">
                                                 <label for="approval">Approval Status</label>
                                                 <select name="approval" class="form-control" id="approvalStatus" required>
                                                     <option value="Approved" selected>Approved</option>
                                                     <option value="Rejected">Rejected</option>
+                                                    <option value="Pending">Pending</option>
                                                 </select>
                                                 @error('approval')
                                                     <div class="text-danger">{{ $message }}</div>
@@ -248,10 +260,22 @@
                                                 <input type="text" class="form-control" id="body_type" name="body_type">
                                             </div>
                                             <div class="col-md-2">
+                                                <label for="registration_status">Status</label>
+                                                <select name="registration_status" class="form-control" id="registration_status" required>
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                                @error('registration_status')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-2">
                                                 <label for="approval">Approval Status</label>
                                                 <select name="approval" class="form-control" id="approval_status" required>
-                                                    <option value="Approved" selected>Approved</option>
+                                                    <option value="Approved">Approved</option>
                                                     <option value="Rejected">Rejected</option>
+                                                    <option value="Pending">Pending</option>
                                                 </select>
                                                 @error('approval')
                                                     <div class="text-danger">{{ $message }}</div>
@@ -449,6 +473,7 @@
                         $("#year_model").val(response.year_model);
                         $("#color").val(response.color);
                         $("#body_type").val(response.body_type);
+                        $("#registration_status").val(response.registration_status);
                         $("#approval_status").val(response.approval_status);
                         $("#reason").val(response.reason);
                         $("#official_receipt_image").html(

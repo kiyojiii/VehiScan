@@ -12,6 +12,9 @@ use App\Http\Controllers\ViolationController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\ApplicantPartnerController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('violations/edit', [ViolationController::class, 'edit']);
     Route::post('violations/delete', [ViolationController::class, 'destroy']);
 
-    #OWNER / APPLICANTS
+    #OWNER 
     Route::get('owners', [OwnerController::class, 'index'])->name('owners.index');
     Route::get('/fetchAllOwner', [OwnerController::class, 'fetchAllOwner'])->name('fetchAllOwner');
     Route::post('owners/store', [OwnerController::class, 'store'])->name('owners.store');
@@ -78,6 +81,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('drivers/delete', [DriverController::class, 'delete'])->name('drivers.delete');
     Route::get('drivers/show/{id}', [DriverController::class, 'show'])->name('drivers.show');
 
+    #APPLICANT
+    Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::get('applicants-manage', [ApplicantController::class, 'manage'])->name('applicants.manage');
+    Route::post('applicants/store', [ApplicantController::class, 'store'])->name('applicants.store');
+
+    Route::get('/fetchPendingApplicant', [ApplicantController::class, 'fetchPendingApplicant'])->name('fetchPendingApplicant');
+    Route::get('/ManageApplicant', [ApplicantController::class, 'ManageApplicant'])->name('ManageApplicant');
+
+    #APPLICANT PARTNER/SUPPLIER
+    Route::get('applicants-partner', [ApplicantPartnerController::class, 'index'])->name('applicants.index-partner');
+    Route::get('applicants-partner-rejected', [ApplicantPartnerController::class, 'rejected'])->name('applicants.rejected-partner');
+    Route::get('/fetchAllPartnerApplicant', [ApplicantPartnerController::class, 'fetchAllPartnerApplicant'])->name('fetchAllPartnerApplicant');
+    Route::get('/fetchAllRejectedPartnerApplicant', [ApplicantPartnerController::class, 'fetchAllRejectedPartnerApplicant'])->name('fetchAllRejectedPartnerApplicant');
+
+    #FORMS
+    Route::get('applicants-form', [ApplicantController::class, 'form'])->name('forms.applicant');
 });
 
 

@@ -64,14 +64,14 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Applicant Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Test Applicant Lists</h5>
                                     <div class="flex-shrink-0">
                                         <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Applicant</a>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-body" id="show_pending_applicants">
+                            <div class="card-body" id="manage_all_applicants">
                                 <h1 class="text-center text-secondary my-5"> Loading... </h1>
                             </div>
 
@@ -244,7 +244,7 @@
                                                                 </div>
                                                                 <div class="col-md" id="reasonApplicantField" style="display: none;">
                                                                     <label for="applicant_reason">Reason for Rejection</label>
-                                                                    <input type="text" name="applicant_reason" class="form-control" placeholder="Reason for Rejection">
+                                                                    <input type="text" name="applicant_reason" class="form-control" value="None / Approved" readonly>
                                                                     @error('applicant_reason')
                                                                     <div class="text-danger">{{ $message }}</div>
                                                                     @enderror
@@ -291,39 +291,36 @@
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-4">
                                                                 <label for="color" class="form-label">Color</label>
                                                                 <input type="text" class="form-control" name="color">
                                                             </div>
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-4">
                                                                 <label for="body_type" class="form-label">Body Type</label>
                                                                 <input type="text" class="form-control" name="body_type">
                                                             </div>
-                                                            <div class="col-md-2">
-                                                                <label for="status">Status</label>
-                                                                <select name="status" class="form-control">
+                                                            <div class="col-md-4">
+                                                                <label for="registration_status">Status</label>
+                                                                <select name="registration_status" class="form-control">
+                                                                    <option value="=">Select Vehicle Status</option>
                                                                     <option value="Active" selected>Active</option>
                                                                     <option value="Inactive">Inactive</option>
                                                                     <option value="Other">Other</option>
                                                                 </select>
-                                                                @error('status')
+                                                                @error('registration_status')
                                                                 <div class="text-danger">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-2" style="display: none;">
                                                                 <label for="vehicle_approval">Approval Status</label>
-                                                                <select name="vehicle_approval" class="form-control" id="approvalVehicleStatus" required>
-                                                                    <option value="Approved" selected>Approved</option>
-                                                                    <option value="Rejected">Rejected</option>
-                                                                    <option value="Pending">Pending</option>
-                                                                </select>
+                                                                <input type="text" name="vehicle_reason" class="form-control" id="approvalVehicleStatus" value="Approved" readonly>
                                                                 @error('vehicle_approval')
                                                                 <div class="text-danger">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
                                                             <div class="col-md" id="reasonVehicleField" style="display: none;">
                                                                 <label for="vehicle_reason">Reason for Rejection</label>
-                                                                <input type="text" name="vehicle_reason" class="form-control" placeholder="Reason for Rejection">
+                                                                <input type="text" name="vehicle_reason" class="form-control" value="None / Approved" readonly>
                                                                 @error('vehicle_reason')
                                                                 <div class="text-danger">{{ $message }}</div>
                                                                 @enderror
@@ -366,7 +363,6 @@
                                                             <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
                                                         </div>
                                                     </section>
-
                                                     <!-- Driver Details -->
                                                     <section id="driverDetailsSection" style="display: none;">
                                                         <!-- Driver's Info -->
@@ -415,20 +411,16 @@
                                                                 <div class="text-danger">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-2" style="display: none;">
                                                                 <label for="driver_approval">Approval Status</label>
-                                                                <select name="driver_approval" class="form-control" id="approvalDriverStatus" required>
-                                                                    <option value="Approved" selected>Approved</option>
-                                                                    <option value="Rejected">Rejected</option>
-                                                                    <option value="Pending">Pending</option>
-                                                                </select>
+                                                                <input type="text" name="driver_approval" class="form-control" id="approvalDriverStatus" value="Approved" readonly>
                                                                 @error('driver_approval')
                                                                 <div class="text-danger">{{ $message }}</div>
                                                                 @enderror
                                                             </div>
                                                             <div class="col-md" id="reasonDriverField" style="display: none;">
                                                                 <label for="driver_reason">Reason for Rejection</label>
-                                                                <input type="text" name="driver_reason" class="form-control" placeholder="Reason for Rejection">
+                                                                <input type="text" name="driver_reason" class="form-control" value="None / Approved" readonly>
                                                                 @error('driver_reason')
                                                                 <div class="text-danger">{{ $message }}</div>
                                                                 @enderror
@@ -436,40 +428,28 @@
                                                         </div>
                                                         <div class="modal-footer" id="modalFooterButtons">
                                                             <button type="button" class="btn btn-secondary" onclick="prevStep()">Back</button>
-                                                            <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
-                                                        </div>
-                                                    </section>
-
-                                                    <!-- Confirm Details -->
-                                                    <section id="confirmDetailsSection" style="display: none;">
-                                                        <!-- Confirm Details Form -->
-                                                        <h3>Confirm Details</h3>
-                                                        <!-- Your Confirm Details Form Inputs -->
-                                                        <div class="modal-footer" id="modalFooterButtons">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                             <button type="submit" id="add_applicant_btn" class="btn btn-primary" id="btn-save">Add Applicant</button>
                                                         </div>
                                                     </section>
+
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- End Modal -->
+                                <!-- End Modal -->
+
+                            </div><!--end card-->
+                        </div><!--end col-->
+
+                    </div><!--end row-->
 
 
-                        </div><!--end card-->
-                    </div><!--end col-->
+                </div> <!-- container-fluid -->
+            </div><!-- End Page-content -->
 
-                </div><!--end row-->
-
-
-            </div> <!-- container-fluid -->
-        </div><!-- End Page-content -->
-
-    </div>
-    <!-- end main content-->
+        </div>
+        <!-- end main content-->
 
     </div>
     <!-- END layout-wrapper -->
@@ -477,7 +457,7 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    @include('applicants.pending_js')
+    @include('applicants.manage_js')
 </body>
 
 </html>

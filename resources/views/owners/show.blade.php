@@ -77,20 +77,20 @@
                                                     <div class="row">
                                                         <div class="col-sm-4">
                                                             <div>
-                                                                <p class="text-muted mb-2">Last Name</p>
-                                                                <h5 class="font-size-15">{{ $owners->last_name}}</h5>
+                                                                <p class="text-muted mb-2"><i class="fas fa-ad"></i> Plate Number</p>
+                                                                <h5 class="font-size-15">{{ $owners->vehicle->plate_number ?? 'N/A' }}</h5>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-4">
                                                             <div class="mt-4 mt-sm-0">
-                                                                <p class="text-muted mb-2">Middle Initial</p>
-                                                                <h5 class="font-size-15">{{ $owners->middle_initial}}.</h5>
+                                                                <p class="text-muted mb-2"><i class="fas fa-car"></i> Vehicle Model</p>
+                                                                <h5 class="font-size-15">{{ $owners->vehicle->vehicle_make ?? 'N/A' }}</h5>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-4">
                                                             <div class="mt-4 mt-sm-0">
-                                                                <p class="text-muted mb-2">First Name</p>
-                                                                <h5 class="font-size-15">{{ $owners->first_name}}</h5>
+                                                                <p class="text-muted mb-2"><i class="fas fa-adjust"></i> Vehicle Year & Color</p>
+                                                                <h5 class="font-size-15">{{ $owners->vehicle->year_model ?? 'N/A' }} & {{ $owners->vehicle->color ?? 'N/A' }}</h5>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -98,71 +98,207 @@
 
                                                 <div class="mt-4">
                                                     <div class="text-muted font-size-14">
-                                                        <!-- Row 1: Contact Information -->
-                                                        <h4>Contact Information</h4>
-                                                        <!-- Row 2: Present Address -->
-                                                        <h6>Present Address:</h6>
-                                                        <p>{{ $owners->present_address }}</p>
-                                                        <!-- Row 3: Email Address and Contact Number -->
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <h6>Email Address:</h6>
-                                                                <p>{{ $owners->email_address }}</p>
-                                                            </div>
-                                                            <div class="col">
-                                                                <h6>Contact Number:</h6>
-                                                                <p>{{ $owners->contact_number }}</p>
-                                                            </div>
-                                                        </div>
-                                                        <!-- Row 4: Work Information -->
+                                                        <!-- Work Information -->
                                                         <h4>Work Information</h4>
                                                         <!-- Row 5: Appointment and Role Status -->
                                                         <div class="row">
                                                             <div class="col">
-                                                                <h6>Appointment:</h6>
-                                                                @php
-                                                                $appointment = App\Models\Appointment::find($owners->appointment_id);
-                                                                @endphp
-                                                                @if($appointment)
-                                                                <p>{{ $appointment->appointment }}</p>
-                                                                @else
-                                                                <p>No appointment found</p>
-                                                                @endif
+                                                                <h6><i class="far fa-calendar-alt"></i> Appointment:</h6>
+                                                                <p>{{ $owners->appointment->appointment ?? 'N/A' }}</p>
                                                             </div>
                                                             <div class="col">
-                                                                <h6>Role Status:</h6>
-                                                                @php
-                                                                $role_status = App\Models\Statuses::find($owners->status_id);
-                                                                @endphp
-                                                                @if($role_status)
-                                                                <p>{{ $role_status->applicant_role_status }}</p>
-                                                                @else
-                                                                <p>No Role Status found</p>
-                                                                @endif
+                                                                <h6><i class="fas fa-check-square"></i> Role Status:</h6>
+                                                                <p>{{ $owners->status->applicant_role_status ?? 'N/A' }}</p>
                                                             </div>
                                                         </div>
                                                         <!-- Row 6: Position & Designation and Office/Department/Agency -->
                                                         <div class="row">
                                                             <div class="col">
-                                                                <h6>Position & Designation:</h6>
+                                                                <h6><i class="fas fa-user-tie"></i> Position & Designation:</h6>
                                                                 <p>{{ $owners->position_designation }}</p>
                                                             </div>
                                                             <div class="col">
-                                                                <h6>Office/Department/Agency:</h6>
+                                                                <h6><i class="fas fa-city"></i> Office/Department/Agency:</h6>
                                                                 <p>{{ $owners->office_department_agency }}</p>
                                                             </div>
                                                         </div>
-                                                    </div>      
-                                                        <blockquote class="p-4 border-light border rounded mb-4">
-                                                            <div class="d-flex">
-                                                                <div class="me-3">
-                                                                    <i class="bx bxs-quote-alt-left text-dark font-size-24"></i>
+
+                                                        <!-- Vehicle Information -->
+                                                        <h4>Vehicle Information</h4>
+                                                        <!-- Row 7: Driver Name, Owner Address -->
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-address-card"></i> Driver Name:</h6>
+                                                                <p>{{ $owners->vehicle->driver->driver_name ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-home"></i> Owner Address:</h6>
+                                                                <p>{{ $owners->present_address }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Row 8: Plate Number, Vehicle Make, Year Model, Color, Body Type, Approval Status -->
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-ad"></i> Plate Number:</h6>
+                                                                <p>{{ $owners->vehicle->plate_number ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-car"></i> Vehicle Make:</h6>
+                                                                <p>{{ $owners->vehicle->vehicle_make ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-calendar-day"></i> Year Model:</h6>
+                                                                <p>{{ $owners->vehicle->year_model ?? 'N/A' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-adjust"></i> Color:</h6>
+                                                                <p>{{ $owners->vehicle->color ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h6><i class="fas fa-car-side"></i> Body Type:</h6>
+                                                                <!-- Assuming $bodyType is retrieved from the database -->
+                                                                <p>{{ $owners->vehicle->body_type ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6><i class="fas fa-clipboard-check"></i> Approval Status:</h6>
+                                                                <!-- Assuming $approvalStatus is retrieved from the database -->
+                                                                <p>{{ $owners->vehicle->approval_status ?? 'N/A' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Vehicle Documents -->
+                                                        <h4>Vehicle Documents</h4>
+                                                        <!-- Row 9: Official Receipt Image, Certificate of Registration Image, Deed of Sale Image, Authorization Letter Image -->
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6>Official Receipt:</h6>
+                                                                <!-- Assuming $officialReceiptImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->official_receipt_image) }}" alt="official_receipt_image ID" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Cert. of Registration:</h6>
+                                                                <!-- Assuming $certificateOfRegistrationImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->certificate_of_registration_image) }}" alt="certificate_of_registration_image ID" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Deed of Sale:</h6>
+                                                                <!-- Assuming $deedOfSaleImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->deed_of_sale_image) }}" alt="certificate_of_registration_image ID" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Authorization Letter:</h6>
+                                                                <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->authorization_letter_image) }}" alt="authorization_letter_image ID" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Vehicle Images -->
+                                                        <h4>Vehicle Images</h4>
+                                                        <!-- Row 10: Front Photo, Side Photo -->
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6>Front Photo:</h6>
+                                                                <!-- Assuming $frontPhotoImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/vehicles/' . $owners->vehicle->front_photo) }}" alt="authorization_letter_image ID" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Side Photo:</h6>
+                                                                <!-- Assuming $sidePhotoImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/vehicles/' . $owners->vehicle->side_photo) }}" alt="side_photo ID" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                        </div>
+                                                        <!-- Driver Information -->
+                                                        <h4>Driver Information</h4>
+                                                        <!-- Driver's License Image, Authorized Driver's License Image -->
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6>Driver's License Image:</h6>
+                                                                <!-- Assuming $driversLicenseImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/drivers/' . ($owners->vehicle->driver->driver_license_image ?? 'N/A')) }}" alt="Driver's License Image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Authorized Driver's License Image:</h6>
+                                                                <!-- Assuming $authorizedDriversLicenseImage is retrieved from the database -->
+                                                                <img src="{{ asset('storage/images/drivers/' . ($owners->vehicle->driver->authorized_driver_license_image ?? 'N/A')) }}" alt="Authorized Driver's License Image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                                                            </div>
+                                                        </div>
+                                                        <!-- Full Name, Authorized Driver's Full Name, Authorized Driver's Address -->
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6>Full Name:</h6>
+                                                                <!-- Assuming $fullName is retrieved from the database -->
+                                                                <p>{{ $owners->vehicle->driver->driver_name ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Authorized Driver's Full Name:</h6>
+                                                                <!-- Assuming $authorizedDriversFullName is retrieved from the database -->
+                                                                <p>{{ $owners->vehicle->driver->authorized_driver_name ?? 'N/A' }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h6>Driver's Address:</h6>
+                                                                <!-- Assuming $authorizedDriversAddress is retrieved from the database -->
+                                                                <p>{{ $owners->present_address ?? 'N/A' }}</p>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h6>Authorized Driver's Address:</h6>
+                                                                <!-- Assuming $authorizedDriversAddress is retrieved from the database -->
+                                                                <p>{{ $owners->vehicle->driver->authorized_driver_address ?? 'N/A' }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <blockquote class="p-4 border-light border rounded mb-4">
+                                                        <div class="d-flex">
+                                                            <div class="me-3">
+                                                                <i class="bx bxs-quote-alt-left text-dark font-size-24"></i>
+                                                            </div>
+                                                            <div class="row">
+                                                                <!-- Reason for Rejection -->
+                                                                <div class="col">
+                                                                    <h6>Reason for Rejection:</h6>
                                                                 </div>
-                                                                <div>
-                                                                    <p class="mb-0"> <h6>Reason for Rejection:</h6> {{ $owners->reason }}</p>
+                                                                <!-- Applicant Reason -->
+                                                                <div class="col">
+                                                                    <div class="col">
+                                                                        <h6>Applicant:</h6>
+                                                                        <p>
+                                                                            @if($owners->approval_status == 'Approved')
+                                                                            <span class="badge bg-success">{{ $owners->reason ?? 'N/A' }}</span>
+                                                                            @elseif($owners->approval_status == 'Rejected')
+                                                                            <span class="badge bg-danger">{{ $owners->reason ?? 'N/A' }}</span>
+                                                                            @else
+                                                                            <span class="badge bg-secondary">Unknown Status</span>
+                                                                            @endif
+                                                                        </p>
+                                                                    </div>
                                                                 </div>
-                                                            </div>                        
-                                                        </blockquote>
+                                                                <!-- Vehicle Reason -->
+                                                                <div class="col">
+                                                                    <h6>Vehicle:</h6>
+                                                                    <p>
+                                                                        @if($owners->vehicle->approval_status == 'Approved')
+                                                                        <span class="badge bg-success badge-lg">{{ $owners->vehicle->reason ?? 'N/A' }}</span>
+                                                                        @else($owners->vehicle->approval_status == 'Rejected')
+                                                                        <span class="badge bg-danger">{{ $owners->vehicle->reason ?? 'N/A' }}</span>
+                                                                        @endif
+                                                                    </p>
+                                                                </div>
+                                                                <!-- Driver Reason -->
+                                                                <div class="col">
+                                                                    <h6>Driver:</h6>
+                                                                    <p>
+                                                                        @if($owners->vehicle->driver->approval_status == 'Approved')
+                                                                        <span class="badge bg-success">{{ $owners->vehicle->driver->reason ?? 'N/A' }}</span>
+                                                                        @else($owners->vehicle->driver->approval_status == 'Rejected')
+                                                                        <span class="badge bg-danger">{{ $owners->vehicle->driver->reason ?? 'N/A' }}</span>
+                                                                        @endif
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </blockquote>
                                                     <hr>
                                                     <!-- Row 11: Photo ID -->
                                                     <div class="my-5">
@@ -171,8 +307,6 @@
                                                     </div>
                                                     <hr>
                                                 </div>
-
-
 
                                             </div>
                                         </div>

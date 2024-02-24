@@ -28,14 +28,14 @@
 
                 <li>
                     <a href="{{ route('home') }}" class="waves-effect">
-                        <i class="bx bx-home-circle"></i>
+                        <i class="fas fa-tachometer-alt"></i>
                         <span key="t-dashboards">Dashboard</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ url('/') }}" class="waves-effect">
-                    <i class='bx bx-world'></i>
+                    <i class='fas fa-globe-asia'></i>
                         <span key="t-guests">Explore Website</span>
                     </a>
                 </li>
@@ -44,7 +44,26 @@
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bxs-user-badge"></i>
+                        <i class="fas fa-users"></i>
+                        <span key="t-blog">Applicants</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('applicants.index') }}" key="t-blog-list">Pending Staff Applicants</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('applicants.manage') }}" key="t-blog-list">Manage Staff Applicants</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('applicants.index-partner') }}" key="t-blog-list">Manage Partner/Supplier Applicants</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('applicants.rejected-partner') }}" key="t-blog-list">Rejected Partner/Supplier Applicants</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="fas fa-id-badge"></i>
                         <span key="t-blog">Owners</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
@@ -54,7 +73,7 @@
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-id-card"></i>
+                        <i class="fas fa-address-card"></i>
                         <span key="t-blog">Drivers</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
@@ -64,31 +83,47 @@
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-car"></i>
+                        <i class="fas fa-car"></i>
                         <span key="t-blog">Vehicles</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('vehicles.index') }}" key="t-blog-list">Manage Vehicles</a></li>
+                        <li><a href="{{ route('vehicles.index') }}" key="t-blog-list">Manage Staff Vehicles</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="#" key="t-blog-list">Manage Partner/Supplier Vehicles</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="fas fa-clock"></i>
+                        <span key="t-blog">Time</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="#" key="t-blog-list">Manage Time</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="#" key="t-blog-list">#</a></li>
                     </ul>
                 </li>
 
                 <li>
                     <a href="{{ route('appointments.index') }}" class="waves-effect">
-                        <i class="bx bx-spreadsheet"></i>
+                        <i class="fas fa-list-alt"></i>
                         <span key="t-guests">Appointments</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('status.index') }}" class="waves-effect">
-                        <i class="bx bx-checkbox-checked"></i>
+                        <i class="fas fa-check-square"></i>
                         <span key="t-guests">Role Status</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('violations.index') }}" class="waves-effect">
-                        <i class="bx bx-error-circle"></i>
+                        <i class="fas fa-exclamation-circle"></i>
                         <span key="t-guests">Violations</span>
                     </a>
                 </li>
@@ -98,7 +133,7 @@
                 <li>
                     @canany(['create-role', 'edit-role', 'delete-role'])
                     <a href="{{ route('roles.index') }}" class="waves-effect">
-                        <i class="bx bx-key"></i>
+                        <i class="fas fa-key"></i>
                         <span key="t-key">Roles</span>
                     </a>
                     @endcanany
@@ -107,7 +142,7 @@
                 <li>
                     @canany(['create-user', 'edit-user', 'delete-user'])
                     <a href="{{ route('users.index') }}" class="waves-effect">
-                        <i class="bx bx-user"></i>
+                        <i class="fas fa-user"></i>
                         <span key="t-user">Users</span>
                     </a>
                     @endcanany
