@@ -66,7 +66,7 @@
                                 <div class="d-flex align-items-center">
                                     <h5 class="mb-0 card-title flex-grow-1">Applicant Lists</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Applicant</a>
+                                        <a class="btn btn-success btn-sm my-2" href="{{ route('applicants.manage') }}"><i class="bi bi-plus-circle"></i> Add Applicant</a>
                                     </div>
                                 </div>
                             </div>

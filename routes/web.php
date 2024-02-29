@@ -85,6 +85,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::get('applicants-manage', [ApplicantController::class, 'manage'])->name('applicants.manage');
     Route::post('applicants/store', [ApplicantController::class, 'store'])->name('applicants.store');
+    #OWNER UPDATE
+    Route::get('applicants/edit', [ApplicantController::class, 'edit'])->name('applicants.edit');
+    Route::post('applicants/update', [ApplicantController::class, 'update'])->name('applicants.update');
+    #VEHICLE UPDATE
+    Route::get('applicants/edit_vehicle', [ApplicantController::class, 'edit_vehicle'])->name('applicants.edit_vehicle');
+    Route::post('applicants/update_vehicle', [ApplicantController::class, 'update_vehicle'])->name('applicants.update_vehicle');
+
+
+    Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
+
+    // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');
+    // Route::post('applicants/update/{id}', [ApplicantController::class, 'update'])->name('applicants.update');
+    // Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
 
     Route::get('/fetchPendingApplicant', [ApplicantController::class, 'fetchPendingApplicant'])->name('fetchPendingApplicant');
     Route::get('/ManageApplicant', [ApplicantController::class, 'ManageApplicant'])->name('ManageApplicant');

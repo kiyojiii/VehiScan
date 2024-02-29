@@ -55,6 +55,47 @@
                 });
             });
 
+            // edit applicant ajax request
+            $(document).on('click', '.editIcon', function(e) {
+                e.preventDefault();
+                let id = $(this).attr('id');
+                $.ajax({
+                    url: '{{ route('applicants.edit') }}',
+                    method: 'get',
+                    data: {
+                        id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        // Applicant
+                        $("#fname").val(response.first_name);
+                        $("#mi").val(response.middle_initial);
+                        $("#lname").val(response.last_name);
+                        $("#paddress").val(response.present_address);
+                        $("#email").val(response.email_address);
+                        $("#contact").val(response.contact_number);
+                        $("#appointment").val(response.appointment_id);
+                        $("#role_status").val(response.status_id);
+                        $("#department").val(response.office_department_agency);
+                        $("#position").val(response.position_designation);
+                        $("#serial_number").val(response.serial_number);
+                        $("#id_number").val(response.id_number);
+                        $("#scan_or_photo_of_id").html(
+                            `<img src="storage/images/${response.scan_or_photo_of_id}" width="100" class="img-fluid img-thumbnail">`);
+                        $("#applicant_id").val(response.id);
+                        $("#applicant_photo").val(response.scan_or_photo_of_id);
+                    },
+                    error: function(xhr, status, error) {
+                        // Show error message using SweetAlert if there's an error with the request
+                        Swal.fire(
+                            "Error",
+                            "An error occurred while fetching Applicant data.",
+                            "error"
+                        );
+                    }
+                });
+            });
+
             // fetch all pending ajax request
             ManageApplicants();
 
@@ -84,16 +125,29 @@
     showStep(currentStep);
 
     // Reset modal and step when closed
-    $('#addOwnerModal').on('hidden.bs.modal', function(e) {
+    $('#addApplicantModal').on('hidden.bs.modal', function(e) {
         currentStep = 0;
         showStep(currentStep);
     });
 
     // Reset step when modal is opened
-    $('#addOwnerModal').on('show.bs.modal', function(e) {
+    $('#addApplicantModal').on('show.bs.modal', function(e) {
         currentStep = 0;
         showStep(currentStep);
     });
+
+    // Reset modal and step when closed
+    $('#editApplicantModal').on('hidden.bs.modal', function(e) {
+        currentStep = 0;
+        showStep(currentStep);
+    });
+
+    // Reset step when modal is opened
+    $('#editApplicantModal').on('show.bs.modal', function(e) {
+        currentStep = 0;
+        showStep(currentStep);
+    });
+
 
     // Store input values when navigating to the next step
     function nextStep() {
@@ -129,18 +183,6 @@
         });
     }
 
-    // Restore input values from the object
-    function restoreInputs() {
-        var inputFields = document.querySelectorAll("input, select");
-        inputFields.forEach(function(input) {
-            if (input.name in inputValues) {
-                input.value = inputValues[input.name];
-            } else {
-                input.value = "";
-            }
-        });
-    }
-
     function submitForm() {
         // Add form submission logic here
         alert("Form submitted successfully!");
@@ -158,14 +200,12 @@
 
     //EDIT
     function edit() {
-        $('#edit_owner_form').trigger("reset");
-        $('#OwnerModal').html("Edit Owner");
-        $('#editOwnerModal').modal('show');
+        $('#edit_applicant_form').trigger("reset");
+        $('#ApplicantModal').html("Edit Applicant");
+        $('#editApplicantModal').modal('show');
         $('#id').val('');
     }
 </script>
-
-
 <!-- Accept Only 11 Numbers in Contact -->
 <script>
     document.getElementById('add_contact').addEventListener('input', function(event) {
@@ -185,52 +225,5 @@
         if (this.value.length > 1) {
             this.value = this.value.slice(0, 1);
         }
-    });
-</script>
-
-<!-- Show Reason if Applicant Rejected -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const approvalApplicantStatus = document.getElementById("approvalApplicantStatus");
-        const reasonApplicantField = document.getElementById("reasonApplicantField");
-
-        // Show/hide reason input field based on approval status
-        approvalApplicantStatus.addEventListener("change", function() {
-            if (this.value === "Rejected") {
-                reasonApplicantField.style.display = "block";
-            } else {
-                reasonApplicantField.style.display = "none";
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const approvalVehicleStatus = document.getElementById("approvalVehicleStatus");
-        const reasonVehicleField = document.getElementById("reasonVehicleField");
-
-        // Show/hide reason input field based on approval status
-        approvalVehicleStatus.addEventListener("change", function() {
-            if (this.value === "Rejected") {
-                reasonVehicleField.style.display = "block";
-            } else {
-                reasonVehicleField.style.display = "none";
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const approvalDriverStatus = document.getElementById("approvalDriverStatus");
-        const reasonDriverField = document.getElementById("reasonDriverField");
-
-        // Show/hide reason input field based on approval status
-        approvalDriverStatus.addEventListener("change", function() {
-            if (this.value === "Rejected") {
-                reasonDriverField.style.display = "block";
-            } else {
-                reasonDriverField.style.display = "none";
-            }
-        });
     });
 </script>

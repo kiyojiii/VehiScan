@@ -60,11 +60,65 @@ class ApplicantController extends Controller
                     <td>' . $rs->position_designation . '</td>
                     <td>' . $rs->approval_status . '</td>
                     <td>
-                        <a href="' . route('owners.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                        <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                         <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
                         <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
                     </td>
                 </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        }
+    }
+
+    public function manage()
+    {
+        $role_status = Statuses::all();
+        $appointments = Appointment::all();
+        $vehicles = Vehicle::all();
+        $drivers = Driver::all();
+        return view('applicants.manage', compact('drivers', 'vehicles', 'role_status', 'appointments'));
+    }
+
+    public function ManageApplicant()
+    {
+        // $applicant = Applicant::where('approval_status', 'Approved')->get();
+        $applicant = Applicant::all();
+        $output = '';
+        if ($applicant->count() > 0) {
+            $output .= '<table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Vehicle</th>
+                <th>Office</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>';
+            foreach ($applicant as $rs) {
+                // Find the vehicle associated with the owner
+                $vehicle = Vehicle::find($rs->vehicle_id);
+
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+
+                $output .= '<tr>
+                <td>' . $rs->id . '</td>
+                <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
+                <td>' . $vehiclePlate . '</td>
+                <td>' . $rs->office_department_agency . '</td>
+                <td>' . $rs->approval_status . '</td>
+                <td>
+                    <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                    <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
+                    <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
+                </td>
+            </tr>';
             }
             $output .= '</tbody></table>';
             echo $output;
@@ -93,11 +147,9 @@ class ApplicantController extends Controller
                 'applicant_approval' => 'nullable|string|max:255',
                 'applicant_reason' => 'nullable|string|max:255',
                 'scan_or_photo_of_id' => 'image|max:2048', // Assuming it's an image file
-                'vehicle' => 'nullable|integer',
                 'serial_number' => 'required|string|max:255',
                 'id_number' => 'required|string|max:255',
                 // Vehicle Details
-                'driver_id' => 'required|string|max:255',
                 'owner_address' => 'required|string|max:2048',
                 'plate_number' => 'required|string|max:255',
                 'vehicle_make' => 'required|string|max:255',
@@ -121,7 +173,6 @@ class ApplicantController extends Controller
                 'authorized_driver_license_image' => 'image|max:2048',
                 'driver_approval' => 'nullable|string|max:255',
                 'driver_reason' => 'nullable|string|max:255',
-
             ]);
 
             // If validation fails, return error response
@@ -170,10 +221,13 @@ class ApplicantController extends Controller
             // Store authorized driver license image
             $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
 
+            // Set Approval and Reason Default Value
+            $approval_status = $request->input('approval_status', 'Approved');
+            $reason = $request->input('reason', 'None / Approved');
+
             // Create new applicant data with user_id
             $ownerData = [
                 'user_id' => $user_id,
-                'vehicle_id' => $request->vehicle,
                 'first_name' => $request->fname,
                 'middle_initial' => $request->mi,
                 'last_name' => $request->lname,
@@ -184,8 +238,8 @@ class ApplicantController extends Controller
                 'status_id' => $request->role_status,
                 'office_department_agency' => $request->department,
                 'position_designation' => $request->position,
-                'approval_status' => $request->filled('applicant_approval') ? $request->approval_status : 'Approved', // Check if reason is empty
-                'reason' => $request->filled('applicant_reason') ? $request->reason : 'None / Approved', // Check if reason is empty
+                'approval_status' => $approval_status, // Default
+                'reason' => $reason, // Default
                 'serial_number' => $request->serial_number,
                 'id_number' => $request->id_number,
                 'scan_or_photo_of_id' => $fileName,
@@ -194,7 +248,6 @@ class ApplicantController extends Controller
             // Create new vehicle data with user_id and unique file names
             $vehicleData = [
                 'user_id' => $user_id,
-                'driver_id' => $request->driver_id,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
@@ -207,8 +260,8 @@ class ApplicantController extends Controller
                 'authorization_letter_image' => $alifileName,
                 'front_photo' => $fpfileName,
                 'side_photo' => $spfileName,
-                'approval_status' => $request->filled('vehicle_approval') ? $request->approval_status : 'Approved', // Check if reason is empty
-                'reason' => $request->filled('vehicle_reason') ? $request->reason : 'None / Approved', // Check if reason is empty
+                'approval_status' => $approval_status, // Default
+                'reason' => $reason, // Default
                 'registration_status' => $request->registration_status,
             ];
 
@@ -220,17 +273,26 @@ class ApplicantController extends Controller
                 'authorized_driver_license_image' => $adlfileName,
                 'authorized_driver_name' => $request->adname,
                 'authorized_driver_address' => $request->adaddress,
-                'approval_status' => $request->filled('driver_approval') ? $request->approval_status : 'Approved', // Check if reason is empty
-                'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
+                'approval_status' => $approval_status, // Default
+                'reason' => $reason, // Default
             ];
 
-
             // Create the applicant record
-            Applicant::create($ownerData);
+            $applicant = Applicant::create($ownerData);
             // Create the vehicle record
-            Vehicle::create($vehicleData);
-            // Create the applicant record
-            Driver::create($driverData);
+            $vehicle = Vehicle::create($vehicleData);
+            // Update the owner data with the retrieved vehicle_id
+            $ownerData['vehicle_id'] = $vehicle->id;
+            // Update the applicant record with the retrieved vehicle_id
+            $applicant->update(['vehicle_id' => $vehicle->id]);
+            // Create the driver record
+            $driver = Driver::create($driverData);
+            // Update the vehicle data with the retrieved driver_id
+            $vehicle->update(['driver_id' => $driver->id]);
+            // Update the owner data with the retrieved driver_id
+            $ownerData['driver_id'] = $driver->id;
+            // Update the applicant record with the retrieved driver_id
+            $applicant->update(['driver_id' => $driver->id]);
 
             return response()->json([
                 'status' => 200,
@@ -244,58 +306,255 @@ class ApplicantController extends Controller
         }
     }
 
-    public function manage()
+    // public function edit($id)
+    // {
+    //     $role_status = Statuses::all();
+    //     $appointments = Appointment::all();
+    //     $vehicles = Vehicle::find($id);
+    //     $owners = Applicant::find($id);
+    //     $drivers = Driver::find($id);
+    //     return view('applicants.edit', compact('appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
+    // }
+
+    // EDIT OWNER
+    public function edit(Request $request)
+    {
+        $id = $request->id;
+        $owner = Applicant::find($id);
+        return response()->json($owner);
+    }
+
+    // UPDATE OWNER
+    public function update(Request $request)
+    {
+        try {
+            // Before validating the request, modify the reason field if approval is "Approved"
+            $request->merge([
+                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
+            ]);
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                // Applicant
+                'fname' => 'string|max:255',
+                'mi' => 'string|size:1',
+                'lname' => 'string|max:255',
+                'paddress' => 'string|max:255',
+                'email' => 'email|unique:applicants,email_address,' . $request->applicant_id, // Use ignore rule to exclude the current record
+                'contact' => 'string|numeric|digits_between:1,11',
+                'appointment' => 'string|max:255',
+                'role_status' => 'string|max:255',
+                'department' => 'string|max:255',
+                'position' => 'string|max:255',
+                'scan_or_photo_of_id' => 'nullable|image|max:2048', // Assuming it's an image file
+                'serial_number' => 'string|max:255',
+                'id_number' => 'string|max:255',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            $fileName = '';
+
+            // APPLICANT
+
+            // Retrieve the owner record
+            $owner = Applicant::find($request->applicant_id);
+
+            // Process file upload
+            if ($request->hasFile('scan_or_photo_of_id')) {
+                $file = $request->file('scan_or_photo_of_id');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/images', $fileName);
+                // Delete the old file if it exists
+                if ($owner->scan_or_photo_of_id) {
+                    Storage::delete('public/images/' . $owner->scan_or_photo_of_id);
+                }
+            } else {
+                $fileName = $request->applicant_photo;
+            }
+
+            $approvalStatus = $request->approval;
+            $reason = $request->filled('reason') ? $request->reason : null;
+    
+            // If approval status is 'Approved', set reason to 'None / Approved'
+            if ($approvalStatus == 'Approved') {
+                $reason = 'None / Approved';
+            }
+
+            // Update owner data
+            $ownerData = [
+                'vehicle_id' => $request->vehicle_details,
+                'first_name' => $request->fname,
+                'middle_initial' => $request->mi,
+                'last_name' => $request->lname,
+                'present_address' => $request->paddress,
+                'email_address' => $request->email,
+                'contact_number' => $request->contact,
+                'appointment_id' => $request->appointment,
+                'status_id' => $request->role_status,
+                'office_department_agency' => $request->department,
+                'position_designation' => $request->position,
+                'approval_status' => $approvalStatus, // Default
+                'reason' => $reason, // Default
+                'serial_number' => $request->serial_number,
+                'id_number' => $request->id_number,
+                'scan_or_photo_of_id' => $fileName,
+            ];
+
+            $owner->update($ownerData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Owner updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // EDIT VEHICLE
+    public function edit_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        return response()->json($vehicle);
+    }
+    
+
+    // UPDATE VEHICLE
+    public function update_vehicle(Request $request)
+    {
+      try {
+  
+        // Before validating the request, modify the reason field if approval is "Approved"
+        $request->merge([
+          'reason' => $request->vehicle_approval_status === 'Approved' ? 'None / Approved' : $request->vehicle_reason,
+        ]);
+  
+        // Validate incoming request data
+        $validator = Validator::make($request->all(), [
+          'driver_details' => 'string|max:255',
+          'owner_address' => 'string|max:2048',
+          'plate_number' => 'string|max:255',
+          'vehicle_make' => 'string|max:255',
+          'year_model' => 'string|max:255',
+          'color' => 'string|max:255',
+          'body_type' => 'string|max:255',
+          'official_receipt_image' => 'image|max:2048',
+          'certificate_of_registration_image' => 'image|max:2048',
+          'deed_of_sale_image' => 'image|max:2048',
+          'authorization_letter_image' => 'image|max:2048',
+          'front_photo' => 'image|max:2048',
+          'side_photo' => 'image|max:2048',
+          'vehicle_approval_status' => 'string|max:255',
+          'vehicle_reason' => 'nullable|string|max:255',
+          'registration_status' => 'required|string|max:255',
+        ]);
+  
+        // If validation fails, return error response
+        if ($validator->fails()) {
+          return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()->first()
+          ], 400);
+        }
+  
+        // Retrieve the vehicle record
+        $vehicle = Vehicle::find($request->vehicle_id);
+  
+        // Process file uploads and update filenames
+        $fileFields = [
+          'front_photo',
+          'side_photo',
+        ];
+  
+        $fileFieldDoc = [
+          'official_receipt_image',
+          'certificate_of_registration_image',
+          'deed_of_sale_image',
+          'authorization_letter_image',
+        ];
+  
+        foreach ($fileFields as $field) {
+          if ($request->hasFile($field)) {
+            $file = $request->file($field);
+            $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/images/vehicles', $fileName);
+            // Delete the old file if it exists
+            if ($vehicle->$field) {
+              Storage::delete('public/images/vehicles/' . $vehicle->$field);
+            }
+            $vehicle->$field = $fileName;
+          }
+        }
+  
+        foreach ($fileFieldDoc as $field) {
+          if ($request->hasFile($field)) {
+            $file = $request->file($field);
+            $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/images/vehicles/documents', $fileName);
+            // Delete the old file if it exists
+            if ($vehicle->$field) {
+              Storage::delete('public/images/vehicles/documents/' . $vehicle->$field);
+            }
+            $vehicle->$field = $fileName;
+          }
+        }
+  
+        $approvalStatus = $request->vehicle_approval_status;
+        $reason = $request->filled('vehicle_reason') ? $request->vehicle_reason : null;
+
+        // If approval status is 'Approved', set reason to 'None / Approved'
+        if ($approvalStatus == 'Approved') {
+            $reason = 'None / Approved';
+        }
+
+        // Update vehicle data
+        $vehicle->update([
+          'driver_id' => $request->driver_details,
+          'owner_address' => $request->owner_address,
+          'plate_number' => $request->plate_number,
+          'vehicle_make' => $request->vehicle_make,
+          'year_model' => $request->year_model,
+          'color' => $request->color,
+          'body_type' => $request->body_type,
+          'approval_status' => $approvalStatus,
+          'reason' => $reason,
+          'registration_status' => $request->registration_status,
+        ]);
+  
+        // Return success response
+        return response()->json([
+          'status' => 200,
+          'message' => 'Vehicle updated successfully.'
+        ]);
+      } catch (\Exception $e) {
+        // Return error response
+        return response()->json([
+          'status' => 500,
+          'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+      }
+    }
+
+    public function show($id)
     {
         $role_status = Statuses::all();
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
-        return view('applicants.manage', compact('drivers', 'vehicles', 'role_status', 'appointments'));
-    }
-
-    public function ManageApplicant()
-    {
-        // $applicant = Applicant::where('approval_status', 'Approved')->get();
-        $applicant = Applicant::all();
-        $output = '';
-        if ($applicant->count() > 0) {
-            $output .= '<table class="table table-striped align-middle">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Vehicle</th>
-                <th>Office</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>';
-            foreach ($applicant as $rs) {
-                // Find the vehicle associated with the owner
-                $vehicle = Vehicle::find($rs->vehicle_id);
-
-                // Get the plate number or set it to 'N/A' if not found
-                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
-
-                $output .= '<tr>
-                <td>' . $rs->id . '</td>
-                <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
-                <td>' . $vehiclePlate . '</td>
-                <td>' . $rs->office_department_agency . '</td>
-                <td>' . $rs->approval_status . '</td>
-                <td>
-                    <a href="' . route('owners.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                    <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                    <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                </td>
-            </tr>';
-            }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
-        }
+        $owners = Applicant::find($id);
+        return view('applicants.show', compact('appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
     }
 
     public function form()
