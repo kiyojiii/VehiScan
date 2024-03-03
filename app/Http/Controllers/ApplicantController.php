@@ -547,6 +547,104 @@ class ApplicantController extends Controller
       }
     }
 
+    public function edit_driver(Request $request)
+    {
+        $id = $request->id;
+        $driver = Driver::find($id);
+        return response()->json($driver);
+    }
+
+    public function update_driver(Request $request)
+    {
+        try {
+
+            // Before validating the request, modify the reason field if approval is "Approved"
+            $request->merge([
+                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
+            ]);
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'dname' => 'required|string|max:255',
+                'driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'adname' => 'string|max:255',
+                'adaddress' => 'string|max:255',
+                'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'driver_approval_status' => 'required|string|max:255',
+                'driver_reason' => 'nullable|string|max:255',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the driver record
+            $driver = Driver::find($request->driver_id);
+
+            // Process file upload for driver's license image
+            if ($request->hasFile('driver_license_image')) {
+                $dlfile = $request->file('driver_license_image');
+                $dlfileName = Str::uuid() . '.' . $dlfile->getClientOriginalExtension();
+                $dlfile->storeAs('public/images/drivers', $dlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->driver_license_image);
+                }
+            } else {
+                $dlfileName = $driver->driver_license_image;
+            }
+
+            // Process file upload for authorized driver's license image
+            if ($request->hasFile('authorized_driver_license_image')) {
+                $adlfile = $request->file('authorized_driver_license_image');
+                $adlfileName = Str::uuid() . '.' . $adlfile->getClientOriginalExtension();
+                $adlfile->storeAs('public/images/drivers', $adlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->authorized_driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->authorized_driver_license_image);
+                }
+            } else {
+                $adlfileName = $driver->authorized_driver_license_image;
+            }
+
+            $approvalStatus = $request->driver_approval_status;
+            $reason = $request->filled('driver_reason') ? $request->driver_reason : null;
+    
+            // If approval status is 'Approved', set reason to 'None / Approved'
+            if ($approvalStatus == 'Approved') {
+                $reason = 'None / Approved';
+            }
+
+            // Update driver data
+            $driverData = [
+                'driver_name' => $request->dname,
+                'authorized_driver_name' => $request->adname,
+                'authorized_driver_address' => $request->adaddress,
+                'approval_status' => $approvalStatus,
+                'reason' => $reason,
+                'driver_license_image' => $dlfileName,
+                'authorized_driver_license_image' => $adlfileName,
+            ];
+
+            $driver->update($driverData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Driver updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function show($id)
     {
         $role_status = Statuses::all();

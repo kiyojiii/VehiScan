@@ -14,6 +14,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ApplicantPartnerController;
+use App\Http\Controllers\TimeController;
 
 
 /*
@@ -91,9 +92,19 @@ Route::middleware(['auth'])->group(function () {
     #VEHICLE UPDATE
     Route::get('applicants/edit_vehicle', [ApplicantController::class, 'edit_vehicle'])->name('applicants.edit_vehicle');
     Route::post('applicants/update_vehicle', [ApplicantController::class, 'update_vehicle'])->name('applicants.update_vehicle');
-
+    #DRIVER UPDATE
+    Route::get('applicants/edit_driver', [ApplicantController::class, 'edit_driver'])->name('applicants.edit_driver');
+    Route::post('applicants/update_driver', [ApplicantController::class, 'update_driver'])->name('applicants.update_driver');
 
     Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
+
+    #TEST ROUTE
+    Route::get('test', [TimeController::class, 'test'])->name('time.test');
+
+    #TIME
+    Route::post('/record-time-in', [TimeController::class, 'recordTimeIn'])->name('record.time.in');
+    Route::post('/check-time-in', [TimeController::class, 'checkTimeIn'])->name('check.time.in');
+    Route::post('/record-time-out', [TimeController::class, 'recordTimeOut'])->name('record.time.out');
 
     // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');
     // Route::post('applicants/update/{id}', [ApplicantController::class, 'update'])->name('applicants.update');

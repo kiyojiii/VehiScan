@@ -1,5 +1,5 @@
 <!-- Edit Modal -->
-<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -32,31 +32,31 @@
                         </div>
                         <div class="col-md-6">
                             <label for="owner_address" class="form-label">Owner Address</label>
-                            <input type="text" class="form-control" id="owner_address" name="owner_address">
+                            <input type="text" class="form-control" id="owner_address" name="owner_address" placeholder="Owner Address">
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="plate_number" class="form-label">Plate Number</label>
-                            <input type="text" class="form-control" id="plate_number" name="plate_number">
+                            <input type="text" class="form-control" id="plate_number" name="plate_number" placeholder="Plate Number">
                         </div>
                         <div class="col-md-4">
                             <label for="vehicle_make" class="form-label">Vehicle Make</label>
-                            <input type="text" class="form-control" id="vehicle_make" name="vehicle_make">
+                            <input type="text" class="form-control" id="vehicle_make" name="vehicle_make" placeholder="Vehicle Make">
                         </div>
                         <div class="col-md-4">
                             <label for="year_model" class="form-label">Year Model</label>
-                            <input type="text" class="form-control" id="year_model" name="year_model">
+                            <input type="text" class="form-control" id="year_model" name="year_model" placeholder="Year Model">
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-2">
                             <label for="color" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color" name="color">
+                            <input type="text" class="form-control" id="color" name="color" placeholder="Color">
                         </div>
                         <div class="col-md-2">
                             <label for="body_type" class="form-label">Body Type</label>
-                            <input type="text" class="form-control" id="body_type" name="body_type">
+                            <input type="text" class="form-control" id="body_type" name="body_type" placeholder="Body Type">
                         </div>
                         <div class="col-md-2">
                             <label for="registration_status">Status</label>
@@ -119,7 +119,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" id="edit_vehicle_btn" class="btn btn-primary" id="btn-save">Edit Vehicle</button>
+                        <button type="submit" id="edit_vehicle_btn" class="btn btn-primary" id="btn-save">Update Vehicle</button>
                     </div>
                 </form>
             </div>

@@ -45,6 +45,87 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
+
+
+
+                        <button id="{{ $owners->vehicle->id }}" class="btn btn-success mx-1" onclick="recordTimeIn('{{ $owners->vehicle->id }}')">
+    <i class="bi-pencil-square"></i> Time In
+</button>
+
+<button id="{{ $owners->vehicle->id }}" class="btn btn-danger mx-1" onclick="recordTimeOut('{{ $owners->vehicle->id }}')">
+    <i class="bi-pencil-square"></i> Time Out
+</button>
+
+<script>
+    function recordTimeOut(vehicleId) {
+        // Send an AJAX request to the controller to record the time out
+        $.ajax({
+            url: '{{ route("record.time.out") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                vehicle_id: vehicleId
+            },
+            success: function(response) {
+                alert("Time Out recorded successfully!" + vehicleId);
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                alert("No active time in record found for the provided vehicle!" + vehicleId);
+            }
+        });
+    }
+</script>
+
+
+<script>
+    function recordTimeIn(vehicleId) {
+        // Send an AJAX request to check if the vehicle has already timed in
+        $.ajax({
+            url: '{{ route("check.time.in") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                vehicle_id: vehicleId
+            },
+            success: function(response) {
+                if (response.allowTimeIn) {
+                    // If the vehicle hasn't timed in yet, proceed to record time in
+                    recordTimeInAjax(vehicleId);
+                } else {
+                    // If the vehicle has already timed in, display a message
+                    alert("Vehicle has already timed in and not timed out yet.");
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                alert("Error checking time in status.");
+            }
+        });
+    }
+
+    function recordTimeInAjax(vehicleId) {
+        // Send an AJAX request to the controller to save the time in
+        $.ajax({
+            url: '{{ route("record.time.in") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                vehicle_id: vehicleId
+            },
+            success: function(response) {
+                alert("Time In recorded successfully!");
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                alert("Time In record Failed!");
+            }
+        });
+    }
+</script>
+
+
+
                             <div class="card-body">
                                 <div class="pt-3">
                                     <div class="row justify-content-center">
@@ -54,13 +135,15 @@
                                                 Vehicle: {{ $owners->vehicle->id }}
                                                 Driver: {{ $owners->vehicle->driver->id }}
                                                 <div class="text-center">
-                                                    <button id="{{ $owners->id }}" class="btn btn-success mx-1 editIconOwner" onclick="editOwner({{ $owners->id }})">
+                                                    <button id="{{ $owners->id }}" class="btn btn-success mx-1 editIconOwner" onclick="editOwner('{{ $owners->id }}')">
                                                         <i class="bi-pencil-square"></i> Edit Owner
                                                     </button>
                                                     <button id="{{ $owners->vehicle->id }}" class="btn btn-primary mx-1 editIconVehicle" onClick="editVehicle('{{ $owners->vehicle->id }}')">
                                                     <i class="bi-pencil-square"></i> Edit Vehicle
                                                     </button>
-
+                                                    <button id="{{ $owners->vehicle->driver->id }}" class="btn btn-secondary mx-1 editIconDriver" onClick="editDriver('{{ $owners->vehicle->driver->id }}')">
+                                                    <i class="bi-pencil-square"></i> Edit Driver
+                                                    </button>
 
                                                     <div class="mb-4">
                                                         Approval Status:
@@ -329,7 +412,7 @@
                                                 <!-- Modals -->
                                                 @include('applicants.edit_owner')
                                                 @include('applicants.edit_vehicle')
-
+                                                @include('applicants.edit_driver')
 
                                             </div>
                                         </div>
