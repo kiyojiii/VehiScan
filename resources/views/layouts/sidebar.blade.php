@@ -103,7 +103,7 @@
                         <li><a href="#" key="t-blog-list">Manage Time</a></li>
                     </ul>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="#" key="t-blog-list">#</a></li>
+                        <li><a href="{{ route('time.test') }}" key="t-blog-list">Record Vehicle Time</a></li>
                     </ul>
                 </li>
 

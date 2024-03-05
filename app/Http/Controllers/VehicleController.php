@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
 use Illuminate\Support\Str;
 use App\Models\Vehicle;
 use App\Models\Driver;
@@ -18,6 +20,7 @@ class VehicleController extends Controller
     return view('vehicles.index', compact('drivers'));
   }
 
+  // Fetch Vehicle Data
   public function fetchAllVehicle()
   {
     $vehicles = Vehicle::all();
@@ -31,6 +34,7 @@ class VehicleController extends Controller
                     <th>Plate Number</th>
                     <th>Vehicle Make</th>
                     <th>Color</th>
+                    <th>Vehicle Code</th>
                     <th>Side Photo</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -39,22 +43,35 @@ class VehicleController extends Controller
             <tbody>';
       foreach ($vehicles as $vehicle) {
         $driverName = Driver::find($vehicle->driver_id)->driver_name ?? 'N/A';
+        // Concatenate vehicle_code and color into the data string for QR code
+        // $qrData = "Code: {$vehicle->vehicle_code}\nColor: {$vehicle->color}";
+        $qrData = "{$vehicle->vehicle_code}";
+        $barcode = new DNS2D();
+        $qrCodeHTML = $barcode->getBarcodeHTML($qrData, 'QRCODE', 4, 4);
+
+        // Path to the image
+        // $imagePath = asset('images/seal.jpg');
+
+        // Concatenate QR code HTML with image HTML
         $output .= '<tr>
-                    <td>' . $vehicle->id . '</td>
-                    <td>' . $driverName . '</td>
-                    <td>' . $vehicle->plate_number . '</td>
-                    <td>' . $vehicle->vehicle_make . '</td>
-                    <td>' . $vehicle->color . '</td>
-                    <td class="text-center">
-                      <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
-                    </td>
-                    <td>' . $vehicle->registration_status . '</td>
-                    <td>
-                        <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
-                </tr>';
+                <td>' . $vehicle->id . '</td>
+                <td>' . $driverName . '</td>
+                <td>' . $vehicle->plate_number . '</td>
+                <td>' . $vehicle->vehicle_make . '</td>
+                <td>' . $vehicle->color . '</td>
+                <td class="text-center">
+                ' . $qrCodeHTML . $vehicle->vehicle_code . '
+                </td> 
+                <td class="text-center">
+                    <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                </td>
+                <td>' . $vehicle->registration_status . '</td>
+                <td>
+                    <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                    <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
+                    <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
+                </td>
+            </tr>';
       }
       $output .= '</tbody></table>';
     } else {
@@ -114,6 +131,9 @@ class VehicleController extends Controller
       $request->file('front_photo')->storeAs('public/images/vehicles', $fpfileName);
       $request->file('side_photo')->storeAs('public/images/vehicles', $spfileName);
 
+      // Generate QR CODE
+      $number = mt_rand(1000000000, 9999999999);
+
       // Create new vehicle data with user_id and unique file names
       $vehicleData = [
         'user_id' => $user_id,
@@ -133,7 +153,12 @@ class VehicleController extends Controller
         'approval_status' => $request->approval,
         'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
         'registration_status' => $request->registration_status,
+        'vehicle_code' => $number,
       ];
+
+      if ($this->vehicleCodeExists($number)) {
+        $number = mt_rand(1000000000, 999999999);
+      }
 
       // Create the vehicle record
       Vehicle::create($vehicleData);
@@ -148,6 +173,10 @@ class VehicleController extends Controller
         'message' => 'Error: ' . $e->getMessage()
       ], 500);
     }
+  }
+  public function vehicleCodeExists($number)
+  {
+    return Vehicle::whereVehicleCode($number)->exists();
   }
 
   public function edit(Request $request)
@@ -185,8 +214,6 @@ class VehicleController extends Controller
         'approval' => 'string|max:255',
         'reason' => 'nullable|string|max:255',
         'registration_status' => 'required|string|max:255',
-        'serial_number' => 'required|string|max:255',
-        'id_number' => 'required|string|max:255',
       ]);
 
       // If validation fails, return error response
@@ -322,8 +349,8 @@ class VehicleController extends Controller
 
   public function show($id)
   {
-      $drivers = Driver::find($id);
-      $vehicles = Vehicle::find($id);
-      return view('vehicles.show', compact('drivers', 'vehicles'));
+    $drivers = Driver::find($id);
+    $vehicles = Vehicle::find($id);
+    return view('vehicles.show', compact('drivers', 'vehicles'));
   }
 }

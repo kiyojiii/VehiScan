@@ -100,11 +100,15 @@ Route::middleware(['auth'])->group(function () {
 
     #TEST ROUTE
     Route::get('test', [TimeController::class, 'test'])->name('time.test');
+    Route::get('/fetchVehicleRecord', [TimeController::class, 'fetchVehicleRecord'])->name('fetchVehicleRecord');
 
     #TIME
     Route::post('/record-time-in', [TimeController::class, 'recordTimeIn'])->name('record.time.in');
     Route::post('/check-time-in', [TimeController::class, 'checkTimeIn'])->name('check.time.in');
     Route::post('/record-time-out', [TimeController::class, 'recordTimeOut'])->name('record.time.out');
+
+    // search route
+    Route::get("search",[TimeController::class,'search']);
 
     // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');
     // Route::post('applicants/update/{id}', [ApplicantController::class, 'update'])->name('applicants.update');

@@ -27,6 +27,7 @@ class Vehicle extends Model
         'approval_status',
         'reason',   
         'registration_status',
+        'vehicle_code',
     ];
 
     // Relationships
