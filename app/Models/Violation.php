@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Violation extends Model
 {
-    protected $fillable = ['violation'];
-    
+    protected $fillable = 
+    ['violation', 
+    'vehicle_id'];
 }
 

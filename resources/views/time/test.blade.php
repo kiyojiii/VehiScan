@@ -31,7 +31,8 @@
     <style>
         /* Customize the Toastr message color */
         .toastr-success {
-            background-color: #5cb85c !important; /* Green color */
+            background-color: #5cb85c !important;
+            /* Green color */
         }
     </style>
 
@@ -68,43 +69,85 @@
                 <p>Authenticated User ID: {{ auth()->id() }}</p>
                 @else
                 <p>User not authenticated</p>
-                @endif            
+                @endif
 
 
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-xl-6">
                         <div class="card">
-                            <div class="card-body border-bottom">
-                                <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Record Vehicle Time</h5>
-                                    <!-- <div class="flex-shrink-0">
-                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Vehicle</a>
-                                    </div> -->
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-2">
+                                        <h5 class="card-title mb-4">>Type Vehicle Code</h5>
+                                    </div>
+                                    <div class="dropdown ms-auto">
+                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
+
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Separated link</a>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <textarea name="record" id="record" class="form-control" placeholder="Enter Vehicle Code" onfocus="this.value=''"></textarea>
+                                <div id="record_list"></div>
                             </div>
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
 
-                            <div class="col-lg-6">
-                                <hr>
-                                <div class="form-group">
-                                    <h4>Type Vehicle Code</h4>
-                                    <input type="text" name="search" id="search" placeholder="Enter search name" class="form-control" onfocus="this.value=''">
-                                </div>
-                                <div id="search_list"></div>
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-2">
+                                        <h5 class="card-title mb-4">Recent Vehicle Activity</h5>
+                                    </div>
+                                    <div class="dropdown ms-auto">
+                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="mdi mdi-dots-horizontal"></i>
+                                        </a>
 
-                                <div class="card-body" id="show_vehicle_record">
-                                    <h1 class="text-center text-secondary my-5"> Loading... </h1>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Separated link</a>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <!-- DISPLAY RECENT VEHICLE ACTIVITY -->
+                                <div id="vehicle-record-container" data-simplebar class="mt-2" style="max-height: 280px;">
+                                    <ul id="vehicle-record-list" class="verti-timeline list-unstyled">
+                                        Loading...
+                                    </ul>
+                                </div>
+
+
+
+                                <div class="text-center mt-4"><a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light btn-sm">View More <i class="mdi mdi-arrow-right ms-1"></i></a></div>
                             </div>
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
 
-                        </div><!--end card-->
-                    </div><!--end col-->
+                </div>
+                <!-- end row -->
 
-                </div><!--end row-->
+                <!-- JS -->
+                @include('time.test_js')
 
-            <!-- JS -->
-            @include('time.test_js')
-
-            </div> <!-- container-fluid -->       
+            </div> <!-- container-fluid -->
         </div><!-- End Page-content -->
 
     </div>

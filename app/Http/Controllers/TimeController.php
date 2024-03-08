@@ -10,6 +10,7 @@ use App\Models\Statuses;
 use App\Models\Vehicle;
 use App\Models\Driver;
 use App\Models\Time;
+use App\Models\Vehicle_Record;
 use Carbon\Carbon;
 
 class TimeController extends Controller
@@ -21,9 +22,9 @@ class TimeController extends Controller
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
         $owners = Applicant::all();
-        return view('time.test', compact('appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
+        $vehicleRecords = Vehicle_Record::latest()->paginate(100);
+        return view('time.test', compact('vehicleRecords', 'appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
     }
-
     public function recordTimeIn(Request $request)
     {
         // Validate the request data, if needed
@@ -38,17 +39,6 @@ class TimeController extends Controller
         ]);
 
         return response()->json(['message' => 'Time in recorded successfully']);
-    }
-
-    
-    public function checkTimeIn(Request $request)
-    {
-        // Check if there is an existing time in record for the provided vehicle that hasn't timed out
-        $existingRecord = Time::where('vehicle_id', $request->vehicle_id)
-            ->whereNull('time_out')
-            ->exists();
-
-        return response()->json(['allowTimeIn' => !$existingRecord]);
     }
 
     public function recordTimeOut(Request $request)
@@ -72,32 +62,76 @@ class TimeController extends Controller
         return response()->json(['error' => 'No active time in record found for the provided vehicle'], 404);
     }
 
-    public function search(Request $request)
+    private function createVehicleRecord($vehicleId, $isTimedIn)
     {
-        if($request->ajax()){
-            // Find the vehicle by vehicle code
-            $vehicle = Vehicle::where('vehicle_code', $request->search)->first();
+        // Retrieve the vehicle
+        $vehicle = Vehicle::find($vehicleId);
     
+        // Check if the vehicle exists
+        if ($vehicle) {
+            // Determine the current date and time
+            $currentTime = Carbon::now()->format('F j, Y \a\t h:i A');
+    
+            // Determine the remarks based on whether the vehicle is timed in or timed out
+            $remarks = $isTimedIn ? "{$vehicle->plate_number} Timed In at $currentTime" : "{$vehicle->plate_number} Timed Out at $currentTime";
+    
+            // Create a new Vehicle Record
+            Vehicle_Record::create([
+                'user_id' => auth()->id(), // Assuming you have user authentication
+                'vehicle_id' => $vehicleId,
+                'remarks' => $remarks
+            ]);
+    
+            return true; // Indicate successful creation of the vehicle record
+        } else {
+            return false; // Indicate vehicle not found
+        }
+    }
+
+
+
+    public function checkTimeIn(Request $request)
+    {
+        // Check if there is an existing time in record for the provided vehicle that hasn't timed out
+        $existingRecord = Time::where('vehicle_id', $request->vehicle_id)
+            ->whereNull('time_out')
+            ->exists();
+
+        return response()->json(['allowTimeIn' => !$existingRecord]);
+    }
+
+    public function record(Request $request)
+    {
+        if ($request->ajax()) {
+            // Find the vehicle by vehicle code
+            $vehicle = Vehicle::where('vehicle_code', $request->record)->first();
+
             // If vehicle found
-            if($vehicle){
+            if ($vehicle) {
                 // Check if there's a recent time_in record for the vehicle
                 $recentTimeIn = Time::where('vehicle_id', $vehicle->id)
-                                    ->whereNull('time_out')
-                                    ->latest('time_in')
-                                    ->first();
-    
+                    ->whereNull('time_out')
+                    ->latest('time_in')
+                    ->first();
+
                 // If no recent time_in record, create a new time_in record
-                if(!$recentTimeIn){
+                if (!$recentTimeIn) {
                     Time::create([
                         'time_in' => now(),
                         'vehicle_id' => $vehicle->id
                     ]);
+                    // Create vehicle record for time in
+                    $this->createVehicleRecord($vehicle->id, true);
+
                     // Return success message with status
                     return response()->json(['status' => 'timed_in']);
                 }
                 // If there's a recent time_in record without time_out, update it to time_out
                 else {
                     $recentTimeIn->update(['time_out' => now()]);
+                    // Create vehicle record for time out
+                    $this->createVehicleRecord($vehicle->id, false);
+
                     // Return success message with status
                     return response()->json(['status' => 'timed_out']);
                 }
@@ -108,47 +142,12 @@ class TimeController extends Controller
             }
         }
     }
-    
-   // Fetch Vehicle Record Data
+
+    // Fetch Vehicle Record Data
     public function fetchVehicleRecord()
     {
-        $times = Time::all();
-        $output = '';
-        if ($times->count() > 0) {
-            $output .= '<table class="table table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Plate Number</th>
-                            <th>Vehicle Make</th>
-                            <th>Color</th>
-                            <th>Vehicle ID</th>
-                            <th>Time In</th>
-                            <th>Time Out</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-            foreach ($times as $time) {
-                // Fetch vehicle details based on vehicle ID
-                $vehicle = Vehicle::find($time->vehicle_id);
-                // Check if vehicle exists
-                if ($vehicle) {
-                    $output .= '<tr>
-                        <td>' . $time->id . '</td>
-                        <td>' . $vehicle->plate_number . '</td>
-                        <td>' . $vehicle->vehicle_make . '</td>
-                        <td>' . $vehicle->color . '</td>
-                        <td>' . $time->vehicle_id . '</td>
-                        <td>' . $time->time_in . '</td>
-                        <td>' . $time->time_out . '</td>
-                    </tr>';
-                }
-            }
-            $output .= '</tbody></table>';
-        } else {
-            $output = '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
-        }
-        return $output;
-    }
+        $vehicleRecords = Vehicle_Record::latest()->get();
 
+        return response()->json($vehicleRecords);
+    }
 }

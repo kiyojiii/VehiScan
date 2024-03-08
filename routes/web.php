@@ -15,7 +15,8 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\ApplicantPartnerController;
 use App\Http\Controllers\TimeController;
-
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\QRCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,9 +52,11 @@ Route::middleware(['auth'])->group(function () {
 
     #VIOLATION
     Route::get('violations', [ViolationController::class, 'index'])->name('violations.index');
-    Route::post('violations/store', [ViolationController::class, 'store']);
-    Route::post('violations/edit', [ViolationController::class, 'edit']);
-    Route::post('violations/delete', [ViolationController::class, 'destroy']);
+    Route::get('/fetchAllViolation', [ViolationController::class, 'fetchAllViolation'])->name('fetchAllViolation');
+    Route::post('violations/store', [ViolationController::class, 'store'])->name('violations.store');
+    Route::get('violations/edit', [ViolationController::class, 'edit'])->name('violations.edit');
+    Route::post('violations/update', [ViolationController::class, 'update'])->name('violations.update');
+    Route::delete('violations/delete', [ViolationController::class, 'delete'])->name('violations.delete');
 
     #OWNER 
     Route::get('owners', [OwnerController::class, 'index'])->name('owners.index');
@@ -98,17 +101,30 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
 
-    #TEST ROUTE
-    Route::get('test', [TimeController::class, 'test'])->name('time.test');
-    Route::get('/fetchVehicleRecord', [TimeController::class, 'fetchVehicleRecord'])->name('fetchVehicleRecord');
-
+    #VEHICLE RECORD ROUTE
+    Route::controller(TimeController::class)->group(function(){    
+        Route::get('test', 'test')->name('time.test');
+        Route::get('/fetchVehicleRecord', 'fetchVehicleRecord')->name('fetchVehicleRecord');
+        Route::get("record", 'record');
+    });
+    
     #TIME
     Route::post('/record-time-in', [TimeController::class, 'recordTimeIn'])->name('record.time.in');
+    Route::post('create-vehicle-record', [TimeController::class, 'createVehicleRecord'])->name('create.vehicle.record');
     Route::post('/check-time-in', [TimeController::class, 'checkTimeIn'])->name('check.time.in');
     Route::post('/record-time-out', [TimeController::class, 'recordTimeOut'])->name('record.time.out');
 
-    // search route
-    Route::get("search",[TimeController::class,'search']);
+    #DOWNLOAD QR ROUTE
+    Route::get('/downloadQRCode/{qrData}', [VehicleController::class, 'downloadQRCode'])->name('downloadQRCode');
+    Route::get('/download-qr-code', [VehicleController::class, 'downloadQRCode'])->name('download.qr.code');
+    Route::post('/save-qr-code', [VehicleController::class, 'saveQRCode'])->name('save.qr.code');
+    Route::get('qrcode/download', [QRCodeController:: class, 'download'])->name('qrcode.download');
+    Route::get('/getPlateNumber', [QRCodeController::class, 'getPlateNumber'])->name('getPlateNumber');
+
+
+    #TEST
+    Route::get('scratch', [TestController::class, 'index'])->name('test');
+ 
 
     // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');
     // Route::post('applicants/update/{id}', [ApplicantController::class, 'update'])->name('applicants.update');

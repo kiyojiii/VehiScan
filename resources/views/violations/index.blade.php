@@ -6,11 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>VehiScan | Violation</title>
-    
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Select2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <!-- SWAL -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
+
+    <!-- Add this style to adjust z-index -->
+    <style>
+        .select2-container--open {
+            z-index: 1600 !important; /* Adjust the z-index as needed */
+        }
+    </style>
 
     @extends('layouts.app')
 
@@ -54,55 +71,11 @@
                                 </div>
                             </div>
 
-                            @if ($message = Session::get('success'))
-                            <div class="alert alert-success">
-                                <p>{{ $message }}</p>
-                            </div>
-                            @endif
-
-                            <div class="card-body">
-                                <table class="table table-bordered" id="violation-datatable">
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Violation</th>
-                                            <th>Created at</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                            <div class="card-body" id="show_all_violations">
+                                <h1 class="text-center text-secondary my-5"> Loading... </h1>
                             </div>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="violation-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Violation</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            <form action="javascript:void(0)" id="ViolationForm" name="ViolationForm" method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                <input type="hidden" name="id" id="id">
-                                       
-                                                <div class="form-group">
-                                                    <label for="violation" class="form-label">Violation</label>
-                                                    <input type="text" class="form-control" id="violation" name="violation" required>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- End Modal -->
+                            @include('violations.violation_modals')
 
                         </div><!--end card-->
                     </div><!--end col-->
@@ -122,122 +95,7 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // DISPLAY
-            $('#violation-datatable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ url('violations') }}",
-                columns: [
-                    { data: 'id',name: 'id' },
-                    { data: 'violation', name: 'violation' },
-                    { 
-                        data: 'created_at', 
-                        name: 'created_at',
-                        render: function(data) {
-                            // Convert data to JavaScript Date object
-                            var date = new Date(data);
-
-                            // Get hours, minutes, and AM/PM
-                            var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-                            var minutes = date.getMinutes();
-                            var ampm = date.getHours() >= 12 ? 'PM' : 'AM';
-
-                            // Add leading zero if needed
-                            hours = hours < 10 ? '0' + hours : hours;
-                            minutes = minutes < 10 ? '0' + minutes : minutes;
-
-                            // Get month, day, and year
-                            var month = date.toLocaleString('default', { month: 'long' });
-                            var day = date.getDate();
-                            var year = date.getFullYear();
-
-                            // Format the date
-                            var formattedDate = month + ' ' + day + ', ' + year + ' at ' + hours + ':' + minutes + ' ' + ampm;
-                            return formattedDate;
-                        }
-                    },
-                    { data: 'action', name: 'action', orderable: false },
-                ],
-                order: [[0, 'desc']]
-            });
-        });
-
-        //CREATE
-        function add() {
-            $('#ViolationForm').trigger("reset");
-            $('#ViolationModal').html("Add Violation");
-            $('#violation-modal').modal('show');
-            $('#id').val('');
-        }
-
-        //UPDATE / EDIT
-        function editFunc(id){
-            $.ajax({
-                type:"POST",
-                url: "{{ url('violations/edit') }}",
-                data: { id: id },
-                dataType: 'json',
-                success: function(res){
-                    $('#ViolationModal').html("Edit Violation");
-                    $('#violation-modal').modal('show');
-                    $('#id').val(res.id);
-                    $('#violation').val(res.violation);
-                }
-            });
-        }
-
-        //DELETE
-        function deleteFunc(id){
-            if (confirm("Delete Record?") == true) {
-                var id = id;
-                // ajax
-                $.ajax({
-                    type:"POST",
-                    url: "{{ url('violations/delete') }}",
-                    data: { id: id },
-                    dataType: 'json',
-                    success: function(res){
-                        var oTable = $('#violation-datatable').dataTable();
-                        oTable.fnDraw(false);
-                    }
-                });
-            }
-        }
-
-  
-        $('#ViolationForm').submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: "{{ url('violations/store') }}",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: (data) => {
-                    console.log(data);
-                    $("#violation-modal").modal('hide');
-                    var oTable = $('#violation-datatable').dataTable();
-                    oTable.fnDraw(false);
-                    $("#btn-save").html('Submit');
-                    $("#btn-save").attr("disabled", false);
-                },
-                error: function(data) {
-                    console.log(data);
-                }
-            });
-        });
-    </script>
-
+    @include('violations.violation_js')
 
 </body>
 

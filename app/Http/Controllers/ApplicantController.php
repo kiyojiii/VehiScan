@@ -651,6 +651,7 @@ class ApplicantController extends Controller
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
+        $vehicles = Vehicle::all();
         $owners = Applicant::find($id);
         return view('applicants.show', compact('appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
     }

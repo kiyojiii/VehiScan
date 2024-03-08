@@ -8,12 +8,33 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Milon\Barcode\DNS1D;
 use Milon\Barcode\DNS2D;
+use Milon\Barcode\Facades\DNS1DFacade;
 use Illuminate\Support\Str;
 use App\Models\Vehicle;
 use App\Models\Driver;
+use File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class VehicleController extends Controller
 {
+  //   public function downloadQRCode($qrData)
+  // {
+  //     // Generate the QR code image (assuming you're using milon/barcode package)
+  //     $barcode = new \Milon\Barcode\DNS2D();
+  //     $qrCodeImage = $barcode->getBarcodePNG($qrData, 'QRCODE', 4, 4);
+
+  //     // Set the Content-Disposition header to force download with a specific filename
+  //     $headers = [
+  //         'Content-Type' => 'image/png',
+  //         'Content-Disposition' => 'attachment; filename="qrcode.png"',
+  //     ];
+
+  //     // Return the QR code image as a downloadable response
+  //     return Response::make($qrCodeImage, 200, $headers);
+  // }
+
   public function index()
   {
     $drivers = Driver::all();
@@ -33,7 +54,6 @@ class VehicleController extends Controller
                     <th>Driver Name</th>
                     <th>Plate Number</th>
                     <th>Vehicle Make</th>
-                    <th>Color</th>
                     <th>Vehicle Code</th>
                     <th>Side Photo</th>
                     <th>Status</th>
@@ -45,28 +65,38 @@ class VehicleController extends Controller
         $driverName = Driver::find($vehicle->driver_id)->driver_name ?? 'N/A';
         // Concatenate vehicle_code and color into the data string for QR code
         // $qrData = "Code: {$vehicle->vehicle_code}\nColor: {$vehicle->color}";
-        $qrData = "{$vehicle->vehicle_code}";
-        $barcode = new DNS2D();
-        $qrCodeHTML = $barcode->getBarcodeHTML($qrData, 'QRCODE', 4, 4);
+        // $qrData = "{$vehicle->vehicle_code}";
+        // $barcode = new DNS2D();
+        // $qrCodeHTML = $barcode->getBarcodeHTML($qrData, 'QRCODE', 4, 4);
 
         // Path to the image
         // $imagePath = asset('images/seal.jpg');
 
         // Concatenate QR code HTML with image HTML
+        // Generate QR code with the same parameters as the download method
+        $qrCode = QrCode::format('png')
+          ->size(50)
+          ->errorCorrection('H')
+          ->generate($vehicle->vehicle_code);
+
+        // Convert the binary data to base64
+        $qrCodeBase64 = base64_encode($qrCode);
+
         $output .= '<tr>
                 <td>' . $vehicle->id . '</td>
                 <td>' . $driverName . '</td>
                 <td>' . $vehicle->plate_number . '</td>
                 <td>' . $vehicle->vehicle_make . '</td>
-                <td>' . $vehicle->color . '</td>
+                <td class="text-center"><img src="data:image/png;base64,' . $qrCodeBase64 .'" /> ' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
-                ' . $qrCodeHTML . $vehicle->vehicle_code . '
-                </td> 
-                <td class="text-center">
-                    <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                    <img src="' . asset('storage/images/qrcodes/' . $vehicle->qr_image) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                 </td>
                 <td>' . $vehicle->registration_status . '</td>
                 <td>
+                    <!-- Button to trigger QR code download -->
+                    <button class="btn btn-primary download-btn" data-qrcode="' . $vehicle->vehicle_code . '">Download QR</button>
+                    <!-- Your other action buttons -->
+                    <!-- For example: -->
                     <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                     <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
                     <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
@@ -79,6 +109,48 @@ class VehicleController extends Controller
     }
     return $output;
   }
+
+  public function saveQRCode(Request $request)
+  {
+    $vehicleCode = $request->input('vehicle_code');
+    $barcode = DNS1DFacade::getBarcodePNG($vehicleCode, 'C39+', 3, 33, array(1, 1, 1));
+
+    // Save the barcode image to storage
+    $path = 'public/images/qrcodes/' . $vehicleCode . '.png';
+    Storage::put($path, $barcode);
+
+    // Find the corresponding vehicle by vehicle_code
+    $vehicle = Vehicle::where('vehicle_code', $vehicleCode)->first();
+
+    // Update the qr_image attribute of the vehicle
+    if ($vehicle) {
+      $vehicle->qr_image = $path;
+      $vehicle->save();
+    } else {
+      // Handle if vehicle not found
+      return response()->json(['error' => 'Vehicle not found'], 404);
+    }
+
+    // Return success response
+    return response()->json(['success' => true]);
+  }
+
+  // DOWNLOAD QR CODE
+  public function downloadQRCode(Request $request)
+  {
+    $qrData = $request->input('qrData');
+
+    // Log the received QR data
+    Log::info('QR Data FROM DOWNLOAD QR CODE: ' . $qrData);
+
+    // Generate QR code
+    $barcode = new DNS2D();
+    $qrCodeHTML = $barcode->getBarcodeHTML($qrData, 'QRCODE', 4, 4);
+
+    // Return a JSON response with the QR code HTML
+    return response()->json(['qrCodeHTML' => $qrCodeHTML]);
+  }
+
 
   // insert a new vehicle ajax request
   public function store(Request $request)

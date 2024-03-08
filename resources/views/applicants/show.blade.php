@@ -105,23 +105,48 @@
     }
 
     function recordTimeInAjax(vehicleId) {
-        // Send an AJAX request to the controller to save the time in
-        $.ajax({
-            url: '{{ route("record.time.in") }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                vehicle_id: vehicleId
-            },
-            success: function(response) {
-                alert("Time In recorded successfully!");
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
+    // Send an AJAX request to the controller to save the time in
+    $.ajax({
+        url: '{{ route("record.time.in") }}',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            vehicle_id: vehicleId
+        },
+        success: function(response) {
+            // Check if the response contains a message
+            if (response.message) {
+                // Display success message
+                alert(response.message);
+                // Call a function to handle vehicle record creation
+                // createVehicleRecord(vehicleId);
+            } else {
                 alert("Time In record Failed!");
             }
-        });
-    }
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
+            alert("Time In record Failed!");
+        }
+    });
+}
+
+function createVehicleRecord(vehicleId) {
+    // Send an AJAX request to create a record in the vehicle record table
+    $.ajax({
+        url: '{{ route("create.vehicle.record") }}',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            vehicle_id: vehicleId
+        },
+        success: function(response) {
+        },
+        error: function(xhr) {
+        }
+    });
+}
+
 </script>
 
 
