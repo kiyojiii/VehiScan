@@ -12,6 +12,7 @@ use Milon\Barcode\Facades\DNS1DFacade;
 use Illuminate\Support\Str;
 use App\Models\Vehicle;
 use App\Models\Driver;
+use App\Models\Applicant;
 use File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -38,7 +39,8 @@ class VehicleController extends Controller
   public function index()
   {
     $drivers = Driver::all();
-    return view('vehicles.index', compact('drivers'));
+    $owners = Applicant::all();
+    return view('vehicles.index', compact('owners', 'drivers'));
   }
 
   // Fetch Vehicle Data
@@ -87,9 +89,9 @@ class VehicleController extends Controller
                 <td>' . $driverName . '</td>
                 <td>' . $vehicle->plate_number . '</td>
                 <td>' . $vehicle->vehicle_make . '</td>
-                <td class="text-center"><img src="data:image/png;base64,' . $qrCodeBase64 .'" /> ' . $vehicle->vehicle_code . ' </td>
+                <td class="text-center"><img src="data:image/png;base64,' . $qrCodeBase64 . '" /> ' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
-                    <img src="' . asset('storage/images/qrcodes/' . $vehicle->qr_image) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                    <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                 </td>
                 <td>' . $vehicle->registration_status . '</td>
                 <td>
@@ -158,7 +160,8 @@ class VehicleController extends Controller
     try {
       // Validate incoming request data
       $validator = Validator::make($request->all(), [
-        'driver_id' => 'required|string|max:255',
+        'owner_id' => '|string|max:255',
+        'driver_id' => '|string|max:255',
         'owner_address' => 'required|string|max:2048',
         'plate_number' => 'required|string|max:255',
         'vehicle_make' => 'required|string|max:255',
@@ -184,6 +187,19 @@ class VehicleController extends Controller
         ], 400);
       }
 
+      // Check if any of the owner's vehicles have a registration status of "Active"
+      $hasActiveVehicle = Vehicle::where('owner_id', $request->owner_id)
+        ->where('registration_status', 'Active')
+        ->exists();
+
+      // If an active vehicle exists, prevent the creation of a new vehicle
+      if ($hasActiveVehicle) {
+        return response()->json([
+          'status' => 400,
+          'message' => 'Cannot add a new vehicle because the owner already has an active vehicle.'
+        ], 400);
+      }
+
       // Get the currently authenticated user's ID
       $user_id = auth()->id();
 
@@ -206,9 +222,14 @@ class VehicleController extends Controller
       // Generate QR CODE
       $number = mt_rand(1000000000, 9999999999);
 
+      if ($this->vehicleCodeExists($number)) {
+        $number = mt_rand(1000000000, 999999999);
+      }
+
       // Create new vehicle data with user_id and unique file names
       $vehicleData = [
         'user_id' => $user_id,
+        'owner_id' => $request->owner_id,
         'driver_id' => $request->driver_id,
         'owner_address' => $request->owner_address,
         'plate_number' => $request->plate_number,
@@ -228,10 +249,6 @@ class VehicleController extends Controller
         'vehicle_code' => $number,
       ];
 
-      if ($this->vehicleCodeExists($number)) {
-        $number = mt_rand(1000000000, 999999999);
-      }
-
       // Create the vehicle record
       Vehicle::create($vehicleData);
 
@@ -246,6 +263,7 @@ class VehicleController extends Controller
       ], 500);
     }
   }
+
   public function vehicleCodeExists($number)
   {
     return Vehicle::whereVehicleCode($number)->exists();
@@ -387,7 +405,6 @@ class VehicleController extends Controller
     if ($vehicle->certificate_of_registration_image) {
       Storage::delete('public/images/vehicles/documents/' . $vehicle->certificate_of_registration_image);
     }
-
 
     // Delete vehicle license image
     if ($vehicle->deed_of_sale_image) {

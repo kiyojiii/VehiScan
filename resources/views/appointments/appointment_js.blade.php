@@ -1,17 +1,17 @@
 <script type="text/javascript">
     //CREATE
     function add() {
-        $('#add_violation_form').trigger("reset");
-        $('#ViolationModal').html("Add Violation");
-        $('#addViolationModal').modal('show');
+        $('#add_appointment_form').trigger("reset");
+        $('#AppointmentModal').html("Add Appointment");
+        $('#addAppointmentModal').modal('show');
         $('#id').val('');
     }
 
     //EDIT
     function edit() {
-        $('#edit_violation_form').trigger("reset");
-        $('#ViolationModal').html("Edit Violation");
-        $('#editViolationModal').modal('show');
+        $('#edit_appointment_form').trigger("reset");
+        $('#AppointmentModal').html("Edit Appointment");
+        $('#editAppointmentModal').modal('show');
         $('#id').val('');
     }
 </script>
@@ -19,12 +19,12 @@
 <script>
 $(function() {
     // Event listener for the form submission
-    $("#add_violation_form").submit(function(e) {
+    $("#add_appointment_form").submit(function(e) {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#add_violation_btn").text('Adding...');
+        $("#add_appointment_btn").text('Adding...');
         $.ajax({
-            url: '{{ route('violations.store') }}',
+            url: '{{ route('appointments.store') }}',
             method: 'post',
             data: fd,
             cache: false,
@@ -33,12 +33,12 @@ $(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.status == 200) {
-                    fetchAllViolations();
+                    fetchAllAppointments();
                     // Close the modal
-                    $("#addViolationModal").modal('hide');
+                    $("#addAppointmentModal").modal('hide');
                     Swal.fire(
                         "Successful",
-                        "Violation Added Successfully",
+                        "Appointment Added Successfully",
                         "success"
                     )
                 } else {
@@ -49,8 +49,8 @@ $(function() {
                         "error"
                     )
                 }
-                $("#add_violation_btn").text('Add Violation');
-                $("#add_violation_form")[0].reset();
+                $("#add_appointment_btn").text('Add Appointment');
+                $("#add_appointment_form")[0].reset();
             },
             error: function(xhr, status, error) {
                 // Parse JSON response to extract specific error message and display it using SweetAlert
@@ -61,54 +61,49 @@ $(function() {
                     errorMessage,
                     "error"
                 );
-                $("#add_violation_btn").text('Add Violation');
+                $("#add_appointment_btn").text('Add Appointment');
             }
         });
         
     });
 
-   //edit violation ajax request
+   //edit appointment ajax request
     $(document).on('click', '.editIcon', function(e) {
         e.preventDefault();
         let id = $(this).attr('id');
         $.ajax({
-            url: '{{ route('violations.edit') }}',
+            url: '{{ route('appointments.edit') }}',
             method: 'get',
             data: {
                 id: id,
                 _token: '{{ csrf_token() }}'
             },
             success: function(response) {
-                // Check if response contains valid data
-                if (response && response.vehicle_id) {
-                    // Set the value of the vehicle dropdown
-                    $('#edit_vehicle_id').val(response.vehicle_id).trigger('change');
-                }
-                // Set the value of the violation input
-                $("#edit_violation").val(response.violation);
-                // Set the value of the hidden input for violation_id
-                $("#violation_id").val(response.id);
+                // Set the value of the appointment input
+                $("#edit_appointment").val(response.appointment);
+                // Set the value of the hidden input for appointment_id
+                $("#appointment_id").val(response.id);
                 // Show the edit modal
-                $('#editViolationModal').modal('show');
+                $('#editAppointmentModal').modal('show');
             },
             error: function(xhr, status, error) {
                 // Show error message using SweetAlert if there's an error with the request
                 Swal.fire(
                     "Error",
-                    "An error occurred while fetching violation data.",
+                    "An error occurred while fetching appointment data.",
                     "error"
                 );
             }
         });
     });
 
-    // update violation ajax request
-    $("#edit_violation_form").submit(function(e) {
+    // update appointment ajax request
+    $("#edit_appointment_form").submit(function(e) {
             e.preventDefault();
             const fd = new FormData(this);
-            $("#edit_violation_btn").text('Updating...');
+            $("#edit_appointment_btn").text('Updating...');
             $.ajax({
-                url: '{{ route('violations.update') }}',
+                url: '{{ route('appointments.update') }}',
                 method: 'post',
                 data: fd,
                 cache: false,
@@ -117,17 +112,17 @@ $(function() {
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == 200) {
-                        fetchAllViolations();
+                        fetchAllAppointments();
                         // Close the modal
-                        $("#editViolationModal").modal('hide');
+                        $("#editAppointmentModal").modal('hide');
                         Swal.fire(
                             "Updated",
-                            "Violation Updated Successfully",
+                            "Appointment Updated Successfully",
                             "success"
                         );
                     }
-                    $("#edit_violation_btn").text('Update Violation');
-                    $("#edit_violation_form")[0].reset();
+                    $("#edit_appointment_btn").text('Update Appointment');
+                    $("#edit_appointment_form")[0].reset();
                 },
                 error: function(xhr, status, error) {
                         // Parse JSON response to extract specific error message and display it using SweetAlert
@@ -138,7 +133,7 @@ $(function() {
                             errorMessage,
                             "error"
                         );
-                    $("#edit_violation_btn").text('Update Violation');
+                    $("#edit_appointment_btn").text('Update Appointment');
                 }
             });
         });
@@ -159,7 +154,7 @@ $(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '{{ route('violations.delete') }}',
+                    url: '{{ route('appointments.delete') }}',
                     method: 'delete',
                     data: {
                         id: id,
@@ -169,10 +164,10 @@ $(function() {
                         if (response.status === 'success') {
                             Swal.fire(
                                 'Deleted!',
-                                'Violation Deleted Successfully',
+                                'Appointment Deleted Successfully',
                                 'success'
                             );
-                            fetchAllViolations();
+                            fetchAllAppointments();
                         } else {
                             Swal.fire(
                                 'Error!',
@@ -184,7 +179,7 @@ $(function() {
                     error: function(xhr, status, error) {
                         Swal.fire(
                             'Error!',
-                            'Failed to delete violation: ' + error,
+                            'Failed to delete appointment: ' + error,
                             'error'
                         );
                     }
@@ -194,50 +189,20 @@ $(function() {
     });
 
 
-        // fetch all violation ajax request
-        fetchAllViolations();
+        // fetch all appointment ajax request
+        fetchAllAppointments();
 
-        function fetchAllViolations() {
+        function fetchAllAppointments() {
             $.ajax({
-                url: '{{ route('fetchAllViolation') }}',
+                url: '{{ route('fetchAllAppointment') }}',
                 method: 'get',
                 success: function(response) {
-                    $("#show_all_violations").html(response);
+                    $("#show_all_appointments").html(response);
                     $("table").DataTable({
                         order:[0, 'desc']
                     });
                 }
             });
         }
-    });
-</script>
-
-<!-- Include Select2 initialization script -->
-<script>
-    $(document).ready(function() {
-        // Initialize Select2 for the vehicle dropdown
-        $('.vehicle-select').select2({
-            dropdownParent: $('#addViolationModal')
-        });
-
-        // Event listener for modal hidden event
-        $('#addViolationModal').on('hidden.bs.modal', function() {
-            // Clear the Select2 value
-            $('.vehicle-select').val(null).trigger('change');
-        });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        // Initialize Select2 for the vehicle dropdown
-        $('.edit-vehicle-select').select2({
-            dropdownParent: $('#editViolationModal')
-        });
-
-        // Event listener for modal hidden event
-        $('#editViolationModal').on('hidden.bs.modal', function() {
-            // Clear the Select2 value
-            $('.edit-vehicle-select').val(null).trigger('change');
-        });
     });
 </script>

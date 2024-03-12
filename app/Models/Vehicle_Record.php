@@ -15,10 +15,15 @@ class Vehicle_Record extends Model
         'status_id',
         'appointment_id',
         'vehicle_id',
+        'owner_id',
         'remarks',
     ];
 
     // Relationships
+    public function applicant()
+    {
+        return $this->belongsTo(Applicant::class, 'owner_id');
+    }
     public function appointment()
     {
         return $this->belongsTo(Appointment::class, 'appointment_id');

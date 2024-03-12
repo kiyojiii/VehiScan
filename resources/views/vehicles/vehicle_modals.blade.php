@@ -1,5 +1,5 @@
 <!-- Add Modal -->
-<div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addVehicleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -12,7 +12,18 @@
             @csrf
             <div class="row mb-3">
                 <h4>Vehicle Information</h4>
-                <div class="col-md-6">
+                <div class="col-md-3">
+                    <label for="owner_id">Owner Name</label>
+                    <select name="owner_id" id="owner_id" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
+                        <option value="">Select Owner</option> <!-- Placeholder option -->
+                        @forelse($owners as $owner)
+                            <option value="{{ $owner->id }}">{{ $owner->first_name }} {{ $owner->middle_initial }}. {{ $owner->last_name }}</option>
+                        @empty
+                            <option value="">No Owner Available</option>
+                        @endforelse
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label for="driver_id">Driver Name</label>
                     <select name="driver_id" id="driver_id" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
                         <option value="">Select Driver</option> <!-- Placeholder option -->
@@ -126,7 +137,7 @@
 <!-- End Modal -->
 
 <!-- Edit Modal -->
-<div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editVehicleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">

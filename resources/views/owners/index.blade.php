@@ -15,9 +15,12 @@
 
     <style>
         .wrapper {
-            width: 100%; /* Adjust width as needed */
-            padding: 0; /* Remove padding */
-            height: auto; /* Auto height */
+            width: 100%;
+            /* Adjust width as needed */
+            padding: 0;
+            /* Remove padding */
+            height: auto;
+            /* Auto height */
         }
     </style>
 
@@ -51,11 +54,10 @@
                 <!-- end page title -->
 
                 @if(auth()->check())
-    <p>Authenticated User ID: {{ auth()->id() }}</p>
-@else
-    <p>User not authenticated</p>
-@endif
-
+                <p>Authenticated User ID: {{ auth()->id() }}</p>
+                @else
+                <p>User not authenticated</p>
+                @endif
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">

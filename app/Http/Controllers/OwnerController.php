@@ -6,11 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use App\Models\Applicant;
 use App\Models\Appointment;
 use App\Models\Statuses;
 use App\Models\Vehicle;
 use App\Models\Driver;
+use App\Models\Vehicle_Record;
+use App\Models\Time; // Make sure to import the Time model
 
 class OwnerController extends Controller
 {
@@ -48,10 +51,10 @@ class OwnerController extends Controller
             foreach ($owner as $rs) {
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($rs->vehicle_id);
-                
+
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
-            
+
                 $output .= '<tr>
                     <td>' . $rs->id . '</td>
                     <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
@@ -163,7 +166,7 @@ class OwnerController extends Controller
     public function update(Request $request)
     {
         try {
-            
+
             // Before validating the request, modify the reason field if approval is "Approved"
             $request->merge([
                 'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
@@ -186,7 +189,7 @@ class OwnerController extends Controller
                 'id_number' => 'required|string|max:255',
                 'vehicle_details' => 'nullable|integer',
                 'scan_or_photo_of_id' => 'nullable|image|max:2048', // Assuming it's an image file
-            ]);            
+            ]);
 
             // If validation fails, return error response
             if ($validator->fails()) {
@@ -277,9 +280,83 @@ class OwnerController extends Controller
 
     public function show($id)
     {
-        $vehicles = Vehicle::find($id);
-        $owners = Applicant::find($id);
-        $drivers = Driver::find($id);
-        return view('owners.show', compact('drivers', 'vehicles', 'owners'));
+        $allowners = Applicant::all();
+        $drivers = Driver::all();
+
+        // Retrieve the owner details
+        $owners = Applicant::findOrFail($id);
+
+        // Retrieve the vehicles associated with the owner
+        $vehicles = Vehicle::where('owner_id', $owners->id)->orderBy('created_at', 'desc')->paginate(4);
+
+        // Count the total number of vehicles associated with the owner
+        $totalVehicles = Vehicle::where('owner_id', $owners->id)->count();
+
+        // Calculate the total time in for all vehicles associated with the owner
+        $totalTimeIn = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+        $totalTimeOut = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+
+        // Retrieve the remarks from the vehicle_record table corresponding to the owner's vehicles
+        $remarks = Vehicle_Record::whereIn('vehicle_id', $vehicles->pluck('id'))
+            ->where('owner_id', $owners->id)
+            ->orderBy('created_at', 'desc') // Order by the 'created_at' column in descending order
+            ->pluck('remarks');
+
+        // Pass the data to the view
+        return view('owners.show', compact('drivers', 'allowners', 'remarks', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
     }
+
+
+    // public function fetchAllOwnerVehicle($id)
+    // {
+    //     // Retrieve the owner details
+    //     $owners = Applicant::findOrFail($id);
+
+    //     // Check if the ID is not empty
+    //     if (!empty($id)) {
+    //         // Retrieve vehicles associated with the specified owner ID (applicant ID)
+    //         $vehicles = Vehicle::where('owner_id', $owners->id)->get();
+
+    //         // Initialize the output variable
+    //         $output = '';
+
+    //         // Check if any vehicles were found
+    //         if ($vehicles->count() > 0) {
+    //             // Start building the HTML table
+    //             $output .= '<table class="table table-striped align-middle">
+    //                 <thead>
+    //                     <tr>
+    //                         <th class="text-center">No.</th>
+    //                         <th class="text-center">Plate Number</th>
+    //                         <th class="text-center">Vehicle Make</th>
+    //                         <th class="text-center">Date</th>
+    //                         <th class="text-center">Action</th>
+    //                     </tr>
+    //                 </thead>
+    //                 <tbody>';
+
+    //             // Loop through each vehicle and add its details to the table
+    //             foreach ($vehicles as $index => $vehicle) {
+    //                 $output .= '<tr>
+    //                     <td class="text-center">' . ($index + 1) . '</td>
+    //                     <td class="text-center">' . $vehicle->plate_number . '</td>
+    //                     <td class="text-center">' . $vehicle->vehicle_make . '</td>
+    //                     <td class="text-center">' . $vehicle->created_at->format('F d, Y \a\t h:i A') . '</td>
+    //                 </tr>';
+    //             }
+
+    //             // Close the table body and table
+    //             $output .= '</tbody></table>';
+    //         } else {
+    //             // If no vehicles were found, display a message
+    //             $output = '<h1 class="text-center text-secondary my-5">No records found for this owner!</h1>';
+    //         }
+    //     } else {
+    //         // If ID is empty, display a message indicating it
+    //         $output = '<h1 class="text-center text-secondary my-5">No owner ID provided!</h1>';
+    //     }
+
+    //     // Return the generated output
+    //     return $output;
+    // }
 }

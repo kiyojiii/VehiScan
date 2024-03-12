@@ -40,16 +40,19 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::middleware(['auth'])->group(function () {
     #APPOINTMENTS
     Route::get('appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::post('appointments/store', [AppointmentController::class, 'store']);
-    Route::post('appointments/edit', [AppointmentController::class, 'edit']);
-    Route::post('appointments/delete', [AppointmentController::class, 'destroy']);
+    Route::get('/fetchAllAppointment', [AppointmentController::class, 'fetchAllAppointment'])->name('fetchAllAppointment');
+    Route::post('appointments/store', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('appointments/edit', [AppointmentController::class, 'edit'])->name('appointments.edit');
+    Route::post('appointments/update', [AppointmentController::class, 'update'])->name('appointments.update');
+    Route::delete('appointments/delete', [AppointmentController::class, 'delete'])->name('appointments.delete');
 
     #ROLE STATUS
     Route::get('status', [StatusController::class, 'index'])->name('status.index');
-    Route::post('status/store', [StatusController::class, 'store']);
-    Route::post('status/edit', [StatusController::class, 'edit']);
-    Route::post('status/delete', [StatusController::class, 'destroy']);
-
+    Route::get('/fetchAllRoleStatus', [StatusController::class, 'fetchAllRoleStatus'])->name('fetchAllRoleStatus');
+    Route::post('status/store', [StatusController::class, 'store'])->name('status.store');
+    Route::get('status/edit', [StatusController::class, 'edit'])->name('status.edit');
+    Route::post('status/update', [StatusController::class, 'update'])->name('status.update');
+    Route::delete('status/delete', [StatusController::class, 'delete'])->name('status.delete');
     #VIOLATION
     Route::get('violations', [ViolationController::class, 'index'])->name('violations.index');
     Route::get('/fetchAllViolation', [ViolationController::class, 'fetchAllViolation'])->name('fetchAllViolation');
@@ -66,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('owners/update', [OwnerController::class, 'update'])->name('owners.update');
     Route::delete('owners/delete', [OwnerController::class, 'delete'])->name('owners.delete');
     Route::get('owners/show/{id}', [OwnerController::class, 'show'])->name('owners.show');
+    Route::get('/fetchAllOwnerVehicle', [OwnerController::class, 'fetchAllOwnerVehicle'])->name('fetchAllOwnerVehicle');
 
     #VEHICLE
     Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
@@ -89,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::get('applicants-manage', [ApplicantController::class, 'manage'])->name('applicants.manage');
     Route::post('applicants/store', [ApplicantController::class, 'store'])->name('applicants.store');
+    Route::delete('applicants/delete', [ApplicantController::class, 'delete'])->name('applicants.delete');
     #OWNER UPDATE
     Route::get('applicants/edit', [ApplicantController::class, 'edit'])->name('applicants.edit');
     Route::post('applicants/update', [ApplicantController::class, 'update'])->name('applicants.update');
@@ -109,6 +114,8 @@ Route::middleware(['auth'])->group(function () {
     });
     
     #TIME
+    Route::get('time', [TimeController::class, 'index'])->name('time.index');
+    Route::get('/fetchAllTime', [TimeController::class, 'fetchAllTime'])->name('fetchAllTime');
     Route::post('/record-time-in', [TimeController::class, 'recordTimeIn'])->name('record.time.in');
     Route::post('create-vehicle-record', [TimeController::class, 'createVehicleRecord'])->name('create.vehicle.record');
     Route::post('/check-time-in', [TimeController::class, 'checkTimeIn'])->name('check.time.in');

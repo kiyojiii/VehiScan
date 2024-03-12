@@ -54,6 +54,9 @@
                         <li><a href="{{ route('applicants.manage') }}" key="t-blog-list">Manage Staff Applicants</a></li>
                     </ul>
                     <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="#" key="t-blog-list">Pending Partner/Supplier Applicants</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('applicants.index-partner') }}" key="t-blog-list">Manage Partner/Supplier Applicants</a></li>
                     </ul>
                     <ul class="sub-menu" aria-expanded="false">
@@ -100,7 +103,7 @@
                         <span key="t-blog">Time</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="#" key="t-blog-list">Manage Time</a></li>
+                        <li><a href="{{ route('time.index') }}" key="t-blog-list">Manage Time</a></li>
                     </ul>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('time.test') }}" key="t-blog-list">Record Vehicle Time</a></li>

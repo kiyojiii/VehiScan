@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>VehiScan | Status</title>
-    
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
@@ -47,62 +47,28 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Status Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Role Status Lists</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Status</a>
+                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Role Status</a>
+                                        <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+                                        <div class="dropdown d-inline-block">
+
+                                            <button type="menu" class="btn btn-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            @if ($message = Session::get('success'))
-                            <div class="alert alert-success">
-                                <p>{{ $message }}</p>
-                            </div>
-                            @endif
-
-                            <div class="card-body">
-                                <table class="table table-bordered" id="status-datatable">
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Status</th>
-                                            <th>Created at</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                            <div class="card-body" id="show_all_role_status">
+                                <h1 class="text-center text-secondary my-5"> Loading... </h1>
                             </div>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="status-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Status</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-
-                                        <div class="modal-body">
-                                            <form action="javascript:void(0)" id="StatusForm" name="StatusForm" method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                <input type="hidden" name="id" id="id">
-                                                
-                                                <div class="form-group">
-                                                    <label for="status" class="form-label">Status</label>
-                                                    <input type="text" class="form-control" id="applicant_role_status" name="applicant_role_status" required>
-                                                </div>
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- End Modal -->
+                            @include('status.status_modals')
 
                         </div><!--end card-->
                     </div><!--end col-->
@@ -122,122 +88,7 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // DISPLAY
-            $('#status-datatable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ url('status') }}",
-                columns: [
-                    { data: 'id',name: 'id' },
-                    { data: 'applicant_role_status', name: 'applicant_role_status' },
-                    { 
-                        data: 'created_at', 
-                        name: 'created_at',
-                        render: function(data) {
-                            // Convert data to JavaScript Date object
-                            var date = new Date(data);
-
-                            // Get hours, minutes, and AM/PM
-                            var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
-                            var minutes = date.getMinutes();
-                            var ampm = date.getHours() >= 12 ? 'PM' : 'AM';
-
-                            // Add leading zero if needed
-                            hours = hours < 10 ? '0' + hours : hours;
-                            minutes = minutes < 10 ? '0' + minutes : minutes;
-
-                            // Get month, day, and year
-                            var month = date.toLocaleString('default', { month: 'long' });
-                            var day = date.getDate();
-                            var year = date.getFullYear();
-
-                            // Format the date
-                            var formattedDate = month + ' ' + day + ', ' + year + ' at ' + hours + ':' + minutes + ' ' + ampm;
-                            return formattedDate;
-                        }
-                    },
-                    { data: 'action', name: 'action', orderable: false },
-                ],
-                order: [[0, 'desc']]
-            });
-        });
-
-        //CREATE
-        function add() {
-            $('#StatusForm').trigger("reset");
-            $('#StatusModal').html("Add Status");
-            $('#status-modal').modal('show');
-            $('#id').val('');
-        }
-
-        //UPDATE / EDIT
-        function editFunc(id){
-            $.ajax({
-                type:"POST",
-                url: "{{ url('status/edit') }}",
-                data: { id: id },
-                dataType: 'json',
-                success: function(res){
-                    $('#StatusModal').html("Edit Status");
-                    $('#status-modal').modal('show');
-                    $('#id').val(res.id);
-                    $('#applicant_role_status').val(res.applicant_role_status);
-                }
-            });
-        }
-
-      //DELETE
-      function deleteFunc(id){
-            if (confirm("Delete Record?") == true) {
-                var id = id;
-                // ajax
-                $.ajax({
-                    type:"POST",
-                    url: "{{ url('status/delete') }}",
-                    data: { id: id },
-                    dataType: 'json',
-                    success: function(res){
-                        var oTable = $('#status-datatable').dataTable();
-                        oTable.fnDraw(false);
-                    }
-                });
-            }
-        }
-
-  
-        $('#StatusForm').submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: "{{ url('status/store') }}",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: (data) => {
-                    console.log(data);
-                    $("#status-modal").modal('hide');
-                    var oTable = $('#status-datatable').dataTable();
-                    oTable.fnDraw(false);
-                    $("#btn-save").html('Submit');
-                    $("#btn-save").attr("disabled", false);
-                },
-                error: function(data) {
-                    console.log(data);
-                }
-            });
-        });
-    </script>
-
+    @include('status.status_js')
 
 </body>
 

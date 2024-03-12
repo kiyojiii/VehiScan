@@ -28,6 +28,7 @@ class Applicant extends Model
     ];
 
     // Relationships
+
     public function appointment()
     {
         return $this->belongsTo(Appointment::class, 'appointment_id');

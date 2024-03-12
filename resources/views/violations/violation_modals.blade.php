@@ -59,8 +59,8 @@
 
                     <!-- Vehicle Dropdown -->
                     <div class="mb-3">
-                        <label for="edit-vehicle_id" class="form-label">Vehicle</label>
-                        <select name="edit-vehicle_id" id="edit-vehicle_id" class="form-select edit-vehicle-select">
+                        <label for="edit_vehicle_id" class="form-label">Vehicle</label>
+                        <select name="edit_vehicle_id" id="edit_vehicle_id" class="form-select edit-vehicle-select">
                             <option value="">Select Vehicle</option> <!-- Placeholder option -->
                             @forelse($vehicles as $vehicle)
                             <option value="{{ $vehicle->id }}">{{ $vehicle->plate_number }} - {{ $vehicle->vehicle_make }} - {{ $vehicle->color }}</option>
@@ -73,7 +73,7 @@
                     <!-- Violation Input -->
                     <div class="mb-3">
                         <label for="violation" class="form-label">Violation</label>
-                        <input type="text" class="form-control" id="edit-violation" name="edit-violation" required>
+                        <input type="text" class="form-control" id="edit_violation" name="edit_violation" required>
                     </div>
 
                     <div class="my-2" id="scan_or_photo_of_id"></div>

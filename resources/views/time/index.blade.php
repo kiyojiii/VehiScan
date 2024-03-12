@@ -5,30 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Violation</title>
+    <title>VehiScan | Time</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <!-- Select2 CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <!-- jQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- Select2 JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
-    <!-- SWAL -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-
-    <!-- Add this style to adjust z-index -->
-    <style>
-        .select2-container--open {
-            z-index: 1600 !important;
-            /* Adjust the z-index as needed */
-        }
-    </style>
 
     @extends('layouts.app')
 
@@ -45,12 +26,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Violation List</h4>
+                            <h4 class="mb-sm-0 font-size-18">Time List</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Violation</a></li>
-                                    <li class="breadcrumb-item active">Violation List</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Time</a></li>
+                                    <li class="breadcrumb-item active">Time List</li>
                                 </ol>
                             </div>
 
@@ -65,9 +46,9 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Violation Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Time Lists</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Violation</a>
+                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add ??</a>
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 
@@ -81,8 +62,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
 
 
                             <div class="card-body border-bottom">
@@ -134,15 +113,13 @@
                                     </div>
                                 </form>
 
-
-
-                                <div class="card-body" id="show_all_violations">
+                                <div class="card-body" id="show_all_time">
                                     <h1 class="text-center text-secondary my-5"> Loading... </h1>
                                 </div>
 
                             </div>
-                            
-                            @include('violations.violation_modals')
+
+                            @include('time.time_modals')
 
                         </div><!--end card-->
                     </div><!--end col-->
@@ -162,7 +139,7 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    @include('violations.violation_js')
+    @include('time.time_js')
 
 </body>
 

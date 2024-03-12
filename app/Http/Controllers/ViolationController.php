@@ -15,13 +15,6 @@ class ViolationController extends Controller
     public function index()
     {
         $vehicles = Vehicle::all();
-        if (request()->ajax()) {
-            return datatables()->of(Violation::select('*'))
-                ->addColumn('action', 'violations.violation-action')
-                ->rawColumns(['action'])
-                ->addIndexColumn()
-                ->make(True);
-        }
         return view('violations.index', compact('vehicles'));
     }
 
@@ -29,18 +22,20 @@ class ViolationController extends Controller
     {
         $violation = Violation::all();
         $output = '';
+        $row = 1; // Initialize the row counter
         if ($violation->count() > 0) {
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>No.</th>
-                <th>Vehicle</th>
-                <th>Violation</th>
-                <th>Date</th>
-                <th>Action</th>
+                <th class="text-center">No.</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Violation</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>';
+            
             foreach ($violation as $rs) {
                 // Find the vehicle associated with the violation
                 $vehicle = Vehicle::find($rs->vehicle_id);
@@ -49,11 +44,12 @@ class ViolationController extends Controller
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
 
                 $output .= '<tr>
-                    <td>' . $rs->id . '</td>
-                    <td>' . $vehiclePlate . '</td>
-                    <td>' . $rs->violation . '</td>
-                    <td>' . $rs->created_at . '</td>
-                    <td>
+                    <td class="text-center">' . $row++ . '</td>
+                    <td class="text-center">' . $vehiclePlate . '</td>
+                    <td class="text-center">' . $rs->violation . '</td>
+                    <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
+                    <td class="text-center">
+                        <a href="' . route('vehicles.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                         <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
                         <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
                     </td>
@@ -84,16 +80,6 @@ class ViolationController extends Controller
                 ], 400);
             }
 
-
-            // Process file upload
-            // if ($request->hasFile('scan_or_photo_of_id')) {
-            //     $file = $request->file('scan_or_photo_of_id');
-            //     $fileName = time() . '.' . $file->getClientOriginalExtension();
-            //     $file->storeAs('public/images', $fileName); //php artisan storage:link
-            // } else {
-            //     throw new \Exception('Photo file is required.');
-            // }
-
             // Create new applicant data with user_id
             $violationData = [
                 'violation' => $request->violation,
@@ -114,11 +100,54 @@ class ViolationController extends Controller
             ], 500);
         }
     }
+
     public function edit(Request $request)
     {
         $id = $request->id;
         $violation = Violation::find($id);
         return response()->json($violation);
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'edit-vehicle_id' => 'string|max:255',
+                'edit-violation' => 'string|max:255',
+            ]);            
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the violation record
+            $violation = Violation::find($request->violation_id);
+
+            // Update violation data
+            $violationData = [
+                'violation' => $request->edit_violation,
+                'vehicle_id' => $request->edit_vehicle_id,
+            ];
+
+            $violation->update($violationData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Violation updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     // delete an violation ajax request

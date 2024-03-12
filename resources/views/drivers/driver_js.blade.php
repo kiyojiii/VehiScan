@@ -1,23 +1,19 @@
-<!-- Accept Only 11 Numbers in Contact -->
-<script>
-    document.getElementById('add_contact').addEventListener('input', function(event) {
-        // Remove non-numeric characters
-        this.value = this.value.replace(/\D/g, '');
-        
-        // Limit input to 11 characters
-        if (this.value.length > 11) {
-            this.value = this.value.slice(0, 11);
-        }
-    });
-</script>
+<script type="text/javascript">
+    //CREATE
+    function add() {
+        $('#add_driver_form').trigger("reset");
+        $('#DriverModal').html("Add Driver");
+        $('#addDriverModal').modal('show');
+        $('#id').val('');
+    }
 
-<!-- Accept Only 1 Letter in MI -->
-<script>
-    document.getElementById('add_mi').addEventListener('input', function(event) {
-        if (this.value.length > 1) {
-            this.value = this.value.slice(0, 1);
-        }
-    });
+    //EDIT
+    function edit() {
+        $('#edit_driver_form').trigger("reset");
+        $('#DriverModal').html("Edit Driver");
+        $('#editDriverModal').modal('show');
+        $('#id').val('');
+    }
 </script>
 
 <!-- Show Reason if Rejected -->
@@ -37,34 +33,16 @@
     });
 </script>
 
-<script type="text/javascript">
-    //CREATE
-    function add() {
-        $('#add_owner_form').trigger("reset");
-        $('#OwnerModal').html("Add Owner");
-        $('#addOwnerModal').modal('show');
-        $('#id').val('');
-    }
-
-    //EDIT
-    function edit() {
-        $('#edit_owner_form').trigger("reset");
-        $('#OwnerModal').html("Edit Owner");
-        $('#editOwnerModal').modal('show');
-        $('#id').val('');
-    }
-</script>
-
 <script>
     $(function() {
 
-        // add new owner ajax request
-        $("#add_owner_form").submit(function(e) {
+        // add new driver ajax request
+        $("#add_driver_form").submit(function(e) {
             e.preventDefault();
             const fd = new FormData(this);
-            $("#add_owner_btn").text('Adding...');
+            $("#add_driver_btn").text('Adding...');
             $.ajax({
-                url: '{{ route('owners.store') }}',
+                url: '{{ route('drivers.store') }}',
                 method: 'post',
                 data: fd,
                 cache: false,
@@ -73,12 +51,12 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == 200) {
-                        fetchAllOwners();
+                        fetchAllDrivers();
                         // Close the modal
-                        $("#addOwnerModal").modal('hide');
+                        $("#addDriverModal").modal('hide');
                         Swal.fire(
                             "Successful",
-                            "Owner Added Successfully",
+                            "Driver Added Successfully",
                             "success"
                         )
                     } else {
@@ -89,8 +67,8 @@
                             "error"
                         )
                     }
-                    $("#add_owner_btn").text('Add Owner');
-                    $("#add_owner_form")[0].reset();
+                    $("#add_driver_btn").text('Add Driver');
+                    $("#add_driver_form")[0].reset();
                 },
                 error: function(xhr, status, error) {
                         // Parse JSON response to extract specific error message and display it using SweetAlert
@@ -101,62 +79,54 @@
                             errorMessage,
                             "error"
                         );
-                    $("#add_owner_btn").text('Add Owner');
+                    $("#add_driver_btn").text('Add Driver');
                 }
             });
         });
 
-
-        // edit owner ajax request
-        $(document).on('click', '.editIcon', function(e) {
+            // edit driver ajax request
+            $(document).on('click', '.editIcon', function(e) {
             e.preventDefault();
             let id = $(this).attr('id');
             $.ajax({
-                url: '{{ route('owners.edit') }}',
+                url: '{{ route('drivers.edit') }}',
                 method: 'get',
                 data: {
                     id: id,
                     _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
-                    $("#vehicle_details").val(response.vehicle_id);
-                    $("#fname").val(response.first_name);
-                    $("#mi").val(response.middle_initial);
-                    $("#lname").val(response.last_name);
-                    $("#paddress").val(response.present_address);
-                    $("#email").val(response.email_address);
-                    $("#contact").val(response.contact_number);
-                    $("#appointment").val(response.appointment_id);
-                    $("#role_status").val(response.status_id);
-                    $("#department").val(response.office_department_agency);
-                    $("#position").val(response.position_designation);
+                    $("#dname").val(response.driver_name);
+                    $("#adname").val(response.authorized_driver_name);
+                    $("#adaddress").val(response.authorized_driver_address);
                     $("#approval").val(response.approval_status);
                     $("#reason").val(response.reason);
-                    $("#serial_number").val(response.serial_number);
-                    $("#id_number").val(response.id_number);
-                    $("#scan_or_photo_of_id").html(
-                        `<img src="storage/images/${response.scan_or_photo_of_id}" width="100" class="img-fluid img-thumbnail">`);
-                    $("#owner_id").val(response.id);
-                    $("#owner_photo").val(response.scan_or_photo_of_id);
+                    $("#driver_license_image").html(
+                        `<img src="storage/images/drivers/${response.driver_license_image}" width="100" class="img-fluid img-thumbnail">`);
+                    $("#authorized_driver_license_image").html(
+                        `<img src="storage/images/drivers/${response.authorized_driver_license_image}" width="100" class="img-fluid img-thumbnail">`);
+                    $("#driver_id").val(response.id);
+                    $("#dlicense_photo").val(response.driver_license_image);
+                    $("#adlicense_photo").val(response.authorized_driver_license_image)
                 },
                 error: function(xhr, status, error) {
                     // Show error message using SweetAlert if there's an error with the request
                     Swal.fire(
                         "Error",
-                        "An error occurred while fetching owner data.",
+                        "An error occurred while fetching driver data.",
                         "error"
                     );
                 }
             });
         });
 
-        // update owner ajax request
-        $("#edit_owner_form").submit(function(e) {
+        // update driver ajax request
+        $("#edit_driver_form").submit(function(e) {
             e.preventDefault();
             const fd = new FormData(this);
-            $("#edit_owner_btn").text('Updating...');
+            $("#edit_driver_btn").text('Updating...');
             $.ajax({
-                url: '{{ route('owners.update') }}',
+                url: '{{ route('drivers.update') }}',
                 method: 'post',
                 data: fd,
                 cache: false,
@@ -165,17 +135,17 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == 200) {
-                        fetchAllOwners();
+                        fetchAllDrivers();
                         // Close the modal
-                        $("#editOwnerModal").modal('hide');
+                        $("#editDriverModal").modal('hide');
                         Swal.fire(
                             "Updated",
-                            "Owner Updated Successfully",
+                            "Driver Updated Successfully",
                             "success"
                         );
                     }
-                    $("#edit_owner_btn").text('Update Owner');
-                    $("#edit_owner_form")[0].reset();
+                    $("#edit_driver_btn").text('Update Driver');
+                    $("#edit_driver_form")[0].reset();
                 },
                 error: function(xhr, status, error) {
                         // Parse JSON response to extract specific error message and display it using SweetAlert
@@ -186,7 +156,7 @@
                             errorMessage,
                             "error"
                         );
-                    $("#edit_owner_btn").text('Update Owner');
+                    $("#edit_driver_btn").text('Update Driver');
                 }
             });
         });
@@ -207,7 +177,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '{{ route('owners.delete') }}',
+                    url: '{{ route('drivers.delete') }}',
                     method: 'delete',
                     data: {
                         id: id,
@@ -217,10 +187,10 @@
                         if (response.status === 'success') {
                             Swal.fire(
                                 'Deleted!',
-                                'Owner Deleted Successfully',
+                                'Driver Deleted Successfully',
                                 'success'
                             );
-                            fetchAllOwners();
+                            fetchAllDrivers();
                         } else {
                             Swal.fire(
                                 'Error!',
@@ -232,7 +202,7 @@
                     error: function(xhr, status, error) {
                         Swal.fire(
                             'Error!',
-                            'Failed to delete owner: ' + error,
+                            'Failed to delete driver: ' + error,
                             'error'
                         );
                     }
@@ -242,20 +212,28 @@
     });
 
 
-        // fetch all owner ajax request
-        fetchAllOwners();
+            // Fetch all drivers via AJAX and initialize DataTable
+            fetchAllDrivers();
 
-        function fetchAllOwners() {
-            $.ajax({
-                url: '{{ route('fetchAllOwner') }}',
-                method: 'get',
-                success: function(response) {
-                    $("#show_all_owners").html(response);
-                    $("table").DataTable({
-                        order:[0, 'desc']
-                    });
-                }
-            });
-        }
+            function fetchAllDrivers() {
+                $.ajax({
+                    url: '{{ route('fetchAllDriver') }}',
+                    method: 'get',
+                    success: function(response) {
+                        $("#show_all_drivers").html(response);
+                        // Initialize DataTable after data is loaded into the table
+                        $("table").DataTable({
+                            order: [0, 'desc']
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Log the error to the console for debugging
+                        console.error("Error fetching drivers:", error);
+                        // Display an error message to the user
+                        $("#show_all_drivers").html("<p>Error fetching data. Please try again later.</p>");
+                    }
+                });
+            }
+
     });
 </script>

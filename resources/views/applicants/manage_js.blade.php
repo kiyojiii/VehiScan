@@ -96,25 +96,75 @@
                 });
             });
 
-            // fetch all pending ajax request
-            ManageApplicants();
-
-            function ManageApplicants() {
+        // delete driver ajax request
+        $(document).on('click', '.deleteIcon', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        let csrf = '{{ csrf_token() }}';
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: '{{ route('ManageApplicant') }}',
-                    method: 'get',
+                    url: '{{ route('applicants.delete') }}',
+                    method: 'delete',
+                    data: {
+                        id: id,
+                        _token: csrf
+                    },
                     success: function(response) {
-                        $("#manage_all_applicants").html(response);
-                        $("table").DataTable({
-                            order: [0, 'desc'], // Order by the first column in descending order
-                            lengthMenu: [5, 10, 25, 50], // Display options to show 5, 10, 25, or 50 records per page
-                            pageLength: 5 // Initially display 5 records per page
-                        });
+                        if (response.status === 'success') {
+                            Swal.fire(
+                                'Deleted!',
+                                'Applicant Deleted Successfully',
+                                'success'
+                            );
+                            fetchAllApplicants();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to delete applicant: ' + error,
+                            'error'
+                        );
                     }
                 });
             }
-
         });
+    });
+
+
+        // fetch all pending ajax request
+        ManageApplicants();
+
+        function ManageApplicants() {
+            $.ajax({
+                url: '{{ route('ManageApplicant') }}',
+                method: 'get',
+                success: function(response) {
+                    $("#manage_all_applicants").html(response);
+                    $("table").DataTable({
+                        order: [0, 'desc'], // Order by the first column in descending order
+                        lengthMenu: [5, 10, 25, 50], // Display options to show 5, 10, 25, or 50 records per page
+                        pageLength: 5 // Initially display 5 records per page
+                    });
+                }
+            });
+        }
+    });
     </script>
 <!-- Add Modal -->
 <script>

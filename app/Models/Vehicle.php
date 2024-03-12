@@ -10,6 +10,7 @@ class Vehicle extends Model
     protected $fillable = [
         'user_id',
         'driver_id',
+        'owner_id',
         'violation_id',
         'time_status_id',
         'official_receipt_image',
@@ -31,6 +32,11 @@ class Vehicle extends Model
     ];
 
     // Relationships
+    public function applicants()
+    {
+        return $this->hasMany(Applicant::class, 'vehicle_id');
+    }
+    
     public function driver()
     {
         return $this->belongsTo(Driver::class, 'driver_id');

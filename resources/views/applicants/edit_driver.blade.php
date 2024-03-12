@@ -24,7 +24,12 @@
                             <label for="driver_license_image">Driver's License</label>
                             <input type="file" name="driver_license_image" class="form-control">
                         </div>
+                        @if($owners->vehicle && $owners->vehicle->driver)
                         <img src="{{ asset('storage/images/drivers/' . $owners->vehicle->driver->driver_license_image) }}" alt="driver_license_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                        @else
+                        <!-- Display a placeholder image or message -->
+                        <p>No driver associated</p>
+                        @endif
                     </div>
 
                     <!-- Authorized Driver's Info -->
@@ -41,7 +46,7 @@
                     </div>
                     <br>
                     <div class="row">
-                    <div class="col-md-2">
+                        <div class="col-md-2">
                             <label for="approval">Approval Status</label>
                             <select name="driver_approval_status" class="form-control" id="driver_approval_status">
                                 <option value="Approved" selected>Approved</option>
@@ -57,7 +62,12 @@
                             <label for="authorized_driver_license_image">Authorized Driver's License</label>
                             <input type="file" name="authorized_driver_license_image" class="form-control">
                         </div>
-                        <img src="{{ asset('storage/images/drivers/' . $owners->vehicle->driver->authorized_driver_license_image) }}" alt="authorized_driver_license_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">     
+                        @if($owners->vehicle && $owners->vehicle->driver)
+                        <img src="{{ asset('storage/images/drivers/' . $owners->vehicle->driver->authorized_driver_license_image) }}" alt="authorized_driver_license_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                        @else
+                        <!-- Display a placeholder image or message -->
+                        <p>No driver associated</p>
+                        @endif
                     </div>
 
                     <div class="modal-footer">

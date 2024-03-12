@@ -19,9 +19,12 @@
 
     <style>
         .wrapper {
-            width: 100%; /* Adjust width as needed */
-            padding: 0; /* Remove padding */
-            height: auto; /* Auto height */
+            width: 100%;
+            /* Adjust width as needed */
+            padding: 0;
+            /* Remove padding */
+            height: auto;
+            /* Auto height */
         }
     </style>
 
@@ -55,9 +58,9 @@
                 <!-- end page title -->
 
                 @if(auth()->check())
-                    <p>Authenticated User ID: {{ auth()->id() }}</p>
+                <p>Authenticated User ID: {{ auth()->id() }}</p>
                 @else
-                    <p>User not authenticated</p>
+                <p>User not authenticated</p>
                 @endif
 
                 <div class="row">
@@ -67,7 +70,17 @@
                                 <div class="d-flex align-items-center">
                                     <h5 class="mb-0 card-title flex-grow-1">Vehicle Lists</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Vehicle</a>
+                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Vehicle</a>
+                                        <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+                                        <div class="dropdown d-inline-block">
+
+                                            <button type="menu" class="btn btn-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +89,7 @@
                                 <h1 class="text-center text-secondary my-5"> Loading... </h1>
                             </div>
 
-                        @include('vehicles.vehicle_modals')
+                            @include('vehicles.vehicle_modals')
 
                         </div><!--end card-->
                     </div><!--end col-->

@@ -1,3 +1,65 @@
+<script>
+    $(document).on('click', '.download-btn', function() {
+        var qrData = $(this).data('qrcode');
+        console.log('QR Data:', qrData); // Check the value of qrData
+        downloadQR(qrData);
+    });
+
+    function downloadQR(qrData) {
+    // Create a hidden link element
+    var link = document.createElement('a');
+
+    // AJAX request to fetch the plate number
+    $.ajax({
+        url: '{{ route("getPlateNumber") }}',
+        method: 'GET',
+        data: {
+            qrData: qrData
+        },
+        success: function(response) {
+            if (response.plateNumber) {
+                var plateNumber = response.plateNumber;
+                link.href = '/qrcode/download?qrData=' + qrData;
+                link.download = plateNumber + '.png'; // Set the filename for the downloaded file
+                document.body.appendChild(link);
+
+                // Trigger the click event on the link
+                link.click();
+                toastr.options = {
+                    "progressBar": true,
+                    "closeButton": true,
+                    "toastClass": "toastr-success" // Use custom class for error messages
+                };
+                toastr.success('QR Code Downloaded Successfully!', {
+                    timeOut: 5000
+                });
+            } else {
+                // Show error message using Toastr
+                toastr.options = {
+                    "progressBar": true,
+                    "closeButton": true,
+                    "toastClass": "toastr-error" // Use custom class for error messages
+                };
+                toastr.error('Plate number not found', {
+                    timeOut: 5000
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            // Show error message using Toastr
+            toastr.options = {
+                "progressBar": true,
+                "closeButton": true,
+                "toastClass": "toastr-error" // Use custom class for error messages
+            };
+            toastr.error('Error fetching plate number', {
+                timeOut: 5000
+            });
+        }
+    });
+}
+</script>
+
 <!-- Data Manipulation -->
 <script>
 $.ajaxSetup({

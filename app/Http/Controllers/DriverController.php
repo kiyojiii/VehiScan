@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Driver;
+use App\Models\Vehicle;
 
 class DriverController extends Controller
 {
@@ -23,35 +24,35 @@ class DriverController extends Controller
 
     public function fetchAllDriver()
     {
-        $driver = Driver::all();
+        $drivers = Driver::all();
         $output = '';
-        if ($driver->count() > 0) {
+        if ($drivers->count() > 0) {
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>No.</th>
-                <th>Driver Name</th>
-                <th>Driver License</th>
-                <th>Authorized Driver</th>
-                <th>Authorized Driver License</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th class="text-center">No.</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Driver Name</th>
+                <th class="text-center">Authorized Driver</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>';
-            foreach ($driver as $rs) {
+            foreach ($drivers as $rs) {
+                // Find the vehicle associated with the driver
+                $vehicle = Vehicle::where('driver_id', $rs->id)->first();
+    
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+    
                 $output .= '<tr>
-                <td>' . $rs->id . '</td>
-                <td>' . $rs->driver_name . '</td>
-                <td>
-                    <img src="' . asset('storage/images/drivers/' . $rs->driver_license_image) . '" alt="Driver\'s License" style="max-width: 50px; max-height: 50px;">
-                </td>
-                <td>' . $rs->authorized_driver_name . '</td>
-                <td>
-                    <img src="' . asset('storage/images/drivers/' . $rs->authorized_driver_license_image) . '" alt="Authorized Driver\'s License" style="max-width: 50px; max-height: 50px;">
-                </td>
-                <td>' . $rs->approval_status . '</td>
-                <td>
+                <td class="text-center">' . $rs->id . '</td>
+                <td class="text-center">' . $vehiclePlate . '</td>
+                <td class="text-center">' . $rs->driver_name . '</td>            
+                <td class="text-center">' . $rs->authorized_driver_name . '</td>
+                <td class="text-center">' . $rs->approval_status . '</td>
+                <td class="text-center">
                 <a href="' . route('drivers.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                 <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
                 <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
@@ -64,6 +65,7 @@ class DriverController extends Controller
             echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
         }
     }
+    
 
     // insert a new driver ajax request
     public function store(Request $request)
