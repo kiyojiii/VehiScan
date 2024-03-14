@@ -32,9 +32,9 @@ class Vehicle extends Model
     ];
 
     // Relationships
-    public function applicants()
+    public function owner()
     {
-        return $this->hasMany(Applicant::class, 'vehicle_id');
+        return $this->belongsTo(Applicant::class, 'owner_id');
     }
     
     public function driver()

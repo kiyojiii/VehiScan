@@ -53,10 +53,18 @@
 
 <script>
     //CREATE
-    function add() {
+    function addVehicle() {
         $('#add_vehicle_form').trigger("reset");
         $('#VehicleModal').html("Add Vehicle");
         $('#addVehicleModal').modal('show');
+        $('#id').val('');
+    }
+
+    //CREATE
+    function addDriver() {
+        $('#add_driver_form').trigger("reset");
+        $('#DriverModal').html("Add Driver");
+        $('#addDriverModal').modal('show');
         $('#id').val('');
     }
 </script>

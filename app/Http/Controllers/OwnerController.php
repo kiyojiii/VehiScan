@@ -14,6 +14,7 @@ use App\Models\Vehicle;
 use App\Models\Driver;
 use App\Models\Vehicle_Record;
 use App\Models\Time; // Make sure to import the Time model
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class OwnerController extends Controller
 {
@@ -304,6 +305,147 @@ class OwnerController extends Controller
 
         // Pass the data to the view
         return view('owners.show', compact('drivers', 'allowners', 'remarks', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
+    }
+
+    public function vehicle_information($id)
+    {
+        // Find the vehicle by its ID
+        $vehicles = Vehicle::find($id);
+
+        // Generate QR code based on the vehicle's code
+        $qrCode = QrCode::format('png')
+            ->size(50)
+            ->errorCorrection('H')
+            ->generate($vehicles->vehicle_code);
+
+        // Convert the binary data to base64
+        $qrCodeBase64 = base64_encode($qrCode);
+
+        return view('owners.vehicle_information', compact('qrCodeBase64', 'vehicles'));
+    }
+
+    // EDIT VEHICLE
+    public function edit_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        return response()->json($vehicle);
+    }
+
+    // UPDATE VEHICLE
+    public function update_vehicle(Request $request)
+    {
+        try {
+
+            // Before validating the request, modify the reason field if approval is "Approved"
+            $request->merge([
+                'reason' => $request->vehicle_approval_status === 'Approved' ? 'None / Approved' : $request->vehicle_reason,
+            ]);
+
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'owner_address' => 'string|max:2048',
+                'plate_number' => 'string|max:255',
+                'vehicle_make' => 'string|max:255',
+                'year_model' => 'string|max:255',
+                'color' => 'string|max:255',
+                'body_type' => 'string|max:255',
+                'official_receipt_image' => 'image|max:2048',
+                'certificate_of_registration_image' => 'image|max:2048',
+                'deed_of_sale_image' => 'image|max:2048',
+                'authorization_letter_image' => 'image|max:2048',
+                'front_photo' => 'image|max:2048',
+                'side_photo' => 'image|max:2048',
+                'vehicle_approval_status' => 'string|max:255',
+                'vehicle_reason' => 'nullable|string|max:255',
+                'registration_status' => 'required|string|max:255',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the vehicle record
+            $vehicle = Vehicle::find($request->vehicle_id);
+
+            // Process file uploads and update filenames
+            $fileFields = [
+                'front_photo',
+                'side_photo',
+            ];
+
+            $fileFieldDoc = [
+                'official_receipt_image',
+                'certificate_of_registration_image',
+                'deed_of_sale_image',
+                'authorization_letter_image',
+            ];
+
+            foreach ($fileFields as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/images/vehicles', $fileName);
+                    // Delete the old file if it exists
+                    if ($vehicle->$field) {
+                        Storage::delete('public/images/vehicles/' . $vehicle->$field);
+                    }
+                    $vehicle->$field = $fileName;
+                }
+            }
+
+            foreach ($fileFieldDoc as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/images/vehicles/documents', $fileName);
+                    // Delete the old file if it exists
+                    if ($vehicle->$field) {
+                        Storage::delete('public/images/vehicles/documents/' . $vehicle->$field);
+                    }
+                    $vehicle->$field = $fileName;
+                }
+            }
+
+            $approvalStatus = $request->vehicle_approval_status;
+            $reason = $request->filled('vehicle_reason') ? $request->vehicle_reason : null;
+
+            // If approval status is 'Approved', set reason to 'None / Approved'
+            if ($approvalStatus == 'Approved') {
+                $reason = 'None / Approved';
+            }
+
+            // Update vehicle data
+            $vehicle->update([
+                'owner_id' => $request->owner_id,
+                'driver_id' => $request->driver_id,
+                'owner_address' => $request->owner_address,
+                'plate_number' => $request->plate_number,
+                'vehicle_make' => $request->vehicle_make,
+                'year_model' => $request->year_model,
+                'color' => $request->color,
+                'body_type' => $request->body_type,
+                'approval_status' => $approvalStatus,
+                'reason' => $reason,
+                'registration_status' => $request->registration_status,
+            ]);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Vehicle updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 

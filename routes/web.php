@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('owners/delete', [OwnerController::class, 'delete'])->name('owners.delete');
     Route::get('owners/show/{id}', [OwnerController::class, 'show'])->name('owners.show');
     Route::get('/fetchAllOwnerVehicle', [OwnerController::class, 'fetchAllOwnerVehicle'])->name('fetchAllOwnerVehicle');
+    Route::get('owners/vehicle_information/{id}', [OwnerController::class, 'vehicle_information'])->name('owners.vehicle_information');
 
     #VEHICLE
     Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
@@ -105,6 +106,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('applicants/update_driver', [ApplicantController::class, 'update_driver'])->name('applicants.update_driver');
 
     Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
+
+    #VEHICLE INFORMATION UPDATE
+    Route::get('vehicle_information/edit_vehicle', [OwnerController::class, 'edit_vehicle'])->name('owners.edit_vehicle');
+    Route::post('vehicle_information/update_vehicle', [OwnerController::class, 'update_vehicle'])->name('owners.update_vehicle');
 
     #VEHICLE RECORD ROUTE
     Route::controller(TimeController::class)->group(function(){    

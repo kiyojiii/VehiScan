@@ -43,7 +43,7 @@
                                 "progressBar": true,
                                 "closeButton": true,
                             };
-                            toastr.error(xhr.responseJSON.error, {
+                            toastr.warning(xhr.responseJSON.error, {
                                 timeOut: 5000
                             });
                         } else {

@@ -1,4 +1,23 @@
 <script>
+    document.getElementById('toggleVehicleImagesBtn').addEventListener('click', function() {
+        var imagesDiv = document.getElementById('vehicleImages');
+        if (imagesDiv.style.display === 'none') {
+            imagesDiv.style.display = 'block';
+        } else {
+            imagesDiv.style.display = 'none';
+        }
+    });
+
+    document.getElementById('toggleDriverImagesBtn').addEventListener('click', function() {
+        var imagesDiv = document.getElementById('driverImages');
+        if (imagesDiv.style.display === 'none') {
+            imagesDiv.style.display = 'block';
+        } else {
+            imagesDiv.style.display = 'none';
+        }
+    });
+</script>
+<script>
     $(document).on('click', '.download-btn', function() {
         var qrData = $(this).data('qrcode');
         console.log('QR Data:', qrData); // Check the value of qrData

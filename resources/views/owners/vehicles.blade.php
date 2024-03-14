@@ -57,7 +57,7 @@
                 <span class="badge rounded-1 badge-soft-info">{{ $vehicle->body_type ?? 'N/A' }}</span>
             </div>
             <div class="mt-4 hstack gap-2">
-                <a href="job-details.html" class="btn btn-soft-success w-100">View Profile</a>
+                <a href="{{ route('owners.vehicle_information', $vehicle->id) }}" class="btn btn-soft-success w-100">View Profile</a>
                 <a href="#applyJobs" data-bs-toggle="modal" class="btn btn-soft-primary w-100">Apply Now</a>
             </div>
         </div>

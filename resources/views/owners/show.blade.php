@@ -275,7 +275,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-4">My Vehicles</h4>
-                                    <a class="btn btn-sm btn-primary my-2" onClick="add()" href="javascript:void(0)">
+                                    <a class="btn btn-sm btn-primary my-2" onClick="addVehicle()" href="javascript:void(0)">
                                         <i class="bi bi-plus-circle"></i> Add Vehicle
                                     </a>
                                 </div>
@@ -294,7 +294,12 @@
 
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title mb-4">Driver Detail</h4>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title mb-4">My Driver</h4>
+                                    <a class="btn btn-sm btn-primary my-2" onClick="addDriver()" href="javascript:void(0)">
+                                        <i class="bi bi-plus-circle"></i> Add Driver
+                                    </a>
+                                </div>
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="fw-bold">Driver's Name:</h5>
