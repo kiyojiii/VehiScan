@@ -41,11 +41,13 @@ class DriverController extends Controller
             <tbody>';
             foreach ($drivers as $rs) {
                 // Find the vehicle associated with the driver
-                $vehicle = Vehicle::where('driver_id', $rs->id)->first();
-    
+                $vehicle = Vehicle::where('driver_id', $rs->id)
+                    ->where('registration_status', 'Active') // Add condition for active vehicles
+                    ->first();
+
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
-    
+
                 $output .= '<tr>
                 <td class="text-center">' . $rs->id . '</td>
                 <td class="text-center">' . $vehiclePlate . '</td>
@@ -65,7 +67,6 @@ class DriverController extends Controller
             echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
         }
     }
-    
 
     // insert a new driver ajax request
     public function store(Request $request)

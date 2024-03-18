@@ -8,31 +8,39 @@ use App\Models\Appointment;
 use App\Models\Statuses;
 use App\Models\Vehicle;
 use App\Models\Driver;
+use App\Models\User;
+use App\Models\Time;
+use App\Charts\AppointmentChart;
+use Carbon;
+use DB;
 
 class TestController extends Controller
 {
     public function index()
     {
-        // Retrieve all applicants
+        // Get the current month and previous month
+        $currentMonth = date('Y-m');
+        $previousMonth = date('Y-m', strtotime('-1 month'));
+    
+        // Query the total time count of the current month
+        $totalTimeCurrentMonth = Time::whereYear('created_at', '=', date('Y'))
+                                    ->whereMonth('created_at', '=', date('m'))
+                                    ->count();
+    
+        // Query the total time count of the previous month
+        $totalTimePreviousMonth = Time::whereYear('created_at', '=', date('Y', strtotime('-1 month')))
+                                    ->whereMonth('created_at', '=', date('m', strtotime('-1 month')))
+                                    ->count();
+    
+        // Rest of your existing code
         $applicants = Applicant::all();
+        $appointments = Appointment::withCount('applicants')->get();
+        $totalTimePerDay = Time::selectRaw('DATE(created_at) as date, COUNT(time_in) as total_time_in, COUNT(time_out) as total_time_out')
+                                ->groupByRaw('DATE(created_at)')
+                                ->orderByRaw('DATE(created_at)')
+                                ->get();
     
-        // Initialize an array to hold vehicles associated with each applicant
-        $applicantVehicles = [];
-    
-        // Loop through each applicant
-        foreach ($applicants as $applicant) {
-            // Retrieve vehicles associated with the current applicant
-            $vehicles = Vehicle::where('owner_id', $applicant->id)->get();
-            
-            // Add the vehicles to the array, indexed by applicant ID
-            $applicantVehicles[$applicant->id] = $vehicles;
-        }
-    
-        // Retrieve all drivers (if needed)
-        $drivers = Driver::all();
-    
-        // Pass the data to the view
-        return view('test', compact('applicants', 'applicantVehicles', 'drivers'));
+        return view('test', compact('totalTimePerDay', 'applicants', 'appointments', 'totalTimeCurrentMonth', 'totalTimePreviousMonth'));
     }
     
 }

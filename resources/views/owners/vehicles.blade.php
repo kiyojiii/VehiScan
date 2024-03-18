@@ -58,7 +58,7 @@
             </div>
             <div class="mt-4 hstack gap-2">
                 <a href="{{ route('owners.vehicle_information', $vehicle->id) }}" class="btn btn-soft-success w-100">View Profile</a>
-                <a href="#applyJobs" data-bs-toggle="modal" class="btn btn-soft-primary w-100">Apply Now</a>
+                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle">Delete Vehicle</a>
             </div>
         </div>
     </div>

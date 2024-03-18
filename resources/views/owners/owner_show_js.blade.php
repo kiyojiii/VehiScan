@@ -1,3 +1,4 @@
+<!-- Add Vehicle-->
 <script>
     $(function() {
         // add new vehicle ajax request
@@ -48,6 +49,57 @@
             });
         });
 
+            // delete vehicle ajax request
+            $(document).on('click', '.deleteVehicle', function(e) {
+            e.preventDefault();
+            let id = $(this).attr('id');
+            let csrf = '{{ csrf_token() }}';
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This Vehicle Will Be Permanently Deleted",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('owners.delete_vehicle') }}',
+                        method: 'delete',
+                        data: {
+                            id: id,
+                            _token: csrf
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                fetchVehicles();
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Vehicle Deleted Successfully',
+                                    'success'
+                                );
+                                fetchAllVehicles();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to delete vehicle: ' + error,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
     });
 </script>
 
@@ -65,6 +117,14 @@
         $('#add_driver_form').trigger("reset");
         $('#DriverModal').html("Add Driver");
         $('#addDriverModal').modal('show');
+        $('#id').val(''); 
+    }
+
+    //EDIT DRIVER
+    function editDriver() {
+        $('#edit_driver_form').trigger("reset");
+        $('#DriverModal').html("Edit Driver");
+        $('#editDriverModal').modal('show');
         $('#id').val('');
     }
 </script>

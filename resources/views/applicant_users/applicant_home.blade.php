@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Owner - Show</title>
+    <title>VehiScan | Applicant </title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -28,12 +28,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Owner</h4>
+                            <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Owners</a></li>
-                                    <li class="breadcrumb-item active">Owner</li>
+                                    <li class="breadcrumb-item active"><a href="javascript: void(0);">User Dashboard</a></li>
                                 </ol>
                             </div>
 
@@ -41,13 +40,14 @@
                     </div>
                 </div>
                 <!-- end page title -->
-
+                @forelse($owners as $owner)
                 <div class="row">
                     <div class="col-xl-4">
                         <div class="card overflow-hidden">
                             <div class="bg-primary-subtle">
                                 <div class="row">
                                     <div class="col-7">
+
                                         <div class="text-primary p-3">
                                             <h5 class="text-primary">Welcome Back !</h5>
                                             <p>It will seem like simplified</p>
@@ -62,25 +62,26 @@
                                 <div class="row">
                                     <div class="col-sm-5">
                                         <div class="avatar-md profile-user-wid mb-">
-                                            @if($owners->scan_or_photo_of_id)
-                                            <img src="{{ asset('storage/images/' . $owners->scan_or_photo_of_id) }}" alt="" class="img-thumbnail rounded-circle">
+                                            @if($owner->scan_or_photo_of_id)
+                                            <img src="{{ asset('storage/images/' . $owner->scan_or_photo_of_id) }}" alt="" class="img-thumbnail rounded-circle">
                                             @else
-                                            <p>No Photo available</p>
+                                            <p>No Scan or Photo of ID available</p>
                                             @endif
                                         </div>
-                                        <h5 class="font-size-15 text-truncate">{{ $owners->first_name ?? 'N/A' }} {{ $owners->middle_initial ?? 'N/A' }}. {{ $owners->last_name ?? 'N/A' }}</h5>
+                                        <h5 class="font-size-15 text-truncate">{{ $owners->first_name }} {{ $owners->middle_initial }}. {{ $owners->last_name }}</h5>
                                         <p class="text-muted mb-0 text-truncate">{{ $owners->appointment->appointment ?? 'N/A' }}</p>
+
                                     </div>
 
                                     <div class="col-sm-7">
                                         <div class="pt-4">
                                             <div class="row">
                                                 <div class="col-6">
-                                                    <h5 class="font-size-15">{{ $totalTimeIn }}</h5>
+                                                    <h5 class="font-size-15">{{ $totalTimeIn ?? 'N/A' }}</h5>
                                                     <p class="text-muted mb-0">Time In</p>
                                                 </div>
                                                 <div class="col-6">
-                                                    <h5 class="font-size-15">{{ $totalTimeOut }}</h5>
+                                                    <h5 class="font-size-15">{{ $totalTimeOut ?? 'N/A' }}</h5>
                                                     <p class="text-muted mb-0">Time out</p>
                                                 </div>
                                             </div>
@@ -173,7 +174,6 @@
                             </div>
                         </div>
                         <!-- end card -->
-
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title mb-5">Vehicle Activity</h4>
@@ -375,7 +375,9 @@
                             </div>
                         </div>
                     </div>
-
+                    @empty
+                    <p>You have not Applied Yet</p>
+                    @endforelse
                 </div>
             </div>
             <!-- end row -->

@@ -1,3 +1,85 @@
+<!-- Edit Driver Ajax -->
+<script>
+$(function() {
+    // edit driver ajax request
+    $(document).on('click', '.editIconDriver', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        $.ajax({
+            url: '{{ route('owners.edit_driver') }}',
+            method: 'get',
+            data: {
+                id: id,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                $("#dname").val(response.driver_name);
+                $("#adname").val(response.authorized_driver_name);
+                $("#adaddress").val(response.authorized_driver_address);
+                $("#driver_approval_status").val(response.approval_status);
+                $("#driver_reason").val(response.reason);
+                // Save Data
+                $("#driver_id").val(response.id);
+                $("#dlicense_photo").val(response.driver_license_image);
+                $("#adlicense_photo").val(response.authorized_driver_license_image)
+            },
+            error: function(xhr, status, error) {
+                // Show error message using SweetAlert if there's an error with the request
+                Swal.fire(
+                    "Error",
+                    "An error occurred while fetching driver data.",
+                    "error"
+                );
+            }
+        });
+    });
+
+    // update driver ajax request
+    $("#edit_driver_form").submit(function(e) {
+        e.preventDefault();
+        const fd = new FormData(this);
+        $("#edit_driver_btn").text('Updating...');
+        $.ajax({
+            url: '{{ route('owners.update_driver') }}',
+            method: 'post',
+            data: fd,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(response) {
+                if (response.status == 200) {
+                        // Close the modal
+                        $("#editDriverModal").modal('hide');
+                        Swal.fire({
+                            title: "Updated",
+                            text: "Driver Updated Successfully, Page Will Reload",
+                            icon: "success",
+                            timer: 3000, // 3 seconds
+                            timerProgressBar: true
+                        }).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                    }
+                $("#edit_driver_btn").text('Update Driver');
+                $("#edit_driver_form")[0].reset();
+            },
+            error: function(xhr, status, error) {
+                    // Parse JSON response to extract specific error message and display it using SweetAlert
+                    const response = JSON.parse(xhr.responseText);
+                    const errorMessage = response.message;
+                    Swal.fire(
+                        "Error",
+                        errorMessage,
+                        "error"
+                    );
+                $("#edit_driver_btn").text('Update Driver');
+            }
+        });
+    });
+});
+</script>
 <!-- Edit Vehicle Ajax -->
 <script>
 $(function() {
@@ -64,7 +146,7 @@ $(function() {
                         $("#editVehicleModal").modal('hide');
                         Swal.fire({
                             title: "Updated",
-                            text: "Vehicle Updated Successfully",
+                            text: "Vehicle Updated Successfully, Page Will Reload",
                             icon: "success",
                             timer: 3000, // 3 seconds
                             timerProgressBar: true

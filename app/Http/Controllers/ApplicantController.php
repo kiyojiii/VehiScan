@@ -128,6 +128,11 @@ class ApplicantController extends Controller
         }
     }
 
+    public function vehicleCodeExists($number)
+    {
+        return Vehicle::whereVehicleCode($number)->exists();
+    }
+    
     // insert a new applicant ajax request
     public function store(Request $request)
     {
@@ -315,11 +320,6 @@ class ApplicantController extends Controller
                 'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    public function vehicleCodeExists($number)
-    {
-        return Vehicle::whereVehicleCode($number)->exists();
     }
 
     // public function edit($id)

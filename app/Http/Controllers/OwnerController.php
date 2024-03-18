@@ -7,14 +7,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Models\Applicant;
 use App\Models\Appointment;
 use App\Models\Statuses;
 use App\Models\Vehicle;
 use App\Models\Driver;
+use App\Models\Violation;
 use App\Models\Vehicle_Record;
 use App\Models\Time; // Make sure to import the Time model
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use DB;
 
 class OwnerController extends Controller
 {
@@ -293,6 +296,9 @@ class OwnerController extends Controller
         // Count the total number of vehicles associated with the owner
         $totalVehicles = Vehicle::where('owner_id', $owners->id)->count();
 
+        // Count the total number of violations associated with the owner
+        $totalViolations = Violation::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+
         // Calculate the total time in for all vehicles associated with the owner
         $totalTimeIn = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
         $totalTimeOut = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
@@ -304,7 +310,7 @@ class OwnerController extends Controller
             ->pluck('remarks');
 
         // Pass the data to the view
-        return view('owners.show', compact('drivers', 'allowners', 'remarks', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
+        return view('owners.show', compact('drivers', 'allowners', 'remarks', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles', 'totalViolations'));
     }
 
     public function vehicle_information($id)
@@ -448,6 +454,154 @@ class OwnerController extends Controller
         }
     }
 
+    public function edit_driver(Request $request)
+    {
+        $id = $request->id;
+        $driver = Driver::find($id);
+        return response()->json($driver);
+    }
+
+    public function update_driver(Request $request)
+    {
+        try {
+
+            // Before validating the request, modify the reason field if approval is "Approved"
+            $request->merge([
+                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
+            ]);
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'dname' => 'required|string|max:255',
+                'driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'adname' => 'string|max:255',
+                'adaddress' => 'string|max:255',
+                'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'driver_approval_status' => 'required|string|max:255',
+                'driver_reason' => 'nullable|string|max:255',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the driver record
+            $driver = Driver::find($request->driver_id);
+
+            // Process file upload for driver's license image
+            if ($request->hasFile('driver_license_image')) {
+                $dlfile = $request->file('driver_license_image');
+                $dlfileName = Str::uuid() . '.' . $dlfile->getClientOriginalExtension();
+                $dlfile->storeAs('public/images/drivers', $dlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->driver_license_image);
+                }
+            } else {
+                $dlfileName = $driver->driver_license_image;
+            }
+
+            // Process file upload for authorized driver's license image
+            if ($request->hasFile('authorized_driver_license_image')) {
+                $adlfile = $request->file('authorized_driver_license_image');
+                $adlfileName = Str::uuid() . '.' . $adlfile->getClientOriginalExtension();
+                $adlfile->storeAs('public/images/drivers', $adlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->authorized_driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->authorized_driver_license_image);
+                }
+            } else {
+                $adlfileName = $driver->authorized_driver_license_image;
+            }
+
+            $approvalStatus = $request->driver_approval_status;
+            $reason = $request->filled('driver_reason') ? $request->driver_reason : null;
+
+            // If approval status is 'Approved', set reason to 'None / Approved'
+            if ($approvalStatus == 'Approved') {
+                $reason = 'None / Approved';
+            }
+
+            // Update driver data
+            $driverData = [
+                'driver_name' => $request->dname,
+                'authorized_driver_name' => $request->adname,
+                'authorized_driver_address' => $request->adaddress,
+                'approval_status' => $approvalStatus,
+                'reason' => $reason,
+                'driver_license_image' => $dlfileName,
+                'authorized_driver_license_image' => $adlfileName,
+            ];
+
+            $driver->update($driverData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Driver updated successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+
+        // Delete vehicle license image
+        if ($vehicle->official_receipt_image) {
+            Storage::delete('public/images/vehicles/documents/' . $vehicle->official_receipt_image);
+        }
+
+        // Delete vehicle license image
+        if ($vehicle->certificate_of_registration_image) {
+            Storage::delete('public/images/vehicles/documents/' . $vehicle->certificate_of_registration_image);
+        }
+
+        // Delete vehicle license image
+        if ($vehicle->deed_of_sale_image) {
+            Storage::delete('public/images/vehicles/documents/' . $vehicle->deed_of_sale_image);
+        }
+
+        // Delete vehicle license image
+        if ($vehicle->authorization_letter_image) {
+            Storage::delete('public/images/vehicles/documents/' . $vehicle->authorization_letter_image);
+        }
+
+        // Delete vehicle license image
+        if ($vehicle->front_photo) {
+            Storage::delete('public/images/vehicles/' . $vehicle->front_photo);
+        }
+
+        // Delete vehicle license image
+        if ($vehicle->side_photo) {
+            Storage::delete('public/images/vehicles/' . $vehicle->side_photo);
+        }
+
+
+        // Now delete the vehicle record
+        $vehicle->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicle deleted successfully'
+        ]);
+    }
 
     // public function fetchAllOwnerVehicle($id)
     // {

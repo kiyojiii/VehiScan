@@ -145,12 +145,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label for="registration_status">Status</label>
-                                    <select name="registration_status" class="form-control">
-                                        <option value="">Select Vehicle Status</option>
-                                        <option value="Active" selected>Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                        <option value="Other">Other</option>
-                                    </select>
+                                    <input type="text" name="registration_status" class="form-control" value="Active" readonly>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -209,7 +204,7 @@
                             <h5 class="mt-4">Authorized Driver's Info</h5>
                             <div class="row">
                                 <div class="col-md">
-                                    <label for="adname">Authorized Driver Name</label>
+                                    <label for="adname">Authorized Driver Name (If Available)</label>
                                     <input type="text" name="adname" class="form-control" placeholder="Authorized Driver Name" required>
                                 </div>
                                 <div class="col-md">

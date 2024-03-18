@@ -27,9 +27,9 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:create-user|edit-user|delete-user', ['only' => ['index','show']]);
-        $this->middleware('permission:create-user', ['only' => ['create','store']]);
-        $this->middleware('permission:edit-user', ['only' => ['edit','update']]);
+        $this->middleware('permission:create-user|edit-user|delete-user', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
 
@@ -75,7 +75,7 @@ class UserController extends Controller
         }
 
         return redirect()->route('users.index')
-                ->withSuccess('New user is added successfully.');
+            ->withSuccess('New user is added successfully.');
     }
 
     /**
@@ -92,9 +92,9 @@ class UserController extends Controller
         $userTemplates = Template::where('user_id', $user->id)->paginate(5);
 
         // Calculate monthly posting data
-        $monthlyPostingsData = $userTemplates->groupBy(function($date) {
+        $monthlyPostingsData = $userTemplates->groupBy(function ($date) {
             return Carbon::parse($date->created_at)->format('Y-m');
-        })->map(function($item, $key) {
+        })->map(function ($item, $key) {
             return $item->count();
         });
 
@@ -140,16 +140,16 @@ class UserController extends Controller
 
         // Get the total number of views for templates created by each user
         $userViews = Template::select('user_id', DB::raw('SUM(views) as total_views'))
-        ->groupBy('user_id')
-        ->get();
+            ->groupBy('user_id')
+            ->get();
 
         // You can also get the total views for the current user separately
         $currentUserViews = $userViews->where('user_id', $user->id)->first()->total_views ?? 0;
 
         // Get the total number of views for templates created by each user
         $userViews = Template::select('user_id', DB::raw('SUM(views) as total_views'))
-        ->groupBy('user_id')
-        ->get();
+            ->groupBy('user_id')
+            ->get();
 
         // Retrieve the 4 most viewed templates for the current user
         $mostViewedTemplates = Template::where('user_id', $user->id)
@@ -175,7 +175,7 @@ class UserController extends Controller
             return view('users.show_pagination', compact('userTemplates', 'userId'))->render();
         }
     }
-    
+
 
     /**
      * Show the form for editing the specified resource.
@@ -183,8 +183,8 @@ class UserController extends Controller
     public function edit(User $user): View
     {
         // Check Only Super Admin can update his own Profile
-        if ($user->hasRole('Super Admin')){
-            if($user->id != auth()->user()->id){
+        if ($user->hasRole('Super Admin')) {
+            if ($user->id != auth()->user()->id) {
                 abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
             }
         }
@@ -202,8 +202,8 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $input = $request->all();
-        
-        if(!empty($request->password)){
+
+        if (!empty($request->password)) {
             $input['password'] = Hash::make($request->password);
         } else {
             $input = $request->except('password');
@@ -213,11 +213,11 @@ class UserController extends Controller
 
         $user->syncRoles($request->roles);
 
-        // Delete old photo and upload new photo
+        // Update user photo
         if ($request->hasFile('photo')) {
             $oldPhoto = $user->photo;
-            
-            // Delete old photo
+
+            // Delete old photo (if it exists)
             if ($oldPhoto) {
                 $oldPhotoPath = public_path('images/photos/') . $oldPhoto;
                 if (file_exists($oldPhotoPath)) {
@@ -225,29 +225,28 @@ class UserController extends Controller
                 }
             }
 
-            // Upload new photo
+            // Store new photo with the same filename
             $photo = $request->file('photo');
-            $photoName = 'photo_' . time() . '.' . $photo->getClientOriginalExtension();
+            $photoName = $user->photo; // Keep the same filename
             $photo->move(public_path('images/photos/'), $photoName);
-            $user->update(['photo' => $photoName]);
         }
 
         return redirect()->route('users.index')->withSuccess('User is updated successfully.');
     }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user): RedirectResponse
     {
         // About if user is Super Admin or User ID belongs to Auth User
-        if ($user->hasRole('Super Admin') || $user->id == auth()->user()->id)
-        {
+        if ($user->hasRole('Super Admin') || $user->id == auth()->user()->id) {
             abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
         }
 
         $user->syncRoles([]);
         $user->delete();
         return redirect()->route('users.index')
-                ->withSuccess('User is deleted successfully.');
+            ->withSuccess('User is deleted successfully.');
     }
 }

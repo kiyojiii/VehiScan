@@ -39,7 +39,7 @@
                     @method("PUT")
 
                     <div class="mb-3 row">
-                        <label for="photo" class="col-md-4 col-form-label text-md-end text-start">Banner</label>
+                        <label for="photo" class="col-md-4 col-form-label text-md-end text-start">User Photo</label>
                         <div class="col-md-6">
                             <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
                             @if ($user->photo)

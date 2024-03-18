@@ -17,6 +17,9 @@ use App\Http\Controllers\ApplicantPartnerController;
 use App\Http\Controllers\TimeController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\QRCodeController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\Auth\RegisterController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -33,9 +36,31 @@ Route::get('/', function () {
     return view('landing/landing');
 });
 
+
+
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/user-profile', [HomeController::class, 'user_profile'])->name('applicant_users.user_profile');
+Route::get('/applicant-dashboard', [HomeController::class, 'user_index'])->name('applicant_users.applicant_home');
+
+#APPLICANT APPLY APPLICATION
+Route::get('/applicant-apply', [HomeController::class, 'user_apply'])->name('applicant_users.applicant_apply');
+Route::get('/fetchAllApplicantDetails', [HomeController::class, 'fetchAllApplicantDetails'])->name('fetchAllApplicantDetails');
+
+#APPLICANT APPLICATION
+Route::post('applicant-apply/store', [HomeController::class, 'store'])->name('applicant.store');
+Route::delete('applicant-apply/delete', [HomeController::class, 'delete'])->name('applicant.delete');
+#OWNER UPDATE
+Route::get('applicant-apply/edit', [HomeController::class, 'edit'])->name('applicant.edit');
+Route::post('applicant-apply/update', [HomeController::class, 'update'])->name('applicant.update');
+#VEHICLE UPDATE
+Route::get('applicant-apply/edit_vehicle', [HomeController::class, 'edit_vehicle'])->name('applicant.edit_vehicle');
+Route::post('applicant-apply/update_vehicle', [HomeController::class, 'update_vehicle'])->name('applicant.update_vehicle');
+#DRIVER UPDATE
+Route::get('applicant-apply/edit_driver', [HomeController::class, 'edit_driver'])->name('applicant.edit_driver');
+Route::post('applicant-apply/update_driver', [HomeController::class, 'update_driver'])->name('applicant.update_driver');
+
 
 Route::middleware(['auth'])->group(function () {
     #APPOINTMENTS
@@ -53,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('status/edit', [StatusController::class, 'edit'])->name('status.edit');
     Route::post('status/update', [StatusController::class, 'update'])->name('status.update');
     Route::delete('status/delete', [StatusController::class, 'delete'])->name('status.delete');
+
     #VIOLATION
     Route::get('violations', [ViolationController::class, 'index'])->name('violations.index');
     Route::get('/fetchAllViolation', [ViolationController::class, 'fetchAllViolation'])->name('fetchAllViolation');
@@ -110,14 +136,19 @@ Route::middleware(['auth'])->group(function () {
     #VEHICLE INFORMATION UPDATE
     Route::get('vehicle_information/edit_vehicle', [OwnerController::class, 'edit_vehicle'])->name('owners.edit_vehicle');
     Route::post('vehicle_information/update_vehicle', [OwnerController::class, 'update_vehicle'])->name('owners.update_vehicle');
+    Route::delete('vehicle_information/delete', [OwnerController::class, 'delete_vehicle'])->name('owners.delete_vehicle');
+
+    #DRIVER INFORMATION UPDATE
+    Route::get('vehicle_information/edit_driver', [OwnerController::class, 'edit_driver'])->name('owners.edit_driver');
+    Route::post('vehicle_information/update_driver', [OwnerController::class, 'update_driver'])->name('owners.update_driver');
 
     #VEHICLE RECORD ROUTE
-    Route::controller(TimeController::class)->group(function(){    
+    Route::controller(TimeController::class)->group(function () {
         Route::get('test', 'test')->name('time.test');
         Route::get('/fetchVehicleRecord', 'fetchVehicleRecord')->name('fetchVehicleRecord');
         Route::get("record", 'record');
     });
-    
+
     #TIME
     Route::get('time', [TimeController::class, 'index'])->name('time.index');
     Route::get('/fetchAllTime', [TimeController::class, 'fetchAllTime'])->name('fetchAllTime');
@@ -130,13 +161,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/downloadQRCode/{qrData}', [VehicleController::class, 'downloadQRCode'])->name('downloadQRCode');
     Route::get('/download-qr-code', [VehicleController::class, 'downloadQRCode'])->name('download.qr.code');
     Route::post('/save-qr-code', [VehicleController::class, 'saveQRCode'])->name('save.qr.code');
-    Route::get('qrcode/download', [QRCodeController:: class, 'download'])->name('qrcode.download');
+    Route::get('qrcode/download', [QRCodeController::class, 'download'])->name('qrcode.download');
     Route::get('/getPlateNumber', [QRCodeController::class, 'getPlateNumber'])->name('getPlateNumber');
 
+    #PERMISSIONS
+    Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/fetchAllPermission', [PermissionController::class, 'fetchAllPermission'])->name('fetchAllPermission');
+    Route::post('permissions/store', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('permissions/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::post('permissions/update', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('permissions/delete', [PermissionController::class, 'delete'])->name('permissions.delete');
 
     #TEST
     Route::get('scratch', [TestController::class, 'index'])->name('test');
- 
+
 
     // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');
     // Route::post('applicants/update/{id}', [ApplicantController::class, 'update'])->name('applicants.update');

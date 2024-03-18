@@ -1,7 +1,60 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
-<div class="card">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .comment-item:hover {
+            background-color: #f7f7f7;
+            cursor: pointer;
+        }
+
+        .card-header:hover {
+            background-color: #f7f7f7;
+            /* Change the background color on hover */
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    @extends('layouts.app')
+
+    @section('content')
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0 font-size-18">Roles</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item active"><a href="javascript: void(0);">Roles</a></li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title -->
+
+                <div class="card">
     <div class="card-header">Manage Roles</div>
     <div class="card-body">
         @can('create-role')
@@ -56,4 +109,18 @@
 
     </div>
 </div>
-@endsection
+
+
+                
+        </div>
+        <!-- End Page-content -->
+    </div>
+    <!-- END layout-wrapper -->
+
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    @endsection
+</body>
+
+</html>

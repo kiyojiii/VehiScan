@@ -13,8 +13,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="caption">
-                        <h6>Hello Students</h6>
-                        <h2>Welcome to Education</h2>
+                        <h6>Hello!</h6>
+                        <h2>Welcome to VehiScan</h2>
                         <p>This is an edu meeting HTML CSS template provided by <a rel="nofollow" href="https://templatemo.com/page/1" target="_blank">TemplateMo website</a>. This is a Bootstrap v5.1.3 layout. The video background is taken from Pexels website, a group of young people by <a rel="nofollow" href="https://www.pexels.com/@pressmaster" target="_blank">Pressmaster</a>.</p>
                         <div class="main-button-red">
                             @if (Route::has('login'))
@@ -23,6 +23,10 @@
                                 <a href="{{ url('/home') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">You are Logged in as {{ auth()->user()->name }}</a>
                                 @else
                                 <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
+
+                                @if (Route::has('register'))
+                                <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
+                                @endif
                                 @endauth
                             </div>
                             @endif

@@ -73,12 +73,6 @@
                         <div class="w-100">
 
                             <div class="d-flex flex-column h-100">
-                                <div class="mb-4 mb-md-5">
-                                    <a href="index.html" class="d-block card-logo">
-                                        <img src="<?php echo url('theme') ?>/dist/assets/images/logo-dark.png" alt="" height="18" class="card-logo-dark">
-                                        <img src="<?php echo url('theme') ?>/dist/assets/images/logo-light.png" alt="" height="18" class="card-logo-light">
-                                    </a>
-                                </div>
                                 <div class="my-auto">
 
                                     <div>
@@ -125,29 +119,6 @@
                                                 <button class="btn btn-primary waves-effect waves-light" type="submit">Log In</button>
                                             </div>
 
-
-                                            <div class="mt-4 text-center">
-                                                <h5 class="font-size-14 mb-3">Sign in with</h5>
-
-                                                <ul class="list-inline">
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript::void()" class="social-list-item bg-primary text-white border-primary">
-                                                            <i class="mdi mdi-facebook"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript::void()" class="social-list-item bg-info text-white border-info">
-                                                            <i class="mdi mdi-twitter"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript::void()" class="social-list-item bg-danger text-white border-danger">
-                                                            <i class="mdi mdi-google"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-
                                             <div class="mt-4 text-center">
                                                 @if (Route::has('password.request'))
                                                 <a href="{{ route('password.request') }}" class="text-muted"><i class="mdi mdi-lock me-1"></i>Forgot your password?</a>
@@ -156,7 +127,7 @@
 
                                         </form>
                                         <div class="mt-5 text-center">
-                                            <p>Don't have an account ? <a href="auth-register-2.html" class="fw-medium text-primary"> Signup now </a> </p>
+                                            <p>Don't have an account ? <a href="{{ route('register') }}" class="fw-medium text-primary"> Signup now </a> </p>
                                         </div>
                                     </div>
                                 </div>

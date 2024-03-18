@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Dashboard | Blog Template system</title>
+    <title>Dashboard | VehiScan</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -55,16 +55,10 @@
     <script src="<?php echo url('theme') ?>/dist/assets/libs/simplebar/simplebar.min.js"></script>
     <script src="<?php echo url('theme') ?>/dist/assets/libs/node-waves/waves.min.js"></script>
 
-    <!-- apexcharts -->
-    <script src="<?php echo url('theme') ?>/dist/assets/libs/apexcharts/apexcharts.min.js"></script>
-
     <!-- dashboard blog init -->
     <script src="<?php echo url('theme') ?>/dist/assets/js/pages/dashboard-blog.init.js"></script>
     <script src="<?php echo url('theme') ?>/dist/assets/js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- apexcharts -->
-    <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
 
     <!-- dashboard blog init -->
     <script src="<?php echo url('theme') ?>/dist/assets/js/pages/dashboard-blog.init.js"></script>

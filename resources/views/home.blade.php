@@ -16,10 +16,12 @@
         }
 
         .card-header:hover {
-            background-color: #f7f7f7; /* Change the background color on hover */
+            background-color: #f7f7f7;
+            /* Change the background color on hover */
             cursor: pointer;
         }
     </style>
+
 </head>
 
 <body>
@@ -39,12 +41,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
+                            <h4 class="mb-sm-0 font-size-18">Admin Dashboard</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Blog</li>
+                                    <li class="breadcrumb-item active">Home</li>
                                 </ol>
                             </div>
 
@@ -54,152 +56,58 @@
                 <!-- end page title -->
 
                 <div class="row">
-
-                    <div class="col-xl-8">
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="card mini-stats-wid">
-                                    <div class="card-body">
-
-                                        <div class="d-flex flex-wrap">
-                                            <div class="me-3">
-                                                <p class="text-muted mb-2">Total Post</p>
-                                                <h5 class="mb-0"></h5>
-                                            </div>
-
-                                            <div class="avatar-sm ms-auto">
-                                                <div class="avatar-title bg-light rounded-circle text-primary font-size-20">
-                                                    <i class="bx bxs-book-bookmark"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4">
-                                <div class="card blog-stats-wid">
-                                    <div class="card-body">
-
-                                        <div class="d-flex flex-wrap">
-                                            <div class="me-3">
-                                                <p class="text-muted mb-2">Total Mails</p>
-                                                <h5 class="mb-0"></h5>
-                                            </div>
-
-                                            <div class="avatar-sm ms-auto">
-                                                <div class="avatar-title bg-light rounded-circle text-primary font-size-20">
-                                                    <i class="bx bxs-envelope"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="card blog-stats-wid">
-                                    <div class="card-body">
-                                        <div class="d-flex flex-wrap">
-                                            <div class="me-3">
-                                                <p class="text-muted mb-2">Total Comments</p>
-                                                <h5 class="mb-0"></h5>
-                                            </div>
-
-                                            <div class="avatar-sm ms-auto">
-                                                <div class="avatar-title bg-light rounded-circle text-primary font-size-20">
-                                                    <i class="bx bxs-message-square-dots"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end row -->
-
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <h5 class="card-title me-2">Visitors</h5>
-                                    <div class="ms-auto">
-                                        <div class="toolbar d-flex flex-wrap gap-2 text-end">
-                                            <button type="button" class="btn btn-light btn-sm">
-                                                ALL
-                                            </button>
-                                            <button type="button" class="btn btn-light btn-sm">
-                                                1M
-                                            </button>
-                                            <button type="button" class="btn btn-light btn-sm">
-                                                6M
-                                            </button>
-                                            <button type="button" class="btn btn-light btn-sm active">
-                                                1Y
-                                            </button>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row text-center">
+                                <div class="row">
                                     <div class="col-lg-4">
-                                        <div class="mt-4">
-                                            <p class="text-muted mb-1">Today</p>
-                                            <h5>1024</h5>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="mt-4">
-                                            <p class="text-muted mb-1">This Month</p>
-                                            <h5>12356 <span class="text-success font-size-13">0.2 % <i class="mdi mdi-arrow-up ms-1"></i></span></h5>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="mt-4">
-                                            <p class="text-muted mb-1">This Year</p>
-                                            <h5>102354 <span class="text-success font-size-13">0.1 % <i class="mdi mdi-arrow-up ms-1"></i></span></h5>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr class="mb-4">
-
-                                <!-- <canvas id="weekly-postings-chart" style="max-height: 300px;"></canvas> -->
-                                <div id="revenue-chart" class="apex-charts" dir="ltr"></div>
-
-                                <!-- <div class="apex-charts" data-colors='["--bs-primary", "--bs-warning"]' id="area-chart" dir="ltr"></div> -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end col -->
-
-                    <div class="col-xl-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex">
-                                    <div class="flex-shrink-0 me-3">
-                                 
-                                            <img class="avatar-sm rounded-circle img-thumbnail" src=""
-                                                alt="Profile Photo">
-                                    
-                                            <img class="avatar-sm rounded-circle img-thumbnail" src="" alt="Profile Photo">
-                              
-                                    </div>
-
-                                    <div class="flex-grow-1">
                                         <div class="d-flex">
-                                            <div class="flex-grow-1">
+                                            <div class="flex-shrink-0 me-3">
+                                                @if ($user->photo)
+                                                <img src="{{ asset('images/photos/' . $user->photo) }}" alt="Profile Photo" class="avatar-md rounded-circle img-thumbnail" width="50" height="50">
+                                                @else
+                                                <div class="no-photo">No Photo</div>
+                                                @endif
+                                            </div>
+                                            <div class="flex-grow-1 align-self-center">
                                                 <div class="text-muted">
-                                                    <h5 class="mb-1"></h5>
-                                                    <p class="mb-0"></p>
+                                                    <p class="mb-2">Welcome to VehiScan Dashboard</p>
+                                                    <h5 class="mb-1">{{ $user->name }}</h5>
+                                                    <p class="mb-0">UI / UX Designer</p>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
 
-                                            <div class="flex-shrink-0 dropdown ms-2">
-                                                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="col-lg-4 align-self-center">
+                                        <div class="text-lg-center mt-4 mt-lg-0">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <div>
+                                                        <p class="text-muted text-truncate mb-2">Total Users</p>
+                                                        <h5 class="mb-0">{{ $totalVehicles }}</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div>
+                                                        <p class="text-muted text-truncate mb-2">Time In's</p>
+                                                        <h5 class="mb-0">{{ $totalTimeIn }}</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div>
+                                                        <p class="text-muted text-truncate mb-2">Time Out's</p>
+                                                        <h5 class="mb-0">{{ $totalTimeOut }}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="clearfix mt-4 mt-lg-0">
+                                            <div class="dropdown float-end">
+                                                <button class="btn btn-primary" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="bx bxs-cog align-middle me-1"></i> Setting
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-end">
@@ -209,497 +117,723 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
-                                        <hr>
-
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div>
-                                                <p class="text-muted mb-4" style="text-align: justify;">
-                                                    Hello, welcome my friend. This is known for providing insightful and engaging contents. Join this journey of exploration and discovery through the world of words.
-                                                </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <h5 class="card-title mb-3 me-2">Views</h5>
-
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
-                                        </div>
                                     </div>
                                 </div>
-
-                       
-
-                                <div class="d-flex flex-wrap">
-                                    <div>
-                                        <p class="text-muted mb-1">Total Views</p>
-                                        <h4 class="mb-3"></h4>
-                                    </div>
-                                    <div class="ms-auto align-self-end">
-                                        <i class="bi bi-eye display-4 text-light"></i>
-                                    </div>
-                                </div>
-
-                                <br><hr>
-
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <h5 class="card-title mb-3 me-2">Likes</h5>
-
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-              
-
-                                <div class="d-flex flex-wrap">
-                                    <div>
-                                        <p class="text-muted mb-1">Total Likes</p>
-                                        <h4 class="mb-3"></h4>
-                                    </div>
-                                    <div class="ms-auto align-self-end">
-                                        <i class="bx bx-like display-4 text-light"></i>
-                                    </div>
-                                </div>
-
-                                <br><hr>
-
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <h5 class="card-title mb-3 me-2">Comments</h5>
-
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                     
-
-                                <div class="d-flex flex-wrap">
-                                    <div>
-                                        <p class="text-muted mb-1">Total Comments</p>
-                                        <h4 class="mb-3"></h4>
-                                    </div>
-                                    <div class="ms-auto align-self-end">
-                                        <i class="bx bx-comment-dots display-4 text-light"></i>
-                                    </div>
-                                </div>
-
-
-
+                                <!-- end row -->
                             </div>
                         </div>
                     </div>
-                    <!-- end col -->
-
                 </div>
                 <!-- end row -->
 
                 <div class="row">
-                    <div class="col-xl-4 col-lg-6">
-                        <div class="card">
-                            <div class="card-header bg-transparent border-bottom" style="cursor: pointer;">
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <div class="me-2">
-                                        <h5 class="card-title mt-1 mb-0">Mails</h5>
-                                    </div>
-                                    <ul class="nav nav-tabs nav-tabs-custom card-header-tabs ms-auto" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" data-bs-toggle="tab" href="#post-recent" role="tab">
-                                                Recent
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                    <div class="col-xl-4">
+                        <div class="card bg-primary-subtle">
+                            <div>
+                                <div class="row">
+                                    <div class="col-7">
+                                        <div class="text-primary p-3">
+                                            <h5 class="text-primary">Welcome Back !</h5>
+                                            <p>Skote Saas Dashboard</p>
 
-
-                            <div class="card-body">
-
-                                <div data-simplebar style="max-height: 295px;">
-                                    <!-- Tab panes -->
-                                    <div class="tab-content">
-                                
-                                        <div class="tab-pane active" id="post-recent" role="tabpanel">
-                                            <ul class="list-group list-group-flush">
-                                            <li class="list-group-item py-3 comment-item">
-                                            <a href="" class="text-decoration-none">
-                                                    <div class="d-flex">
-                                                        <div class="flex-grow-1">
-                                                      
-                                                                <h5 class="font-size-14 mb-1">
-                                                                    <span style="color: black; margin-left: 5px; margin-right: 5px;">You received a mail from</span>
-                                                                   ;
-                                                      
-                                                                    <span style="color: black; margin-left: 5px; margin-right: 5px;">with subject.</span>
-                                                                </h5>
-                                                   
-
-                                                            <small class="text-muted"></small>
-                                                        </div>
-                                                        <div class="dropdown ms-2">
-                                                            <a class="text-muted font-size-14" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <i class="mdi mdi-dots-horizontal"></i>
-                                                            </a>
-                                                            <div class="dropdown-menu dropdown-menu-end">
-                                                                <a class="dropdown-item" href="#">Action</a>
-                                                                <a class="dropdown-item" href="#">Another action</a>
-                                                                <a class="dropdown-item" href="#">Something else here</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
+                                            <ul class="ps-3 mb-0">
+                                                <li class="py-1">7 + Layouts</li>
+                                                <li class="py-1">Multiple apps</li>
                                             </ul>
                                         </div>
-                                 
-                                        <div class="text-muted">No concerns found.</div>
-                        
-                                        <!-- end tab pane -->
                                     </div>
-                                    <!-- end tab content -->
-
-
+                                    <div class="col-5 align-self-end">
+                                        <img src="assets/images/profile-img.png" alt="" class="img-fluid">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- end col -->
-
-                    <div class="col-xl-4 col-lg-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <div class="me-2">
-                                        <h5 class="card-title mb-3">Comments</h5>
-                                    </div>
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
+                    <div class="col-xl-8">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="avatar-xs me-3">
+                                                <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
+                                                    <i class="fas fa-car"></i>
+                                                </span>
+                                            </div>
+                                            <h5 class="font-size-14 mb-0">Total Vehicles</h5>
+                                        </div>
+                                        <div class="text-muted mt-4">
+                                            <h4>{{ $totalVehicles }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                            <div class="d-flex">
+                                                <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div data-simplebar style="max-height: 310px;">
-                                    <ul class="list-group list-group-flush">
-                
-                                        <li class="list-group-item py-3 comment-item">
-                                            <a href="" class="text-decoration-none">
-                                                <div class="d-flex">
-                                                    <div class="flex-shrink-0 me-3">
-                                                        <div class="avatar-xs">
-                                                            <div class="avatar-title rounded-circle bg-light text-primary">
-                                                                <i class="bx bxs-user"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <h5 class="font-size-14 mb-1"><span style="color: black; margin-left: 5px; margin-right: 5px;">commented on your blog</span>
-                                        
-                                                        </h5>
-                                                        <small class="text-muted"></small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                   
-                             
-                                        <div class="text-muted">No comments found.</div>
-                    
-                                    </ul>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="avatar-xs me-3">
+                                                <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
+                                                    <i class="fas fa-id-badge"></i>
+                                                </span>
+                                            </div>
+                                            <h5 class="font-size-14 mb-0">Total Owners</h5>
+                                        </div>
+                                        <div class="text-muted mt-4">
+                                            <h4>{{ $totalOwners}}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                            <div class="d-flex">
+                                                <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="avatar-xs me-3">
+                                                <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
+                                                    <i class="fas fa-address-card"></i>
+                                                </span>
+                                            </div>
+                                            <h5 class="font-size-14 mb-0">Total Drivers</h5>
+                                        </div>
+                                        <div class="text-muted mt-4">
+                                            <h4>{{ $totalDrivers }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+
+                                            <div class="d-flex">
+                                                <span class="badge badge-soft-warning font-size-12"> 0% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- end row -->
                     </div>
-
-                    <!-- end col -->
-
-                    <div class="col-xl-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap align-items-start">
-                                    <div class="me-2">
-                                        <h5 class="card-title mb-3">Top Visitors</h5>
-                                    </div>
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row text-center">
-                                    <div class="col-6">
-                                        <div class="mt-3">
-                                            <p class="text-muted mb-1">Today</p>
-                                            <h5>1024</h5>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6">
-                                        <div class="mt-3">
-                                            <p class="text-muted mb-1">This Month</p>
-                                            <h5>12356 <span class="text-success font-size-13">0.2 % <i class="mdi mdi-arrow-up ms-1"></i></span></h5>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr>
-
-                                <div>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">
-                                            <div class="py-2">
-                                                <h5 class="font-size-14">California <span class="float-end">78%</span></h5>
-                                                <div class="progress animated-progess progress-sm">
-                                                    <div class="progress-bar" role="progressbar" style="width: 78%" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <div class="py-2">
-                                                <h5 class="font-size-14">Nevada <span class="float-end">69%</span></h5>
-                                                <div class="progress animated-progess progress-sm">
-                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 69%" aria-valuenow="69" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <div class="py-2">
-                                                <h5 class="font-size-14">Texas <span class="float-end">61%</span></h5>
-                                                <div class="progress animated-progess progress-sm">
-                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 61%" aria-valuenow="61" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </li>
-
-                                    </ul>
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end col -->
                 </div>
-                <!-- end row -->
-
 
                 <div class="row">
-                    <div class="col-xl-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-2">
-                                        <h5 class="card-title mb-4">Activity</h5>
-                                    </div>
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
-
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div data-simplebar class="mt-2" style="max-height: 280px;">
-                                    <ul class="verti-timeline list-unstyled">
-                                        <li class="event-list active">
-                                            <div class="event-timeline-dot">
-                                                <i class="bx bxs-right-arrow-circle font-size-18 bx-fade-right"></i>
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <h5 class="font-size-14"><i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i></h5>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div>
-                                                        <span class="fw-semibold">
-                                                           
-                                                        </span>
-                                                        Posted
-                                                        <span class="fw-semibold">
-                                                
-
-                                                        </span>
-                                                        blog... <a href="">View</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-
-                            
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="bx bx-right-arrow-circle font-size-18"></i>
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <h5 class="font-size-14"><i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i></h5>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div>
-                                                        <span class="fw-semibold">
-
-                                                        </span>
-                                                        Posted
-                                                        <span class="fw-semibold">
-                                                           
-                                                        </span>
-                                                        blog... <a href="">View</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                
-                                    </ul>
-                                </div>
-
-                                <div class="text-center mt-4"><a href="" class="btn btn-primary waves-effect waves-light btn-sm">View All <i class="mdi mdi-arrow-right ms-1"></i></a></div>
-                            </div>
-                        </div>
-                        <!-- end card -->
-                    </div>
-                    <!-- end col -->
                     <div class="col-xl-8">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex align-items-start">
-                                    <div class="me-2">
-                                        <h5 class="card-title mb-4">Popular Posts</h5>
+                                <div class="clearfix">
+                                    <div class="float-end">
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-select form-select-sm">
+                                                <option value="JA" selected>Jan</option>
+                                                <option value="DE">Dec</option>
+                                                <option value="NO">Nov</option>
+                                                <option value="OC">Oct</option>
+                                            </select>
+                                            <label class="input-group-text">Month</label>
+                                        </div>
                                     </div>
-                                    <div class="dropdown ms-auto">
-                                        <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">
-                                            <i class="mdi mdi-dots-horizontal"></i>
-                                        </a>
+                                    <h4 class="card-title mb-4">Vehicle Per Day</h4>
+                                </div>
 
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Separated link</a>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="text-muted">
+                                            <div class="mb-4">
+                                                <p>This month</p>
+                                                <h4>{{$totalTimeCurrentMonth}}</h4>
+                                                @php
+                                                // Calculate the absolute difference between the current month and previous month total time counts
+                                                $absoluteDifference = abs($totalTimeCurrentMonth - $totalTimePreviousMonth);
+
+                                                // Calculate the percentage difference
+                                                if ($totalTimePreviousMonth != 0) {
+                                                $percentageDifference = ($absoluteDifference / $totalTimeCurrentMonth) * 100;
+                                                } else {
+                                                $percentageDifference = 0;
+                                                }
+
+                                                // Format the percentage difference
+                                                $formattedPercentageDifference = number_format($percentageDifference, 2) . '%';
+                                                @endphp
+
+                                                <div><span class="badge badge-soft-success font-size-12 me-1">{{$formattedPercentageDifference}}</span> From previous period</div>
+                                            </div>
+
+                                            <div>
+                                                <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light btn-sm">View Details <i class="mdi mdi-chevron-right ms-1"></i></a>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <p class="mb-2">Last month</p>
+                                                <h5>{{$totalTimePreviousMonth}}</h5>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-8">
+                                        <div id="line_chart_dashed" data-colors='["--bs-success", "--bs-danger", "--bs-info"]' class="apex-charts" dir="ltr"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-4">Vehicle Owner Driver Ratio</h4>
+
+                                <div class="col-lg-12">
+                                    <div id="pie_chart" data-colors='["--bs-danger", "--bs-primary", "--bs-success"]' class="apex-charts" dir="ltr"></div>
+                                </div>
+                                @include('chart_js')
+
+
+                                <div class="text-center text-muted">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="mt-4">
+                                                <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-danger me-1"></i> Vehicles</p>
+                                                <h5>{{$totalVehicles}}</h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mt-4">
+                                                <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-primary me-1"></i> Owners</p>
+                                                <h5>{{$totalOwners}}</h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mt-4">
+                                                <p class="mb-2 text-truncate"><i class="mdi mdi-circle text-success me-1"></i> Drivers</p>
+                                                <h5>{{$totalDrivers}}</h5>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="table-responsive">
-                                    <table class="table align-middle table-nowrap mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" colspan="2">Post</th>
-                                                <th scope="col">Views</th>
-                                                <th scope="col">Likes</th>
-                                                <th scope="col">Comments</th>
-                                                <th scope="col"></th>
-                                            </tr>
-                                        </thead>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="clearfix">
+                                    <div class="float-end">
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-select form-select-sm">
+                                                <option value="JA" selected>Jan</option>
+                                                <option value="DE">Dec</option>
+                                                <option value="NO">Nov</option>
+                                                <option value="OC">Oct</option>
+                                            </select>
+                                            <label class="input-group-text">Month</label>
+                                        </div>
+                                    </div>
+                                    <h4 class="card-title mb-4">Top Selling product</h4>
+                                </div>
+
+                                <div class="text-muted text-center">
+                                    <p class="mb-2">Product A</p>
+                                    <h4>$ 6385</h4>
+                                    <p class="mt-4 mb-0"><span class="badge badge-soft-success font-size-11 me-2"> 0.6% <i class="mdi mdi-arrow-up"></i> </span> From previous period</p>
+                                </div>
+
+                                <div class="table-responsive mt-4">
+                                    <table class="table align-middle mb-0">
                                         <tbody>
-                                      
                                             <tr>
-                                                <td><img src="" alt="Template Banner" class="avatar-md h-auto d-block rounded" width="100%" height="50"></td>
                                                 <td>
-                                                    <h5 class="font-size-13 text-truncate mb-1"><a href="javascript: void(0);" class="text-dark">
-                                                            <a>
-                                                                
-                                                            </a>
-                                                    </h5>
-                                                    <p class="text-muted mb-0"></p>
+                                                    <h5 class="font-size-14 mb-1">Product A</h5>
+                                                    <p class="text-muted mb-0">Neque quis est</p>
                                                 </td>
-                                                <td><i class="bi bi-eye align-middle me-1"></i></td>
-                                                <td><i class="bx bx-like align-middle me-1"></i></td> 
-                                                <td><i class="bx bx-comment-dots align-middle me-1"></i></td>
+
                                                 <td>
-                                                    <div>
-                                                        <a href="" class="text-primary">Read more <i class="mdi mdi-arrow-right"></i></a>
-                                                    </div>
+                                                    <div id="radialchart-1" data-colors='["--bs-primary"]' class="apex-charts"></div>
+                                                </td>
+                                                <td>
+                                                    <p class="text-muted mb-1">Sales</p>
+                                                    <h5 class="mb-0">37 %</h5>
                                                 </td>
                                             </tr>
-                                  
                                             <tr>
-                                                <td colspan="6" class="text-muted">No posts found.</td>
+                                                <td>
+                                                    <h5 class="font-size-14 mb-1">Product B</h5>
+                                                    <p class="text-muted mb-0">Quis autem iure</p>
+                                                </td>
+
+                                                <td>
+                                                    <div id="radialchart-2" data-colors='["--bs-success"]' class="apex-charts"></div>
+                                                </td>
+                                                <td>
+                                                    <p class="text-muted mb-1">Sales</p>
+                                                    <h5 class="mb-0">72 %</h5>
+                                                </td>
                                             </tr>
-                                          
+                                            <tr>
+                                                <td>
+                                                    <h5 class="font-size-14 mb-1">Product C</h5>
+                                                    <p class="text-muted mb-0">Sed aliquam mauris.</p>
+                                                </td>
+
+                                                <td>
+                                                    <div id="radialchart-3" data-colors='["--bs-danger"]' class="apex-charts"></div>
+                                                </td>
+                                                <td>
+                                                    <p class="text-muted mb-1">Sales</p>
+                                                    <h5 class="mb-0">54 %</h5>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
+                                </div>
 
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-4">Tasks</h4>
 
+                                <ul class="nav nav-pills bg-light rounded">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="#">In Process</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Upcoming</a>
+                                    </li>
+                                </ul>
 
+                                <div class="mt-4">
+                                    <div data-simplebar style="max-height: 250px;">
+
+                                        <div class="table-responsive">
+                                            <table class="table table-nowrap align-middle table-hover mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="width: 50px;">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck01">
+                                                                <label class="form-check-label" for="tasklistCheck01"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote Saas Dashboard</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Mark</p>
+                                                        </td>
+                                                        <td style="width: 90px;">
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck02">
+                                                                <label class="form-check-label" for="tasklistCheck02"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">New Landing UI</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Team A</p>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck02">
+                                                                <label class="form-check-label" for="tasklistCheck02"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Brand logo design</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Janis</p>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck04">
+                                                                <label class="form-check-label" for="tasklistCheck04"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Blog Template UI</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Dianna</p>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck05">
+                                                                <label class="form-check-label" for="tasklistCheck05"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Multipurpose Landing</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Team B</p>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck06">
+                                                                <label class="form-check-label" for="tasklistCheck06"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Redesign - Landing page</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Jerry</p>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="tasklistCheck07">
+                                                                <label class="form-check-label" for="tasklistCheck07"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote Crypto Dashboard</a></h5>
+                                                            <p class="text-muted mb-0">Assigned to Eric</p>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <ul class="list-inline mb-0 font-size-16">
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-success p-1"><i class="bx bxs-edit-alt"></i></a>
+                                                                    </li>
+                                                                    <li class="list-inline-item">
+                                                                        <a href="javascript: void(0);" class="text-danger p-1"><i class="bx bxs-trash"></i></a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer bg-transparent border-top">
+                                <div class="text-center">
+                                    <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light"> Add new Task</a>
                                 </div>
                             </div>
                         </div>
-                        <!-- end card -->
                     </div>
-                    <!-- end col -->
+
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body border-bottom">
+                                <div class="row">
+                                    <div class="col-md-4 col-9">
+                                        <h5 class="font-size-15 mb-1">Steven Franklin</h5>
+                                        <p class="text-muted mb-0"><i class="mdi mdi-circle text-success align-middle me-1"></i> Active now</p>
+                                    </div>
+                                    <div class="col-md-8 col-3">
+                                        <ul class="list-inline user-chat-nav text-end mb-0">
+                                            <li class="list-inline-item d-none d-sm-inline-block">
+                                                <div class="dropdown">
+                                                    <button class="btn nav-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="bx bx-search-alt-2"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-end py-0 dropdown-menu-md">
+                                                        <form class="p-3">
+                                                            <div class="form-group m-0">
+                                                                <div class="input-group">
+                                                                    <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+
+                                                                    <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-inline-item  d-none d-sm-inline-block">
+                                                <div class="dropdown">
+                                                    <button class="btn nav-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="bx bx-cog"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a class="dropdown-item" href="#">View Profile</a>
+                                                        <a class="dropdown-item" href="#">Clear chat</a>
+                                                        <a class="dropdown-item" href="#">Muted</a>
+                                                        <a class="dropdown-item" href="#">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                            <li class="list-inline-item">
+                                                <div class="dropdown">
+                                                    <button class="btn nav-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="bx bx-dots-horizontal-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a class="dropdown-item" href="#">Action</a>
+                                                        <a class="dropdown-item" href="#">Another action</a>
+                                                        <a class="dropdown-item" href="#">Something else</a>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pb-0">
+                                <div>
+                                    <div class="chat-conversation">
+                                        <ul class="list-unstyled" data-simplebar style="max-height: 260px;">
+                                            <li>
+                                                <div class="chat-day-title">
+                                                    <span class="title">Today</span>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="conversation-list">
+                                                    <div class="dropdown">
+
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">Copy</a>
+                                                            <a class="dropdown-item" href="#">Save</a>
+                                                            <a class="dropdown-item" href="#">Forward</a>
+                                                            <a class="dropdown-item" href="#">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ctext-wrap">
+                                                        <div class="conversation-name">Steven Franklin</div>
+                                                        <p>
+                                                            Hello!
+                                                        </p>
+                                                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:00</p>
+                                                    </div>
+
+                                                </div>
+                                            </li>
+
+                                            <li class="right">
+                                                <div class="conversation-list">
+                                                    <div class="dropdown">
+
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">Copy</a>
+                                                            <a class="dropdown-item" href="#">Save</a>
+                                                            <a class="dropdown-item" href="#">Forward</a>
+                                                            <a class="dropdown-item" href="#">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ctext-wrap">
+                                                        <div class="conversation-name">Henry Wells</div>
+                                                        <p>
+                                                            Hi, How are you? What about our next meeting?
+                                                        </p>
+
+                                                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:02</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                            <li>
+                                                <div class="conversation-list">
+                                                    <div class="dropdown">
+
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">Copy</a>
+                                                            <a class="dropdown-item" href="#">Save</a>
+                                                            <a class="dropdown-item" href="#">Forward</a>
+                                                            <a class="dropdown-item" href="#">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ctext-wrap">
+                                                        <div class="conversation-name">Steven Franklin</div>
+                                                        <p>
+                                                            Yeah everything is fine
+                                                        </p>
+
+                                                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:06</p>
+                                                    </div>
+
+                                                </div>
+                                            </li>
+
+                                            <li class="last-chat">
+                                                <div class="conversation-list">
+                                                    <div class="dropdown">
+
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">Copy</a>
+                                                            <a class="dropdown-item" href="#">Save</a>
+                                                            <a class="dropdown-item" href="#">Forward</a>
+                                                            <a class="dropdown-item" href="#">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ctext-wrap">
+                                                        <div class="conversation-name">Steven Franklin</div>
+                                                        <p>& Next meeting tomorrow 10.00AM</p>
+                                                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:06</p>
+                                                    </div>
+
+                                                </div>
+                                            </li>
+
+                                            <li class="right">
+                                                <div class="conversation-list">
+                                                    <div class="dropdown">
+
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">Copy</a>
+                                                            <a class="dropdown-item" href="#">Save</a>
+                                                            <a class="dropdown-item" href="#">Forward</a>
+                                                            <a class="dropdown-item" href="#">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="ctext-wrap">
+                                                        <div class="conversation-name">Henry Wells</div>
+                                                        <p>
+                                                            Wow that's great
+                                                        </p>
+
+                                                        <p class="chat-time mb-0"><i class="bx bx-time-five align-middle me-1"></i> 10:07</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="p-3 chat-input-section">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="position-relative">
+                                            <input type="text" class="form-control rounded chat-input" placeholder="Enter Message...">
+                                            <div class="chat-input-links">
+                                                <ul class="list-inline mb-0">
+                                                    <li class="list-inline-item"><a href="javascript: void(0);"><i class="mdi mdi-emoticon-happy-outline"></i></a></li>
+                                                    <li class="list-inline-item"><a href="javascript: void(0);"><i class="mdi mdi-file-image-outline"></i></a></li>
+                                                    <li class="list-inline-item"><a href="javascript: void(0);"><i class="mdi mdi-file-document-outline"></i></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary chat-send w-md waves-effect waves-light"><span class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- end row -->
 
             </div> <!-- container-fluid -->
         </div>
         <!-- End Page-content -->
-    </div>
-    <!-- end main content-->
     </div>
     <!-- END layout-wrapper -->
 

@@ -1,3 +1,4 @@
+@forelse($owners as $owner)
 <!-- Add Modal -->
 <div class="modal fade" id="addVehicleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -192,3 +193,7 @@
     </div>
 </div>
 <!-- End Modal -->
+
+@empty
+<p>You have not Applied Yet</p>
+@endforelse

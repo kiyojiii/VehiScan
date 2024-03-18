@@ -38,12 +38,13 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Applicant Details</h4>
+                            <h4 class="mb-sm-0 font-size-18">Vehicle Information</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Applicants</a></li>
-                                    <li class="breadcrumb-item active">Applicant Details</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Owners</a></li>
+                                    <li class="breadcrumb-item">Vehicle Information</li>
+                                    <li class="breadcrumb-item active">{{ $vehicles->plate_number }}</li>
                                 </ol>
                             </div>
 
@@ -171,7 +172,7 @@
                                     </li>
                                 </ul>
                                 <div class="mt-4">
-                                    <a href=" {{ route('owners.show', $vehicles->owner->id) }}" class="btn btn-soft-primary btn-hover w-100 rounded"><i class="mdi mdi-eye"></i> View Profile</a>
+                                    <a href=" {{ route('owners.show', $vehicles->owner->id) }}" class="btn btn-soft-danger btn-hover w-100 rounded"><i class="mdi mdi-keyboard-return"></i> Go Back</a>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +184,7 @@
                                     <!-- Assuming $qrCodeBase64 contains the base64-encoded image data -->
                                     <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" height="50" class="mx-auto d-block img-modal">
                                     <div class="flex-grow-1 ms-3 d-flex justify-content-end">
-                                        <h5 class="fw-semibold">Vehicle QR Code <button class="btn btn-primary download-btn" data-qrcode="{{ $vehicles->vehicle_code }} "><i class="fas fa-download"></i>Download QR</button></h5>
+                                        <h5 class="fw-semibold">Vehicle QR Code <button class="btn btn-primary download-btn" data-qrcode="{{ $vehicles->vehicle_code }} "><i class="fas fa-download"></i> Download QR</button></h5>
                                         <ul class="list-unstyled hstack gap-2 mb-0">
                                             <li>
                                                 <button id="{{ $vehicles->id }}" class="btn btn-primary mx-1 editIconVehicle" onClick="editVehicle('{{ $vehicles->id }}')">
@@ -200,8 +201,8 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <!-- <h5 class="fw-semibold mb-3">Description</h5> -->
-                                <!-- <p class="text-muted">We are looking to hire a skilled Magento developer to build and maintain eCommerce websites for our clients. As a Magento developer, you will be responsible for liaising with the design team, setting up Magento 1x and 2x sites, building modules and customizing extensions, testing the performance of each site, and maintaining security and feature updates after the installation is complete.</p> -->
+                                <!-- <h5 class="fw-semibold mb-3">Description</h5>
+                                <p class="text-muted">We are looking to hire a skilled Magento developer to build and maintain eCommerce websites for our clients. As a Magento developer, you will be responsible for liaising with the design team, setting up Magento 1x and 2x sites, building modules and customizing extensions, testing the performance of each site, and maintaining security and feature updates after the installation is complete.</p> -->
 
                                 <h5 class="fw-semibold mb-3">Vehicle Details:</h5>
                                 <ul class="vstack gap-3">
@@ -415,6 +416,7 @@
             @include('owners.vehicle_information_js')
             @include('applicants.show_modals')
             @include('owners.edit_vehicle')
+            @include('owners.edit_driver')
 </body>
 
 </html>

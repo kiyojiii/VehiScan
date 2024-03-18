@@ -37,7 +37,7 @@ https://templatemo.com/tm-569-edu-meeting
       <div class="row">
         <div class="col-lg-8 col-sm-8">
           <div class="left-content">
-            <p>This is an educational <em>HTML CSS</em> template by TemplateMo website.</p>
+            <p>This is a Vehicle Inventory System for <em>MSU - IIT</em> by TemplateMo.</p>
           </div>
         </div>
         <div class="col-lg-4 col-sm-4">
@@ -62,7 +62,7 @@ https://templatemo.com/tm-569-edu-meeting
           <nav class="main-nav">
             <!-- ***** Logo Start ***** -->
             <a href="index.html" class="logo">
-              Edu Meeting
+              VehiScan
             </a>
             <!-- ***** Logo End ***** -->
             <!-- ***** Menu Start ***** -->

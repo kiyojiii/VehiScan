@@ -184,7 +184,7 @@
                                     <!-- Assuming $qrCodeBase64 contains the base64-encoded image data -->
                                     <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" height="50" class="mx-auto d-block img-modal">
                                     <div class="flex-grow-1 ms-3 d-flex justify-content-end">
-                                        <h5 class="fw-semibold">Vehicle QR Code <button class="btn btn-primary download-btn" data-qrcode="{{ $owners->vehicle->vehicle_code }} "><i class="fas fa-download"></i>Download QR</button></h5>
+                                        <h5 class="fw-semibold">Vehicle QR Code <button class="btn btn-primary download-btn" data-qrcode="{{ $owners->vehicle->vehicle_code }} "><i class="fas fa-download"></i> Download QR</button></h5>
                                         <ul class="list-unstyled hstack gap-2 mb-0">
                                             <li>
                                                 <button id="{{ $owners->id }}" class="btn btn-success mx-1 editIconOwner" onclick="editOwner('{{ $owners->id }}')">
