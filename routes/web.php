@@ -43,6 +43,8 @@ Auth::routes();
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/user-profile', [HomeController::class, 'user_profile'])->name('applicant_users.user_profile');
 Route::get('/applicant-dashboard', [HomeController::class, 'user_index'])->name('applicant_users.applicant_home');
+Route::get('/applicant-violation', [HomeController::class, 'user_violation'])->name('applicant_users.applicant_violation');
+Route::get('/fetchAllApplicantViolation', [HomeController::class, 'fetchAllApplicantViolation'])->name('fetchAllApplicantViolation');
 
 #APPLICANT APPLY APPLICATION
 Route::get('/applicant-apply', [HomeController::class, 'user_apply'])->name('applicant_users.applicant_apply');
@@ -96,7 +98,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('owners/delete', [OwnerController::class, 'delete'])->name('owners.delete');
     Route::get('owners/show/{id}', [OwnerController::class, 'show'])->name('owners.show');
     Route::get('/fetchAllOwnerVehicle', [OwnerController::class, 'fetchAllOwnerVehicle'])->name('fetchAllOwnerVehicle');
-    Route::get('owners/vehicle_information/{id}', [OwnerController::class, 'vehicle_information'])->name('owners.vehicle_information');
+    Route::get('vehicle_information/{id}', [OwnerController::class, 'vehicle_information'])->name('owners.vehicle_information');
 
     #VEHICLE
     Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');

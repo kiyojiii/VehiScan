@@ -8,6 +8,8 @@
 
     <!-- Include Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- apexcharts -->
+    <script src="<?php echo url('theme') ?>/dist/assets/libs/apexcharts/apexcharts.min.js"></script>
 
     <style>
         .comment-item:hover {
@@ -165,7 +167,7 @@
                                         <div class="text-muted mt-4">
                                             <h4>{{ $totalVehicles }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
                                             <div class="d-flex">
-                                                <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                                <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous month</span>
                                             </div>
                                         </div>
                                     </div>

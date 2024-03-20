@@ -5,15 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Applicant </title>
+    <title>VehiScan | Applicant Dashboard </title>
 
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- apexcharts -->
+    <script src="<?php echo url('theme') ?>/dist/assets/libs/apexcharts/apexcharts.min.js"></script>
 </head>
 
 <body>
 
-    @extends('layouts.app')
+    @extends('layouts.app2')
 
     @section('content')
     <!-- ============================================================== -->
@@ -40,7 +44,7 @@
                     </div>
                 </div>
                 <!-- end page title -->
-                @forelse($owners as $owner)
+                @forelse($owners as $owners)
                 <div class="row">
                     <div class="col-xl-4">
                         <div class="card overflow-hidden">
@@ -62,8 +66,8 @@
                                 <div class="row">
                                     <div class="col-sm-5">
                                         <div class="avatar-md profile-user-wid mb-">
-                                            @if($owner->scan_or_photo_of_id)
-                                            <img src="{{ asset('storage/images/' . $owner->scan_or_photo_of_id) }}" alt="" class="img-thumbnail rounded-circle">
+                                            @if($owners->scan_or_photo_of_id)
+                                            <img src="{{ asset('storage/images/' . $owners->scan_or_photo_of_id) }}" alt="" class="img-thumbnail rounded-circle">
                                             @else
                                             <p>No Scan or Photo of ID available</p>
                                             @endif
@@ -147,6 +151,8 @@
                                                 <td><span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span></td>
                                                 @elseif($owners->vehicle->approval_status == 'Rejected')
                                                 <td><span class="badge badge-soft-danger">Rejected</span></td>
+                                                @elseif($owners->vehicle->approval_status == 'Pending')
+                                                <td><span class="badge badge-soft-warning">Pending</span></td>
                                                 @else
                                                 <td><span class="badge badge-soft-secondary">Unknown</span></td>
                                                 @endif
@@ -179,7 +185,7 @@
                                 <h4 class="card-title mb-5">Vehicle Activity</h4>
                                 <div class="">
                                     <ul class="verti-timeline list-unstyled">
-                                        @foreach($remarks as $remark)
+
                                         <li class="event-list">
                                             <div class="event-timeline-dot">
                                                 <i class="bx bx-right-arrow-circle"></i>
@@ -190,13 +196,13 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <div>
-                                                        <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark">{{ $remark }}</a></h5>
+                                                        <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark"></a></h5>
                                                         <span class="text-primary">2013 - 16</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </li>
-                                        @endforeach
+
                                     </ul>
                                 </div>
                             </div>
@@ -213,7 +219,7 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-2">Total Vehicles</p>
-                                                <h4 class="mb-0">{{ $totalVehicles }}</h4>
+                                                <h4 class="mb-0">{{ $totalVehicles ?? 'N/A' }}</h4>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
@@ -233,7 +239,7 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-2">Total Violations</p>
-                                                <h4 class="mb-0">{{ $totalViolations }}</h4>
+                                                <h4 class="mb-0">{{ $totalViolations ?? 'N/A' }}</h4>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
@@ -271,27 +277,40 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title mb-4">Time Chart</h4>
-                                <div id="revenue-chart" class="apex-charts" dir="ltr"></div>
+                                <div id="user_dashboard_chart" data-colors='["--bs-primary", "--bs-success"]' class="apex-charts" dir="ltr"></div>
                             </div>
+                            @include('applicant_users.chart_js')
                         </div>
 
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-4">My Vehicles</h4>
-                                    <a class="btn btn-sm btn-primary my-2" onClick="addVehicle()" href="javascript:void(0)">
+                                    <a id="addVehicleBtn" class="btn btn-sm btn-primary my-2" href="javascript:void(0)" @if($hasActiveVehicle) disabled @endif onClick="showAlert()">
                                         <i class="bi bi-plus-circle"></i> Add Vehicle
                                     </a>
                                 </div>
 
+                                <script>
+                                    function showAlert() {
+                                        // Show SweetAlert message
+                                        Swal.fire({
+                                            title: 'Alert',
+                                            text: 'You still have an active vehicle',
+                                            icon: 'warning'
+                                        });
+                                    }
+                                </script>
+
+
                                 <!-- Display Vehicles -->
                                 <div class="row" id="vehicleContainer">
-                                    @include('owners.vehicles')
+                                    @include('applicant_users.vehicles')
                                 </div>
 
                                 <!-- Pagination Links -->
                                 <div class="row justify-content-center" id="paginationLinks">
-                                    {!! $vehicles->links() !!}
+
                                 </div>
                             </div>
                         </div>
@@ -300,9 +319,9 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-4">My Driver</h4>
-                                    <a class="btn btn-sm btn-primary my-2" onClick="addDriver()" href="javascript:void(0)">
+                                    <!-- <a class="btn btn-sm btn-primary my-2" onClick="addDriver()" href="javascript:void(0)">
                                         <i class="bi bi-plus-circle"></i> Add Driver
-                                    </a>
+                                    </a> -->
                                 </div>
 
                                 <div class="row">
@@ -358,11 +377,13 @@
                                         <strong scope="row">Approval Status</strong>
                                         @if($owners->vehicle && $owners->vehicle->approval_status)
                                         @if($owners->vehicle->approval_status == 'Approved')
-                                        <span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span>
+                                        <span class="badge badge-soft-success">Approved</span>
                                         @elseif($owners->vehicle->approval_status == 'Rejected')
-                                        <span class="badge badge-soft-danger">{{ $owners->vehicle->approval_status }}</span>
+                                        <span class="badge badge-soft-danger">Rejected</span>
+                                        @elseif($owners->vehicle->approval_status == 'Pending')
+                                        <span class="badge badge-soft-warning">Pending</span>
                                         @else
-                                        <span class="badge badge-soft-secondary">{{ $owners->vehicle->approval_status }}</span>
+                                        <span class="badge badge-soft-secondary">Unknown</span>
                                         @endif
                                         @else
                                         <span class="badge badge-soft-secondary">No Driver Associated</span>
@@ -380,12 +401,10 @@
                     @endforelse
                 </div>
             </div>
-            <!-- end row -->
+            <!-- container-fluid -->
 
-        </div> <!-- container-fluid -->
+        </div> <!-- End Page-content -->
     </div>
-    <!-- End Page-content -->
-
     <!-- end main content-->
 
     @include('owners.owner_show_js')

@@ -93,9 +93,11 @@
                                             <tr>
                                                 <th scope="row">Approval Status</th>
                                                 @if($vehicles->owner->approval_status == 'Approved')
-                                                <td><span class="badge badge-soft-success">{{ $vehicles->owner->approval_status }}</span></td>
+                                                <td><span class="badge badge-soft-success">Approved</span></td>
                                                 @elseif($vehicles->owner->approval_status == 'Rejected')
                                                 <td><span class="badge badge-soft-danger">Rejected</span></td>
+                                                @elseif($vehicles->owner->approval_status == 'Pending')
+                                                <td><span class="badge badge-soft-warning">Pending</span></td>
                                                 @else
                                                 <td><span class="badge badge-soft-secondary">Unknown</span></td>
                                                 @endif
@@ -172,7 +174,15 @@
                                     </li>
                                 </ul>
                                 <div class="mt-4">
-                                    <a href=" {{ route('owners.show', $vehicles->owner->id) }}" class="btn btn-soft-danger btn-hover w-100 rounded"><i class="mdi mdi-keyboard-return"></i> Go Back</a>
+                                    @role('Applicant')
+                                    <a href="{{ route('applicant_users.applicant_home') }}" class="btn btn-soft-danger btn-hover w-100 rounded">
+                                        <i class="mdi mdi-keyboard-return"></i> Go Back
+                                    </a>
+                                    @else
+                                    <a href="{{ route('owners.show', $vehicles->owner->id) }}" class="btn btn-soft-danger btn-hover w-100 rounded">
+                                        <i class="mdi mdi-keyboard-return"></i> Go Back
+                                    </a>
+                                    @endrole
                                 </div>
                             </div>
                         </div>
@@ -182,9 +192,27 @@
                             <div class="card-body border-bottom">
                                 <div class="d-flex">
                                     <!-- Assuming $qrCodeBase64 contains the base64-encoded image data -->
+                                    @if($vehicles)
+                                    @if($vehicles->approval_status == 'Approved')
                                     <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" height="50" class="mx-auto d-block img-modal">
+                                    @elseif($vehicles->approval_status == 'Rejected')
+                                    @elseif($vehicles->approval_status == 'Pending')
+                                    @else
+                                    @endif
+                                    @else
+                                    <strong><span class="badge badge-soft-secondary">No Vehicle Associated</span></strong>
+                                    @endif
                                     <div class="flex-grow-1 ms-3 d-flex justify-content-end">
+                                        @if($vehicles)
+                                        @if($vehicles->approval_status == 'Approved')
                                         <h5 class="fw-semibold">Vehicle QR Code <button class="btn btn-primary download-btn" data-qrcode="{{ $vehicles->vehicle_code }} "><i class="fas fa-download"></i> Download QR</button></h5>
+                                        @elseif($vehicles->approval_status == 'Rejected')
+                                        @elseif($vehicles->approval_status == 'Pending')
+                                        @else
+                                        @endif
+                                        @else
+                                        <strong><span class="badge badge-soft-secondary">No Vehicle Associated</span></strong>
+                                        @endif
                                         <ul class="list-unstyled hstack gap-2 mb-0">
                                             <li>
                                                 <button id="{{ $vehicles->id }}" class="btn btn-primary mx-1 editIconVehicle" onClick="editVehicle('{{ $vehicles->id }}')">
@@ -238,11 +266,13 @@
                                         <strong scope="row">Approval Status</strong>
                                         @if($vehicles)
                                         @if($vehicles->approval_status == 'Approved')
-                                        <strong><span class="badge badge-soft-success">{{ $vehicles->approval_status }}</span></strong>
+                                        <strong><span class="badge badge-soft-success">Approved</span></strong>
                                         @elseif($vehicles->approval_status == 'Rejected')
                                         <strong><span class="badge badge-soft-danger">Rejected</span></strong>
+                                        @elseif($vehicles->approval_status == 'Pending')
+                                        <strong><span class="badge badge-soft-warning">Pending</span></strong>
                                         @else
-                                        <strong><span class="badge badge-soft-secondary">Unknown</span></strong>
+                                        <strong><span class="badge badge-soft-warning">Unknown</span></strong>
                                         @endif
                                         @else
                                         <strong><span class="badge badge-soft-secondary">No Vehicle Associated</span></strong>
@@ -360,11 +390,13 @@
                                             <strong scope="row">Approval Status</strong>
                                             @if($vehicles && $vehicles->driver->approval_status)
                                             @if($vehicles->driver->approval_status == 'Approved')
-                                            <span class="badge badge-soft-success">{{ $vehicles->driver->approval_status }}</span>
+                                            <span class="badge badge-soft-success">Approved</span>
                                             @elseif($vehicles->driver->approval_status == 'Rejected')
-                                            <span class="badge badge-soft-danger">{{ $vehicles->driver->approval_status }}</span>
+                                            <span class="badge badge-soft-danger">Rejected</span>
+                                            @elseif($vehicles->driver->approval_status == 'Pending')
+                                            <span class="badge badge-soft-warning">Pending</span>
                                             @else
-                                            <span class="badge badge-soft-secondary">{{ $vehicles->driver->approval_status }}</span>
+                                            <span class="badge badge-soft-secondary">Unknown</span>
                                             @endif
                                             @else
                                             <span class="badge badge-soft-secondary">No Driver Associated</span>

@@ -1,6 +1,15 @@
-@include('layouts.head')
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- App favicon -->
+<link rel="shortcut icon" href="<?php echo url('theme') ?>/dist/assets/images/favicon.ico">
+
+<!-- Bootstrap Css -->
+<link href="<?php echo url('theme') ?>/dist/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+<!-- Icons Css -->
+<link href="<?php echo url('theme') ?>/dist/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+<!-- App Css-->
+<link href="<?php echo url('theme') ?>/dist/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+<!-- App js -->
+<script src="<?php echo url('theme') ?>/dist/assets/js/plugin.js"></script>
+
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
@@ -150,3 +159,28 @@
         </div>
     </div>
 </header>
+
+<!-- JAVASCRIPT -->
+<script src="<?php echo url('theme') ?>/dist/assets/libs/jquery/jquery.min.js"></script>
+<script src="<?php echo url('theme') ?>/dist/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo url('theme') ?>/dist/assets/libs/metismenu/metisMenu.min.js"></script>
+<script src="<?php echo url('theme') ?>/dist/assets/libs/simplebar/simplebar.min.js"></script>
+<script src="<?php echo url('theme') ?>/dist/assets/libs/node-waves/waves.min.js"></script>
+
+<!-- dashboard blog init -->
+<script src="<?php echo url('theme') ?>/dist/assets/js/pages/dashboard-blog.init.js"></script>
+<script src="<?php echo url('theme') ?>/dist/assets/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- dashboard blog init -->
+<script src="<?php echo url('theme') ?>/dist/assets/js/pages/dashboard-blog.init.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- file-manager js -->
+<script src="<?php echo url('theme') ?>/dist/assets/js/pages/file-manager.init.js"></script>
+
+<!-- email editor init -->
+<script src="<?php echo url('theme') ?>/dist/assets/js/pages/email-editor.init.js"></script>
+
+<!-- App js -->
+<script src="<?php echo url('theme') ?>/dist/assets/js/app.js"></script>

@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Scratch Blade</title>
-
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Scripts -->
@@ -20,13 +14,3 @@
     <link href="<?php echo url('theme') ?>/dist/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
     <!-- App js -->
     <script src="<?php echo url('theme') ?>/dist/assets/js/plugin.js"></script>
-
-</head>
-
-<body>
-{{ $vehicles->plate_number }}
-
-
-
-</body>
-</html>

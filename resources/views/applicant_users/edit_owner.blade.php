@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-md">
                                 <label for="position">Vehicle</label>
-                                <input type="text" name="vehicle_name" id="vehicle_name" class="form-control" value="{{ $owner->vehicle->plate_number ?? 'N/A' }} - {{ $owner->vehicle->vehicle_make ?? 'N/A' }}" placeholder="Vehicle Plate Number" readonly>
+                                <input type="text" name="vehicle_name" id="vehicle_name" class="form-control" value="{{ $owner->vehicle->plate_number ?? 'N/A' }} - {{ $owner->vehicle->vehicle_make ?? 'N/A' }} - {{ $owner->vehicle->year ?? 'N/A' }}" placeholder="Vehicle Plate Number" readonly>
                             </div>
                             <div class="col-md">
                                 <label for="serial_number">Serial Number</label>
@@ -117,6 +117,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label>Scan/Photo of ID</label>
+                                <p class="text-danger">If the image doesn't change, please reload the page.</p>
                                 @if($owner->scan_or_photo_of_id)
                                 <img src="{{ asset('storage/images/' . $owner->scan_or_photo_of_id) }}" alt="Photo ID" class="img-thumbnail mx-auto d-block" style="width: 250px; height: 150px;">
                                 @else

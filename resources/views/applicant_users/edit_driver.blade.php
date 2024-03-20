@@ -11,8 +11,8 @@
             <div class="modal-body">
                 <form action="javascript:void(0)" id="edit_driver_form" name="edit_driver_form" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <input name="dlicense_photo" id="dlicense_photo">
-                    <input name="adlicense_photo" id="adlicense_photo">
+                    <input type="hidden" name="dlicense_photo" id="dlicense_photo">
+                    <input type="hidden" name="adlicense_photo" id="adlicense_photo">
                     <!-- Driver's Info -->
                     <div class="col-md" style="display: none">
                         <label for="position">Driver ID</label>
@@ -20,10 +20,23 @@
                     </div>
                     <h5>Driver's Info</h5>
                     <div class="row">
-                        <div class="col-md">
+                        <div class="col-md-4">
                             <label for="dname">Driver Name</label>
                             <input type="text" name="dname" id="dname" class="form-control" placeholder="Driver Name">
                         </div>
+                        <div class="col-md-4">
+                            <label for="adname">Authorized Driver Name</label>
+                            <input type="text" name="adname" id="adname" class="form-control" placeholder="Authorized Driver Name">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="adaddress">Authorized Driver Address</label>
+                            <input type="text" name="adaddress" id="adaddress" class="form-control" placeholder="Authorized Driver Address">
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mt-4"> Driver's Documents</h5>
+                    <p class="text-danger">If the image doesn't change, please reload the page.</p>
+                    <div class="row">
                         <div class="col-md">
                             <label for="driver_license_image">Driver's License</label>
                             <input type="file" name="driver_license_image" class="form-control">
@@ -34,22 +47,6 @@
                         <!-- Display a placeholder image or message -->
                         <p>No driver associated</p>
                         @endif
-                    </div>
-
-                    <!-- Authorized Driver's Info -->
-                    <h5 class="mt-4">Authorized Driver's Info</h5>
-                    <div class="row">
-                        <div class="col-md">
-                            <label for="adname">Authorized Driver Name</label>
-                            <input type="text" name="adname" id="adname" class="form-control" placeholder="Authorized Driver Name">
-                        </div>
-                        <div class="col-md">
-                            <label for="adaddress">Authorized Driver Address</label>
-                            <input type="text" name="adaddress" id="adaddress" class="form-control" placeholder="Authorized Driver Address">
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
                         <div class="col-md">
                             <label for="authorized_driver_license_image">Authorized Driver's License</label>
                             <input type="file" name="authorized_driver_license_image" class="form-control">
@@ -61,6 +58,7 @@
                         <p>No driver associated</p>
                         @endif
                     </div>
+
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

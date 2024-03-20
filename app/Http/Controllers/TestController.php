@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Applicant;
 use App\Models\Appointment;
 use App\Models\Statuses;
@@ -18,29 +19,20 @@ class TestController extends Controller
 {
     public function index()
     {
-        // Get the current month and previous month
-        $currentMonth = date('Y-m');
-        $previousMonth = date('Y-m', strtotime('-1 month'));
-    
-        // Query the total time count of the current month
-        $totalTimeCurrentMonth = Time::whereYear('created_at', '=', date('Y'))
-                                    ->whereMonth('created_at', '=', date('m'))
-                                    ->count();
-    
-        // Query the total time count of the previous month
-        $totalTimePreviousMonth = Time::whereYear('created_at', '=', date('Y', strtotime('-1 month')))
-                                    ->whereMonth('created_at', '=', date('m', strtotime('-1 month')))
-                                    ->count();
-    
-        // Rest of your existing code
-        $applicants = Applicant::all();
-        $appointments = Appointment::withCount('applicants')->get();
-        $totalTimePerDay = Time::selectRaw('DATE(created_at) as date, COUNT(time_in) as total_time_in, COUNT(time_out) as total_time_out')
-                                ->groupByRaw('DATE(created_at)')
-                                ->orderByRaw('DATE(created_at)')
-                                ->get();
-    
-        return view('test', compact('totalTimePerDay', 'applicants', 'appointments', 'totalTimeCurrentMonth', 'totalTimePreviousMonth'));
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owners associated with the authenticated user
+        $owners = Applicant::where('user_id', $user_id)->get();
+
+        // Query the Vehicles
+        $owner_first = $owners->first();
+        $owner_id = $owner_first->id;
+        $vehicles = Vehicle::where('owner_id', $owner_id)->first();
+
+        return view('test', compact('vehicles'));
     }
-    
 }

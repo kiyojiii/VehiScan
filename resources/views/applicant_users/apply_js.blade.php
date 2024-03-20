@@ -513,3 +513,106 @@ $(function() {
         }
     });
 </script>
+<script>
+    document.getElementById('toggleVehicleImagesBtn').addEventListener('click', function() {
+        var imagesDiv = document.getElementById('vehicleImages');
+        if (imagesDiv.style.display === 'none') {
+            imagesDiv.style.display = 'block';
+        } else {
+            imagesDiv.style.display = 'none';
+        }
+    });
+
+    document.getElementById('toggleDriverImagesBtn').addEventListener('click', function() {
+        var imagesDiv = document.getElementById('driverImages');
+        if (imagesDiv.style.display === 'none') {
+            imagesDiv.style.display = 'block';
+        } else {
+            imagesDiv.style.display = 'none';
+        }
+    });
+</script>
+<script>
+    $(document).on('click', '.download-btn', function() {
+        var qrData = $(this).data('qrcode');
+        console.log('QR Data:', qrData); // Check the value of qrData
+        downloadQR(qrData);
+    });
+
+    function downloadQR(qrData) {
+        // Create a hidden link element
+        var link = document.createElement('a');
+
+        // AJAX request to fetch the plate number
+        $.ajax({
+            url: '{{ route("getPlateNumber") }}',
+            method: 'GET',
+            data: {
+                qrData: qrData
+            },
+            success: function(response) {
+                if (response.plateNumber) {
+                    var plateNumber = response.plateNumber;
+                    link.href = '/qrcode/download?qrData=' + qrData;
+                    link.download = plateNumber + '.png'; // Set the filename for the downloaded file
+                    document.body.appendChild(link);
+
+                    // Trigger the click event on the link
+                    link.click();
+                    toastr.options = {
+                        "progressBar": true,
+                        "closeButton": true,
+                        "toastClass": "toastr-success" // Use custom class for error messages
+                    };
+                    toastr.success('QR Code Downloaded Successfully!', {
+                        timeOut: 5000
+                    });
+                } else {
+                    // Show error message using Toastr
+                    toastr.options = {
+                        "progressBar": true,
+                        "closeButton": true,
+                        "toastClass": "toastr-error" // Use custom class for error messages
+                    };
+                    toastr.error('Plate number not found', {
+                        timeOut: 5000
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Show error message using Toastr
+                toastr.options = {
+                    "progressBar": true,
+                    "closeButton": true,
+                    "toastClass": "toastr-error" // Use custom class for error messages
+                };
+                toastr.error('Error fetching plate number', {
+                    timeOut: 5000
+                });
+            }
+        });
+    }
+</script>
+<script>
+    // Pagination AJAX
+    $(document).on('click', '#paginationLinks a', function(event) {
+        event.preventDefault();
+        var url = $(this).attr('href');
+        fetchVehicles(url);
+    });
+
+    // Fetch Vehicles Function
+    function fetchVehicles(url) {
+        $.ajax({
+            url: url,
+            type: 'get',
+            success: function(response) {
+                $('#vehicleContainer').html($(response).find('#vehicleContainer').html());
+                $('#paginationLinks').html($(response).find('#paginationLinks').html());
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>

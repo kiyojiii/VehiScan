@@ -13,6 +13,7 @@ use App\Models\Appointment;
 use App\Models\Applicant;
 use App\Models\Driver;
 use App\Models\Time;
+use App\Models\Violation;
 use App\Models\Statuses;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -108,8 +109,26 @@ class HomeController extends Controller
         // Find the owners associated with the authenticated user
         $owners = Applicant::where('user_id', $user_id)->get();
 
+        // Query the Vehicles
+        $owner_first = $owners->first();
+        $owner_id = $owner_first->id;
+        $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->paginate(4);
+
+        // Check if the owner has at least one active vehicle
+        $hasActiveVehicle = Vehicle::where('owner_id', $owner_id)->where('registration_status', 'active')->exists();
+
+        // Count the total number of vehicles associated with the owner
+        $totalVehicles = Vehicle::where('owner_id', $owner_id)->count();
+
+        // Count the total number of violations associated with the owner
+        $totalViolations = Violation::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+
+        // Calculate the total time in for all vehicles associated with the owner
+        $totalTimeIn = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+        $totalTimeOut = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+
         // Pass the owners data to the view
-        return view('applicant_users.applicant_home', compact('owners'));
+        return view('applicant_users.applicant_home', compact('hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
     }
 
     public function user_apply()
@@ -129,6 +148,66 @@ class HomeController extends Controller
         $owners = Applicant::where('user_id', $user_id)->get();
 
         return view('applicant_users.applicant_apply', compact('drivers', 'vehicles', 'role_status', 'appointments', 'owners'));
+    }
+
+    public function fetchAllApplicantViolation()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owner (applicant) associated with the authenticated user
+        $owner = Applicant::where('user_id', $user_id)->first();
+
+        // Retrieve the owner's ID
+        $owner_id = $owner->id;
+
+        // Query the vehicles owned by the owner
+        $vehicles = Vehicle::where('owner_id', $owner_id)->pluck('id');
+
+        // Query the violations associated with the vehicles owned by the owner
+        $violation = Violation::whereIn('vehicle_id', $vehicles)->get();
+        $output = '';
+        $row = 1; // Initialize the row counter
+        if ($violation->count() > 0) {
+            $output .= '<table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th class="text-center">No.</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Violation</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>';
+
+            foreach ($violation as $rs) {
+                // Find the vehicle associated with the violation
+                $vehicle = Vehicle::find($rs->vehicle_id);
+
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+
+                $output .= '<tr>
+                    <td class="text-center">' . $row++ . '</td>
+                    <td class="text-center">' . $vehiclePlate . '</td>
+                    <td class="text-center">' . $rs->violation . '</td>
+                    <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-success my-5"><i class="bx bx-badge-check"></i> Congratulations, You have no Violations</h1>';
+        }
+    }
+
+    public function user_violation()
+    {
+        return view('applicant_users.violation.index');
     }
 
     public function fetchAllApplicantDetails()
