@@ -20,13 +20,21 @@
     <link href="<?php echo url('theme') ?>/dist/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
     <!-- App js -->
     <script src="<?php echo url('theme') ?>/dist/assets/js/plugin.js"></script>
-
+    <!-- apexcharts -->
+    <script src="<?php echo url('theme') ?>/dist/assets/libs/apexcharts/apexcharts.min.js"></script>
 </head>
 
 <body>
-{{ $vehicles->plate_number }}
+@foreach($allRemarks as $ar)
+    ADADSDAS: {{ $ar }}
+@endforeach
+
+
+    
+</script>
 
 
 
 </body>
+
 </html>

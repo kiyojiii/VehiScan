@@ -26,53 +26,97 @@
   }
 }
 
-var lineChartDatalabelColors = getChartColorsArray("user_dashboard_chart");
-lineChartDatalabelColors &&
-  ((options = {
-    chart: {
-      height: 380,
-      type: "line",
-      zoom: { enabled: !1 },
-      toolbar: { show: !1 },
-    },
-    colors: lineChartDatalabelColors,
-    dataLabels: { enabled: !1 },
-    stroke: { width: [3, 3], curve: "straight" },
-    series: [
-      { name: "Time In", data: [26, 24, 32, 36, 33, 31, 33] },
-      { name: "Time Out", data: [14, 11, 16, 12, 17, 13, 12] },
-    ],
-    title: {
-      text: "Weekly Time Chart",
-      align: "left",
-      style: { fontWeight: "500" },
-    },
-    grid: {
-      row: { colors: ["transparent", "transparent"], opacity: 0.2 },
-      borderColor: "#f1f1f1",
-    },
-    markers: { style: "inverted", size: 6 },
-    xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thurs", "Fri", "Sat", "Sun"],
-      title: { text: "Day" },
-    },
-    yaxis: { title: { text: "Time" }, min: 5, max: 40 },
-    legend: {
-      position: "top",
-      horizontalAlign: "right",
-      floating: !0,
-      offsetY: -25,
-      offsetX: -5,
-    },
-    responsive: [
-      {
-        breakpoint: 600,
-        options: { chart: { toolbar: { show: !1 } }, legend: { show: !1 } },
-      },
-    ],
-  }),
-  (chart = new ApexCharts(
-    document.querySelector("#user_dashboard_chart"),
-    options
-  )).render());
+function getChartColorsArray(e) {
+        if (null !== document.getElementById(e)) {
+            var t = document.getElementById(e).getAttribute("data-colors");
+            if (t)
+                return (t = JSON.parse(t)).map(function(e) {
+                    var t = e.replace(" ", "");
+                    if (-1 === t.indexOf(",")) {
+                        var r = getComputedStyle(document.documentElement).getPropertyValue(
+                            t
+                        );
+                        return r || t;
+                    }
+                    var o = e.split(",");
+                    return 2 != o.length ?
+                        t :
+                        "rgba(" +
+                        getComputedStyle(document.documentElement).getPropertyValue(
+                            o[0]
+                        ) +
+                        "," +
+                        o[1] +
+                        ")";
+                });
+            console.warn("data-colors Attribute not found on:", e);
+        }
+    }
+
+    // column chart
+    var columnChartColors = getChartColorsArray("user_column_chart");
+    if (columnChartColors) {
+        var options = {
+            chart: {
+                height: 350,
+                type: 'bar',
+                toolbar: {
+                    show: false,
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '45%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            series: [{
+                name: 'Time In',
+                data: {!! json_encode($timeInData) !!},
+            }, {
+                name: 'Time Out',
+                data: {!! json_encode($timeOutData) !!},
+            }],
+            colors: columnChartColors,
+            xaxis: {
+              title: {
+                    text: 'Days',
+                    style: {
+                        fontWeight: '500',
+                    },
+                },
+                categories: {!! json_encode($dates) !!},
+            },
+            yaxis: {
+                title: {
+                    text: 'Time Frequency',
+                    style: {
+                        fontWeight: '500',
+                    },
+                }
+            },
+            grid: {
+                borderColor: '#f1f1f1',
+            },
+            fill: {
+                opacity: 1
+            }
+        }
+
+        var chart = new ApexCharts(
+            document.querySelector("#user_column_chart"),
+            options
+        );
+
+        chart.render();
+    }
 </script>

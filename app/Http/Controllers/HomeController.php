@@ -14,8 +14,11 @@ use App\Models\Applicant;
 use App\Models\Driver;
 use App\Models\Time;
 use App\Models\Violation;
+use App\Models\Vehicle_Record;
 use App\Models\Statuses;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Carbon\Carbon;
+use DB;
 
 class HomeController extends Controller
 {
@@ -115,7 +118,13 @@ class HomeController extends Controller
         $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->paginate(4);
 
         // Check if the owner has at least one active vehicle
-        $hasActiveVehicle = Vehicle::where('owner_id', $owner_id)->where('registration_status', 'active')->exists();
+        $hasActiveVehicle = Vehicle::where('owner_id', $owner_id)
+            ->where(function ($query) {
+                $query->where('registration_status', 'Active')
+                    ->orWhere('registration_status', 'Pending');
+            })
+            ->exists();
+
 
         // Count the total number of vehicles associated with the owner
         $totalVehicles = Vehicle::where('owner_id', $owner_id)->count();
@@ -123,12 +132,62 @@ class HomeController extends Controller
         // Count the total number of violations associated with the owner
         $totalViolations = Violation::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
 
+        $all_vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+
+        $active_vehicle = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Active')
+            ->first();
+
+        // Extract vehicle IDs
+        $vehicle_ids = $all_vehicles->pluck('id');
+
         // Calculate the total time in for all vehicles associated with the owner
-        $totalTimeIn = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
-        $totalTimeOut = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+        $totalTimeIn = Time::whereIn('vehicle_id', $vehicle_ids)->whereNotNull('time_in')->count();
+
+        // Calculate the total time out for all vehicles associated with the owner
+        $totalTimeOut = Time::whereIn('vehicle_id', $vehicle_ids)->whereNotNull('time_out')->count();
+
+        $allRemarks = Vehicle_Record::whereIn('vehicle_id', $vehicle_ids)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get(['remarks', 'created_at']);
+
+
+        // Fetch all vehicles associated with the owner
+        $chart_vehicles = Vehicle::whereIn('id', $vehicle_ids)->get();
+
+
+        // Define arrays to store the time data
+        $dates = [];
+        $timeInData = [];
+        $timeOutData = [];
+
+        // Loop through each vehicle
+        foreach ($chart_vehicles as $vehicle) {
+            // Retrieve the times associated with the vehicle
+            $times = Time::select(
+                DB::raw('DATE_FORMAT(time_in, "%a (%b %d, %Y)") as formatted_date'),
+                DB::raw('COUNT(time_in) as count_time_in'),
+                DB::raw('COUNT(time_out) as count_time_out')
+            )
+                ->where('vehicle_id', $vehicle->id)
+                ->groupBy('formatted_date')
+                ->get();
+
+            // Iterate through each time entry and store data
+            foreach ($times as $time) {
+                $dates[] = $time->formatted_date;
+                $timeInData[] = $time->count_time_in;
+                $timeOutData[] = $time->count_time_out;
+            }
+        }
+
+        // Remove duplicate dates
+        $dates = array_unique($dates);
+
 
         // Pass the owners data to the view
-        return view('applicant_users.applicant_home', compact('hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
+        return view('applicant_users.applicant_home', compact('active_vehicle', 'allRemarks', 'dates', 'timeInData', 'timeOutData', 'hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
     }
 
     public function user_apply()
@@ -235,14 +294,19 @@ class HomeController extends Controller
                 <tbody>';
             foreach ($owners as $owner) {
                 $output .= '<tr>
-                    <td class="text-center">Owner</td>
-                    <td class="text-center">' . $owner->first_name . ' ' . $owner->last_name . '</td>
-                    <td class="text-center">' . ($owner->reason ?? 'N/A') . '</td>
-                    <td class="text-center">' . ($owner->approval_status ?? 'N/A') . '</td>
-                    <td class="text-center">
-                        <a href="#" id="' . $owner->id . '" class="text-success mx-1 editIconOwner" onClick="editOwner()"><i class="bi-pencil-square h4"></i></a>
-                    </td>
-                </tr>';
+                        <td class="text-center">Owner</td>
+                        <td class="text-center">' . $owner->first_name . ' ' . $owner->last_name . '</td>
+                        <td class="text-center">' . ($owner->reason ?? 'N/A') . '</td>
+                        <td class="text-center">' . ($owner->approval_status ?? 'N/A') . '</td>
+                        <td class="text-center">';
+                // Check if approval status is 'Approved'
+                if ($owner->approval_status === 'Approved') {
+                    // If approval status is 'Approved', disable the edit button
+                    $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
+                } else {
+                    // If approval status is not 'Approved', enable the edit button
+                    $output .= '<a href="#" id="' . $owner->id . '" class="text-success mx-1 editIconOwner" onClick="editOwner()"><i class="bi-pencil-square h4"></i></a>';
+                }
 
                 if ($owner->vehicle) {
                     $output .= '<tr>
@@ -250,10 +314,15 @@ class HomeController extends Controller
                         <td class="text-center">' . $owner->vehicle->plate_number . '</td>
                         <td class="text-center">' . ($owner->vehicle->reason ?? 'N/A') . '</td>
                         <td class="text-center">' . ($owner->vehicle->approval_status ?? 'N/A') . '</td>
-                        <td class="text-center">
-                            <a href="#" id="' . $owner->vehicle->id . '" class="text-success mx-1 editIconVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>
-                        </td>
-                    </tr>';
+                        <td class="text-center">';
+                    // Check if approval status is 'Approved'
+                    if ($owner->vehicle->approval_status === 'Approved') {
+                        // If approval status is 'Approved', disable the edit button
+                        $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
+                    } else {
+                        // If approval status is not 'Approved', enable the edit button
+                        $output .= '<a href="#" id="' . $owner->vehicle->id . '" class="text-success mx-1 editIconVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>';
+                    }
                 } else {
                     $output .= '<tr>
                         <td class="text-center">Vehicle</td>
@@ -270,10 +339,15 @@ class HomeController extends Controller
                         <td class="text-center">' . $owner->vehicle->driver->driver_name . '</td>
                         <td class="text-center">' . ($owner->vehicle->driver->reason ?? 'N/A') . '</td>
                         <td class="text-center">' . ($owner->vehicle->driver->approval_status ?? 'N/A') . '</td>
-                        <td class="text-center">
-                            <a href="#" id="' . $owner->vehicle->driver->id . '" class="text-success mx-1 editIconDriver" onClick="editDriver()"><i class="bi-pencil-square h4"></i></a>
-                        </td>
-                    </tr>';
+                        <td class="text-center">';
+                    // Check if approval status is 'Approved'
+                    if ($owner->vehicle->driver->approval_status  === 'Approved') {
+                        // If approval status is 'Approved', disable the edit button
+                        $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
+                    } else {
+                        // If approval status is not 'Approved', enable the edit button
+                        $output .= '<a href="#" id="' . $owner->vehicle->driver->id . '" class="text-success mx-1 editIconDriver" onClick="editDriver()"><i class="bi-pencil-square h4"></i></a>';
+                    }
                 } else {
                     $output .= '<tr>
                         <td class="text-center">Driver</td>
@@ -780,5 +854,373 @@ class HomeController extends Controller
                 'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function vehicle_information($id)
+    {
+        // Find the vehicle by its ID
+        $vehicles = Vehicle::find($id);
+
+        // Generate QR code based on the vehicle's code
+        $qrCode = QrCode::format('png')
+            ->size(50)
+            ->errorCorrection('H')
+            ->generate($vehicles->vehicle_code);
+
+        // Convert the binary data to base64
+        $qrCodeBase64 = base64_encode($qrCode);
+
+        return view('applicant_users.vehicle_information.index', compact('qrCodeBase64', 'vehicles'));
+    }
+
+    // insert a new vehicle ajax request
+    public function applicant_add_vehicle(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'owner_id' => '|string|max:255',
+                'driver_id' => '|string|max:255',
+                'owner_address' => 'required|string|max:2048',
+                'plate_number' => 'required|string|max:255',
+                'vehicle_make' => 'required|string|max:255',
+                'year_model' => 'required|string|max:255',
+                'color' => 'required|string|max:255',
+                'body_type' => 'required|string|max:255',
+                'official_receipt_image' => 'required|image|max:2048',
+                'certificate_of_registration_image' => 'required|image|max:2048',
+                'deed_of_sale_image' => 'required|image|max:2048',
+                'authorization_letter_image' => 'required|image|max:2048',
+                'front_photo' => 'required|image|max:2048',
+                'side_photo' => 'required|image|max:2048',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Check if any of the owner's vehicles have a registration status of "Active"
+            $hasActiveVehicle = Vehicle::where('owner_id', $request->owner_id)
+                ->where('registration_status', 'Active')
+                ->exists();
+
+            // If an active vehicle exists, prevent the creation of a new vehicle
+            if ($hasActiveVehicle) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'Cannot add a new vehicle because the owner already has an active vehicle.'
+                ], 400);
+            }
+
+            // Get the currently authenticated user's ID
+            $user_id = auth()->id();
+
+            // Generate unique file names using UUIDs
+            $orifileName = Str::uuid() . '.' . $request->file('official_receipt_image')->getClientOriginalExtension();
+            $crifileName = Str::uuid() . '.' . $request->file('certificate_of_registration_image')->getClientOriginalExtension();
+            $dsifileName = Str::uuid() . '.' . $request->file('deed_of_sale_image')->getClientOriginalExtension();
+            $alifileName = Str::uuid() . '.' . $request->file('authorization_letter_image')->getClientOriginalExtension();
+            $fpfileName = Str::uuid() . '.' . $request->file('front_photo')->getClientOriginalExtension();
+            $spfileName = Str::uuid() . '.' . $request->file('side_photo')->getClientOriginalExtension();
+
+            // Store each file with unique file names
+            $request->file('official_receipt_image')->storeAs('public/images/vehicles/documents', $orifileName);
+            $request->file('certificate_of_registration_image')->storeAs('public/images/vehicles/documents', $crifileName);
+            $request->file('deed_of_sale_image')->storeAs('public/images/vehicles/documents', $dsifileName);
+            $request->file('authorization_letter_image')->storeAs('public/images/vehicles/documents', $alifileName);
+            $request->file('front_photo')->storeAs('public/images/vehicles', $fpfileName);
+            $request->file('side_photo')->storeAs('public/images/vehicles', $spfileName);
+
+            // Generate QR CODE
+            $number = mt_rand(1000000000, 9999999999);
+
+            if ($this->vehicleCodeExists($number)) {
+                $number = mt_rand(1000000000, 999999999);
+            }
+
+            // Set Approval and Reason Default Value
+            $add_approval_status = $request->input('approval_status', 'Pending');
+            $add_reason = $request->input('reason', 'For Approval');
+
+            // Create new vehicle data with user_id and unique file names
+            $vehicleData = [
+                'user_id' => $user_id,
+                'owner_id' => $request->owner_id,
+                'driver_id' => $request->driver_id,
+                'owner_address' => $request->owner_address,
+                'plate_number' => $request->plate_number,
+                'vehicle_make' => $request->vehicle_make,
+                'year_model' => $request->year_model,
+                'color' => $request->color,
+                'body_type' => $request->body_type,
+                'official_receipt_image' => $orifileName,
+                'certificate_of_registration_image' => $crifileName,
+                'deed_of_sale_image' => $dsifileName,
+                'authorization_letter_image' => $alifileName,
+                'front_photo' => $fpfileName,
+                'side_photo' => $spfileName,
+                'approval_status' => $add_approval_status,
+                'reason' => $add_reason,
+                'registration_status' => $request->registration_status,
+                'vehicle_code' => $number,
+            ];
+
+            // Create the vehicle record
+            Vehicle::create($vehicleData);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Vehicle created successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // APPLICANT VEHICLES
+    public function user_vehicles()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owners associated with the authenticated user
+        $owners = Applicant::where('user_id', $user_id)->get();
+
+        // Query the Vehicles
+        $owner_first = $owners->first();
+        $owner_id = $owner_first->id;
+
+        $vehicles = Vehicle::where('owner_id', $owner_id)->first();
+
+        // Count Vehicles
+        $totalVehicles = Vehicle::where('owner_id', $owner_id)->count();
+        // Retrieve the active vehicle
+        $activeVehicle = Vehicle::where('registration_status', 'Active')
+            ->where('owner_id', $owner_id)
+            ->first();
+
+        // Check if an active vehicle exists
+        if ($activeVehicle) {
+            $plateNumber = $activeVehicle->plate_number;
+            $vehicleMake = $activeVehicle->vehicle_make;
+        } else {
+            // If no active vehicle exists, set the values to null or any other default value
+            $plateNumber = null;
+            $vehicleMake = null;
+        }
+
+        return view('applicant_users.vehicles.index', compact('activeVehicle', 'totalVehicles', 'vehicles'));
+    }
+
+    // FETCH APPLICANT VEHICLES
+    public function fetchAllApplicantVehicle()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owners associated with the authenticated user
+        $owners = Applicant::where('user_id', $user_id)->get();
+
+        // Query the Vehicles
+        $owner_first = $owners->first();
+        $owner_id = $owner_first->id;
+
+        $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+        $output = '';
+
+        if ($vehicles->isNotEmpty()) {
+            $output .= '<table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Date Applied</th>
+                    <th>Plate Number</th>
+                    <th>Vehicle Make</th>
+                    <th class="text-center">Vehicle Code</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                    <th class="text-center">QR</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+            foreach ($vehicles as $vehicle) {
+                $driverName = Driver::find($vehicle->driver_id)->driver_name ?? 'N/A';
+                // Variable to keep track of the count
+                $count = 1;
+                $output .= '<tr>
+                <td>' . \Carbon\Carbon::parse($vehicle->created_at)->format('M, d, Y') . '</td>
+                <td>' . $vehicle->plate_number . '</td>
+                <td>' . $vehicle->vehicle_make . '</td>
+                <td class="text-center">' . $vehicle->vehicle_code . ' </td>
+                <td>' . $vehicle->registration_status . '</td>
+                <td class="text-center">
+                    <!-- For example: -->
+                    <a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="viewVehicle()"><i class="bi bi-eye h4"></i></a>
+                    <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>
+                    <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteVehicle"><i class="bi-trash h4"></i></a>
+                    </td>  
+                    <td class="text-center">
+                    <!-- Button to trigger QR code download -->
+                    <button class="btn btn-primary download-btn" data-qrcode="' . $vehicle->vehicle_code . '"><i class="fas fa-download"></i></button>
+                </td>
+            </tr>';
+            }
+
+            $output .= '</tbody></table>';
+        } else {
+            $output = '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        }
+
+        return $output;
+    }
+
+    public function applicant_vehicle_edit(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        return response()->json($vehicle);
+    }
+
+    public function applicant_vehicle_update(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'owner_address' => 'string|max:2048',
+                'plate_number' => 'string|max:255',
+                'vehicle_make' => 'string|max:255',
+                'year_model' => 'string|max:255',
+                'color' => 'string|max:255',
+                'body_type' => 'string|max:255',
+                'official_receipt_image' => 'image|max:2048',
+                'certificate_of_registration_image' => 'image|max:2048',
+                'deed_of_sale_image' => 'image|max:2048',
+                'authorization_letter_image' => 'image|max:2048',
+                'front_photo' => 'image|max:2048',
+                'side_photo' => 'image|max:2048',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the vehicle record
+            $vehicle = Vehicle::find($request->vehicle_id);
+
+            // Process file uploads and update filenames
+            $fileFields = [
+                'front_photo',
+                'side_photo',
+            ];
+
+            $fileFieldDoc = [
+                'official_receipt_image',
+                'certificate_of_registration_image',
+                'deed_of_sale_image',
+                'authorization_letter_image',
+            ];
+
+            foreach ($fileFields as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/images/vehicles', $fileName);
+                    // Delete the old file if it exists
+                    if ($vehicle->$field) {
+                        Storage::delete('public/images/vehicles/' . $vehicle->$field);
+                    }
+                    $vehicle->$field = $fileName;
+                }
+            }
+
+            foreach ($fileFieldDoc as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/images/vehicles/documents', $fileName);
+                    // Delete the old file if it exists
+                    if ($vehicle->$field) {
+                        Storage::delete('public/images/vehicles/documents/' . $vehicle->$field);
+                    }
+                    $vehicle->$field = $fileName;
+                }
+            }
+
+            // Set Approval and Reason Default Value
+            $approval_status = $request->input('approval_status', 'Pending');
+            $reason = $request->input('reason', 'Vehicle Update Request');
+            $registration_status = $request->input('registration_status', 'Pending');
+
+            // Update vehicle data
+            $vehicle->update([
+                'driver_id' => $request->driver_id,
+                'owner_address' => $request->owner_address,
+                'plate_number' => $request->plate_number,
+                'vehicle_make' => $request->vehicle_make,
+                'year_model' => $request->year_model,
+                'color' => $request->color,
+                'body_type' => $request->body_type,
+                'approval_status' => $approval_status,
+                'reason' => $reason,
+                'registration_status' => $registration_status,
+            ]);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Vehicle Updated Successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function applicant_vehicle_delete(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+
+        // Change registration_status to Inactive
+        $vehicle->registration_status = 'Inactive';
+        $vehicle->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicle registration status changed to Inactive'
+        ]);
+    }
+
+    public function applicant_vehicle_view(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        return response()->json($vehicle);
     }
 }

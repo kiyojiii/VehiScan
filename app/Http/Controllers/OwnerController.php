@@ -562,44 +562,14 @@ class OwnerController extends Controller
                 'message' => 'Vehicle not found'
             ], 404);
         }
-
-        // Delete vehicle license image
-        if ($vehicle->official_receipt_image) {
-            Storage::delete('public/images/vehicles/documents/' . $vehicle->official_receipt_image);
-        }
-
-        // Delete vehicle license image
-        if ($vehicle->certificate_of_registration_image) {
-            Storage::delete('public/images/vehicles/documents/' . $vehicle->certificate_of_registration_image);
-        }
-
-        // Delete vehicle license image
-        if ($vehicle->deed_of_sale_image) {
-            Storage::delete('public/images/vehicles/documents/' . $vehicle->deed_of_sale_image);
-        }
-
-        // Delete vehicle license image
-        if ($vehicle->authorization_letter_image) {
-            Storage::delete('public/images/vehicles/documents/' . $vehicle->authorization_letter_image);
-        }
-
-        // Delete vehicle license image
-        if ($vehicle->front_photo) {
-            Storage::delete('public/images/vehicles/' . $vehicle->front_photo);
-        }
-
-        // Delete vehicle license image
-        if ($vehicle->side_photo) {
-            Storage::delete('public/images/vehicles/' . $vehicle->side_photo);
-        }
-
-
-        // Now delete the vehicle record
-        $vehicle->delete();
-
+    
+        // Change registration_status to Inactive
+        $vehicle->registration_status = 'Inactive';
+        $vehicle->save();
+    
         return response()->json([
             'status' => 'success',
-            'message' => 'Vehicle deleted successfully'
+            'message' => 'Vehicle registration status changed to Inactive'
         ]);
     }
 

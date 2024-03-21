@@ -41,14 +41,32 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+#APPLICANT PROFILE
 Route::get('/user-profile', [HomeController::class, 'user_profile'])->name('applicant_users.user_profile');
+
+#APPLICANT HOME DASHBOARD
 Route::get('/applicant-dashboard', [HomeController::class, 'user_index'])->name('applicant_users.applicant_home');
+
+#APPLICANT VIOLATION
 Route::get('/applicant-violation', [HomeController::class, 'user_violation'])->name('applicant_users.applicant_violation');
 Route::get('/fetchAllApplicantViolation', [HomeController::class, 'fetchAllApplicantViolation'])->name('fetchAllApplicantViolation');
+Route::post('applicant/vehicles/store', [HomeController::class, 'applicant_add_vehicle'])->name('applicant_users.store');
+
+#APPLICANT VEHICLES
+Route::get('/applicant-vehicles', [HomeController::class, 'user_vehicles'])->name('applicant_users.applicant_vehicle');
+Route::get('/fetchAllApplicantVehicle', [HomeController::class, 'fetchAllApplicantVehicle'])->name('fetchAllApplicantVehicle');
+Route::get('applicant/vehicles/edit', [HomeController::class, 'applicant_vehicle_edit'])->name('applicant_vehicle.edit');
+Route::post('applicant/vehicles/update', [HomeController::class, 'applicant_vehicle_update'])->name('applicant_vehicle.update');
+Route::delete('applicant/vehicles/delete', [HomeController::class, 'applicant_vehicle_delete'])->name('applicant_vehicle.delete');
+Route::get('applicant/vehicles/view', [HomeController::class, 'applicant_vehicle_view'])->name('applicant_vehicle.view');
 
 #APPLICANT APPLY APPLICATION
 Route::get('/applicant-apply', [HomeController::class, 'user_apply'])->name('applicant_users.applicant_apply');
 Route::get('/fetchAllApplicantDetails', [HomeController::class, 'fetchAllApplicantDetails'])->name('fetchAllApplicantDetails');
+
+#APPLICANT VEHICLE INFORMATION
+Route::get('applicant/vehicle_information/{id}', [HomeController::class, 'vehicle_information'])->name('applicant_users.vehicle_information');
 
 #APPLICANT APPLICATION
 Route::post('applicant-apply/store', [HomeController::class, 'store'])->name('applicant.store');
@@ -98,7 +116,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('owners/delete', [OwnerController::class, 'delete'])->name('owners.delete');
     Route::get('owners/show/{id}', [OwnerController::class, 'show'])->name('owners.show');
     Route::get('/fetchAllOwnerVehicle', [OwnerController::class, 'fetchAllOwnerVehicle'])->name('fetchAllOwnerVehicle');
-    Route::get('vehicle_information/{id}', [OwnerController::class, 'vehicle_information'])->name('owners.vehicle_information');
+    Route::get('owners/vehicle_information/{id}', [OwnerController::class, 'vehicle_information'])->name('owners.vehicle_information');
 
     #VEHICLE
     Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');

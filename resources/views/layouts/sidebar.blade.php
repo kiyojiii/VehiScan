@@ -24,6 +24,14 @@
                 </li>
 
                 <li class="menu-title" key="t-apps">Data</li>
+                <li>
+                   
+                    <a href="{{ route('time.test') }}" class="waves-effect">
+                        <i class="fas fa-tasks"></i>
+                        <span key="t-guests">Record Vehicle Time</span>
+                    </a>
+        
+                </li>
 
                 <li>
                     @canany(['create-applicant', 'edit-applicant', 'delete-applicant', 'view-applicant'])
@@ -42,9 +50,6 @@
                     </ul>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('applicants.index-partner') }}" key="t-blog-list">Manage Partner/Supplier Applicants</a></li>
-                    </ul>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('applicants.rejected-partner') }}" key="t-blog-list">Rejected Partner/Supplier Applicants</a></li>
                     </ul>
                 </li>
 
@@ -94,9 +99,6 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('time.index') }}" key="t-blog-list">Manage Time</a></li>
-                    </ul>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('time.test') }}" key="t-blog-list">Record Vehicle Time</a></li>
                     </ul>
                     @endcanany
                 </li>

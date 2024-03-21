@@ -7,7 +7,7 @@
             const fd = new FormData(this);
             $("#add_vehicle_btn").text('Adding...');
             $.ajax({
-                url: '{{ route('vehicles.store') }}',
+                url: '{{ route('applicant_users.store') }}',
                 method: 'post',
                 data: fd,
                 cache: false,
@@ -72,21 +72,23 @@
                             _token: csrf
                         },
                         success: function(response) {
-                            if (response.status === 'success') {
-                                fetchVehicles();
-                                Swal.fire(
-                                    'Deleted!',
-                                    'Vehicle is now Inactive',
-                                    'success'
-                                );
-                                fetchAllVehicles();
-                            } else {
-                                Swal.fire(
-                                    'Error!',
-                                    response.message,
-                                    'error'
-                                );
-                            }
+                        if (response.status === 'success') {
+                            fetchVehicles();
+                            Swal.fire(
+                                'Deleted!',
+                                'Vehicle is now Inactive',
+                                'success'
+                            ).then(function() {
+                                // Reload the page
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
                         },
                         error: function(xhr, status, error) {
                             Swal.fire(

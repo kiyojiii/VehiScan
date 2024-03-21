@@ -17,6 +17,14 @@
                 </li>
 
                 <li>
+                    <a href="{{ route('applicant_users.applicant_vehicle') }}" class="waves-effect">
+                        <i class="fas fa-car"></i>
+                        <span key="t-dashboards">Vehicles</span>
+                    </a>
+                </li>
+
+
+                <li>
                     <a href="{{ route('applicant_users.applicant_violation') }}" class="waves-effect">
                         <i class="fas fa-exclamation-circle"></i>
                         <span key="t-dashboards">Violations</span>
@@ -31,8 +39,8 @@
                 </li>
 
                 <li>
-                    <a href="{{ url('/') }}" class="waves-effect">
-                        <i class='fas fa-chart-bar'></i>
+                    <a href="{{ route('applicant_users.applicant_apply') }}" class="waves-effect">
+                        <i class='fas fa-receipt'></i>
                         <span key="t-guests">Application </span>
                     </a>
                 </li>

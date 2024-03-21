@@ -54,7 +54,7 @@
 
                                         <div class="text-primary p-3">
                                             <h5 class="text-primary">Welcome Back !</h5>
-                                            <p>It will seem like simplified</p>
+                                            <p>You are an Applicant</p>
                                         </div>
                                     </div>
                                     <div class="col-5 align-self-end">
@@ -99,8 +99,6 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title mb-4">Personal Information</h4>
-
-                                <p class="text-muted mb-4">Hi I'm {{ $owners->first_name }} {{ $owners->middle_initial }}. {{ $owners->last_name }},has been the industry's standard dummy text To an English person, it will seem like simplified English, as a skeptical Cambridge.</p>
                                 <div class="table-responsive">
                                     <table class="table mb-0">
                                         <tbody>
@@ -196,13 +194,28 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <div>
-                                                        <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark"></a></h5>
-                                                        <span class="text-primary">2013 - 16</span>
+                                                        @foreach($allRemarks as $ar)
+                                                        @php
+                                                        $remarks = str_contains($ar->remarks, 'at') ? strstr($ar->remarks, 'at', true) : $ar->remarks;
+                                                        $badgeClass = str_contains($ar->remarks, 'Timed In') ? 'bg-success' : (str_contains($ar->remarks, 'Timed Out') ? 'bg-danger' : '');
+                                                        @endphp
+                                                        <div class="d-flex justify-content-start align-items-center">
+
+                                                            <div>
+                                                                <h5 class="font-size-15">
+                                                                    @if (!empty($badgeClass))
+                                                                    <span class="badge {{ $badgeClass }} rounded-circle" style="width: 10px; height: 10px; display: inline-flex; justify-content: center; align-items: center;"></span> &nbsp;&nbsp;&nbsp; <a href="javascript: void(0);" class="text-dark">{{ $remarks }}</a>
+                                                                    @endif
+                                                                </h5>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-primary">{{ \Carbon\Carbon::parse($ar->created_at)->format('M, d, Y') }}</span>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        @endforeach
                                                     </div>
                                                 </div>
                                             </div>
                                         </li>
-
                                     </ul>
                                 </div>
                             </div>
@@ -258,14 +271,18 @@
                                     <div class="card-body">
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
-                                                <p class="text-muted fw-medium mb-2">Total Revenue</p>
-                                                <h4 class="mb-0">?</h4>
+                                                <p class="text-muted fw-medium mb-2">Active Vehicle</p>
+                                                @if ($active_vehicle)
+                                                <h4 class="mb-0">{{ $active_vehicle->plate_number }}</h4>
+                                                @else
+                                                <h4 class="mb-0 text-danger">None</h4>
+                                                @endif
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
                                                 <div class="avatar-sm mini-stat-icon rounded-circle bg-primary">
                                                     <span class="avatar-title">
-                                                        <i class="bx bx-package font-size-24"></i>
+                                                        <i class="bx bx-check-double font-size-24"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -276,8 +293,8 @@
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title mb-4">Time Chart</h4>
-                                <div id="user_dashboard_chart" data-colors='["--bs-primary", "--bs-success"]' class="apex-charts" dir="ltr"></div>
+                                <h4 class="card-title mb-4">Time Count per Day</h4>
+                                <div id="user_column_chart" data-colors='["--bs-success","--bs-primary", "--bs-danger"]' class="apex-charts" dir="ltr"></div>
                             </div>
                             @include('applicant_users.chart_js')
                         </div>
@@ -286,17 +303,23 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-4">My Vehicles</h4>
-                                    <a id="addVehicleBtn" class="btn btn-sm btn-primary my-2" href="javascript:void(0)" @if($hasActiveVehicle) disabled @endif onClick="showAlert()">
+                                    @if($hasActiveVehicle)
+                                    <a id="addVehicleBtn" class="btn btn-sm btn-primary my-2" href="javascript:void(0)" onClick="showAlert()">
                                         <i class="bi bi-plus-circle"></i> Add Vehicle
                                     </a>
+                                    @else
+                                    <a id="addVehicleBtn" class="btn btn-sm btn-primary my-2" href="javascript:void(0)" onClick="addVehicle()">
+                                        <i class="bi bi-plus-circle"></i> Add Vehicle
+                                    </a>
+                                    @endif
                                 </div>
 
                                 <script>
                                     function showAlert() {
                                         // Show SweetAlert message
                                         Swal.fire({
-                                            title: 'Alert',
-                                            text: 'You still have an active vehicle',
+                                            title: 'Active or Pending Vehicle Exists',
+                                            text: 'Please Deactivate the Active Vehicle First, You can only have one Active Vehicle',
                                             icon: 'warning'
                                         });
                                     }
@@ -309,8 +332,9 @@
                                 </div>
 
                                 <!-- Pagination Links -->
+                                <!-- Pagination Links -->
                                 <div class="row justify-content-center" id="paginationLinks">
-
+                                    {!! $vehicles->links() !!}
                                 </div>
                             </div>
                         </div>
@@ -407,8 +431,8 @@
     </div>
     <!-- end main content-->
 
-    @include('owners.owner_show_js')
-    @include('owners.owner_show_modals')
+    @include('applicant_users.applicant_users_js')
+    @include('applicant_users.applicant_users_modals')
 
 </body>
 

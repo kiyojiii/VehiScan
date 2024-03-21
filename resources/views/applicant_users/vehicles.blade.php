@@ -24,12 +24,12 @@
                 </li>
                 <li>
                     <strong scope="row">Approval Status</strong>
-                    @if($owners->vehicle)
-                    @if($owners->vehicle->approval_status == 'Approved')
-                    <strong><span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span></strong>
-                    @elseif($owners->vehicle->approval_status == 'Rejected')
+                    @if($vehicle)
+                    @if($vehicle->approval_status == 'Approved')
+                    <strong><span class="badge badge-soft-success">Approved</span></strong>
+                    @elseif($vehicle->approval_status == 'Rejected')
                     <strong><span class="badge badge-soft-danger">Rejected</span></strong>
-                    @elseif($owners->vehicle->approval_status == 'Pending')
+                    @elseif($vehicle->approval_status == 'Pending')
                     <strong><span class="badge badge-soft-warning">Pending</span></strong>
                     @else
                     <strong><span class="badge badge-soft-secondary">Unknown</span></strong>
@@ -50,7 +50,7 @@
                 </li>
                 <li>
                     <strong>Reason(If Rejected):</strong>
-                    <span>{{ $owners->vehicle->reason ?? 'N/A' }}</span>
+                    <span>{{ $vehicle->reason ?? 'N/A' }}</span>
                 </li>
             </ul>
             <div class="mt-3 hstack gap-2">
@@ -59,8 +59,12 @@
                 <span class="badge rounded-1 badge-soft-info">{{ $vehicle->body_type ?? 'N/A' }}</span>
             </div>
             <div class="mt-4 hstack gap-2">
-                <a href="{{ route('owners.vehicle_information', $vehicle->id) }}" class="btn btn-soft-success w-100">View Vehicle</a>
-                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle">Delete Vehicle</a>
+                <a href="{{ route('applicant_users.vehicle_information', $vehicle->id) }}" class="btn btn-soft-success w-100">View Vehicle</a>
+                @if($vehicle->registration_status === 'Active')
+                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle">Deactivate</a>
+                @else
+                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle disabled-link">Inactive</a>
+                @endif
             </div>
         </div>
     </div>
@@ -70,3 +74,10 @@
     <p>No vehicles found.</p>
 </div>
 @endforelse
+<style>
+    .disabled-link {
+    color: #6c757d;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+</style>
