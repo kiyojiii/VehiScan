@@ -185,7 +185,6 @@ $("#edit_vehicle_form").submit(function(e) {
     });
 });
 
-
     });
 </script>
 <script>

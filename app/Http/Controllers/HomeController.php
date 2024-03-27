@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Vehicle;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use App\Models\Appointment;
 use App\Models\Applicant;
 use App\Models\Driver;
@@ -41,6 +42,12 @@ class HomeController extends Controller
     {
         // Retrieve the authenticated user
         $user = Auth::user();
+
+        // Check if the user has the "applicant" role
+        if ($user->hasRole('Applicant')) {
+            return redirect()->route('applicant_users.applicant_home');
+        }
+
         // Count Specific Tables
         $totalVehicles = Vehicle::count();
         $totalOwners = Applicant::count();
@@ -94,11 +101,33 @@ class HomeController extends Controller
         // Retrieve the authenticated user
         $user = Auth::user();
 
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
         // Find the owners associated with the authenticated user
         $owners = Applicant::where('user_id', $user->id)->get();
 
+        // Find the owners associated with the authenticated user
+        $applicants = Applicant::where('user_id', $user_id)->get();
+
+        // Extract appointment IDs from the retrieved applicants
+        $appointmentIds = $applicants->pluck('appointment_id');
+
+        $appointment = Appointment::where('id', $appointmentIds)->get();
+
+
+        // Check Only Super Admin can update his own Profile
+        if ($user->hasRole('Super Admin')) {
+            if ($user->id != auth()->user()->id) {
+                abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
+            }
+        }
+
         // Pass the owners data to the view
-        return view('applicant_users.user_profile', compact('user', 'owners'));
+        return view('applicant_users.user_profile', compact('appointment', 'user', 'owners'), [
+            'roles' => Role::pluck('name')->all(),
+            'userRoles' => $user->roles->pluck('name')->all()
+        ]);
     }
 
     public function user_index()
@@ -125,14 +154,16 @@ class HomeController extends Controller
             })
             ->exists();
 
-
         // Count the total number of vehicles associated with the owner
         $totalVehicles = Vehicle::where('owner_id', $owner_id)->count();
 
-        // Count the total number of violations associated with the owner
-        $totalViolations = Violation::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
-
         $all_vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+
+        // Retrieve the vehicle IDs associated with the owner
+        $vehicleIds = $all_vehicles->pluck('id');
+
+        // Query violations where the vehicle_id and owner_id match
+        $totalViolations = Violation::whereIn('vehicle_id', $vehicleIds)->count();
 
         $active_vehicle = Vehicle::where('owner_id', $owner_id)
             ->where('registration_status', 'Active')
@@ -166,7 +197,7 @@ class HomeController extends Controller
         foreach ($chart_vehicles as $vehicle) {
             // Retrieve the times associated with the vehicle
             $times = Time::select(
-                DB::raw('DATE_FORMAT(time_in, "%a (%b %d, %Y)") as formatted_date'),
+                DB::raw('DATE_FORMAT(time_in, "%a") as formatted_date'),
                 DB::raw('COUNT(time_in) as count_time_in'),
                 DB::raw('COUNT(time_out) as count_time_out')
             )
@@ -187,7 +218,7 @@ class HomeController extends Controller
 
 
         // Pass the owners data to the view
-        return view('applicant_users.applicant_home', compact('active_vehicle', 'allRemarks', 'dates', 'timeInData', 'timeOutData', 'hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
+        return view('applicant_users.applicant_home', compact('vehicleIds', 'active_vehicle', 'allRemarks', 'dates', 'timeInData', 'timeOutData', 'hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
     }
 
     public function user_apply()
@@ -238,7 +269,6 @@ class HomeController extends Controller
                 <th class="text-center">Vehicle</th>
                 <th class="text-center">Violation</th>
                 <th class="text-center">Date</th>
-                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>';
@@ -882,7 +912,7 @@ class HomeController extends Controller
                 'owner_id' => '|string|max:255',
                 'driver_id' => '|string|max:255',
                 'owner_address' => 'required|string|max:2048',
-                'plate_number' => 'required|string|max:255',
+                'plate_number' => 'required|string|max:255|unique:vehicles,plate_number',
                 'vehicle_make' => 'required|string|max:255',
                 'year_model' => 'required|string|max:255',
                 'color' => 'required|string|max:255',
@@ -1222,5 +1252,212 @@ class HomeController extends Controller
         $id = $request->id;
         $vehicle = Vehicle::find($id);
         return response()->json($vehicle);
+    }
+
+    # APPLICANT ANALYTICS
+    public function applicant_analytics(Request $request)
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owners associated with the authenticated user
+        $owners = Applicant::where('user_id', $user_id)->get();
+
+        // Query the Vehicles
+        $owner_first = $owners->first();
+        $owner_id = $owner_first->id;
+        $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+
+        // Initialize arrays to store the counts
+        $timeCounts = [];
+        $combinedCounts = [];
+
+        // Loop through each vehicle
+        foreach ($vehicles as $vehicle) {
+            // Query the time_in and time_out counts per month for the current vehicle
+            $timeCounts[$vehicle->id] = Time::selectRaw('MONTH(created_at) as month, COUNT(time_in) as time_in_count, COUNT(time_out) as time_out_count')
+                ->where('vehicle_id', $vehicle->id)
+                ->groupByRaw('MONTH(created_at)')
+                ->get();
+
+            // Combine the counts for each month
+            foreach ($timeCounts[$vehicle->id] as $time) {
+                $month = \Carbon\Carbon::createFromDate(null, $time->month, 1)->format('F');
+                if (!isset($combinedCounts[$month])) {
+                    $combinedCounts[$month] = (object)['time_in_count' => 0, 'time_out_count' => 0];
+                }
+                $combinedCounts[$month]->time_in_count += $time->time_in_count;
+                $combinedCounts[$month]->time_out_count += $time->time_out_count;
+            }
+        }
+
+        // Prepare data for JavaScript chart
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $timeInCounts = array_fill(0, 12, 0);
+        $timeOutCounts = array_fill(0, 12, 0);
+
+        foreach ($combinedCounts as $month => $count) {
+            $index = array_search($month, $months);
+            if ($index !== false) {
+                $timeInCounts[$index] += $count->time_in_count;
+                $timeOutCounts[$index] += $count->time_out_count;
+            }
+        }
+
+        $timeInData = implode(', ', $timeInCounts);
+        $timeOutData = implode(', ', $timeOutCounts);
+
+        // Initialize array to store time differences
+        $timeDifferences = [];
+
+        // Loop through each vehicle
+        foreach ($vehicles as $vehicle) {
+            // Query the time_in and time_out for the current vehicle
+            $times = Time::where('vehicle_id', $vehicle->id)
+                ->orderBy('created_at')
+                ->get();
+
+            // Initialize variables to track time for each day
+            $currentDate = null;
+            $totalDifference = 0;
+
+            foreach ($times as $time) {
+                // Calculate time difference in hours if both time_in and time_out are available
+                if ($time->time_in && $time->time_out) {
+                    $timeIn = Carbon::parse($time->time_in);
+                    $timeOut = Carbon::parse($time->time_out);
+                    $difference = $timeOut->diffInHours($timeIn);
+
+                    // If it's a new day, store the total difference for the previous day (if any)
+                    if ($time->created_at->format('Y-m-d') !== $currentDate) {
+                        if ($currentDate) {
+                            $timeDifferences[] = [
+                                'date' => Carbon::parse($currentDate)->format('F d, Y'),
+                                'difference' => $totalDifference,
+                            ];
+                        }
+                        // Reset for the new day
+                        $currentDate = $time->created_at->format('Y-m-d');
+                        $totalDifference = 0;
+                    }
+
+                    // Add the difference to the total for the current day
+                    $totalDifference += $difference;
+                }
+            }
+
+            // Store the total difference for the last day (if any)
+            if ($currentDate) {
+                $timeDifferences[] = [
+                    'date' => Carbon::parse($currentDate)->format('F d, Y'),
+                    'difference' => $totalDifference,
+                ];
+            }
+        }
+
+        // Sort the time differences by date
+        usort($timeDifferences, function ($a, $b) {
+            return strtotime($a['date']) - strtotime($b['date']);
+        });
+
+        // Limit the time differences to the most recent 7 dates
+        $timeDifferences = array_slice($timeDifferences, -7);
+
+        // Extract dates and differences for the chart
+        $dates = [];
+        $differences = [];
+        foreach ($timeDifferences as $entry) {
+            $dates[] = $entry['date'];
+            $differences[] = $entry['difference'];
+        }
+
+        // Initialize an array to store formatted dates
+        $formattedDates = [];
+
+        // Loop through each date and format it
+        foreach ($dates as $date) {
+            // Use Carbon to parse the date and format it as desired
+            $formattedDate = \Carbon\Carbon::parse($date)->isoFormat('MMM D');
+
+            // Add the formatted date to the array
+            $formattedDates[] = $formattedDate;
+        }
+
+
+        return view('applicant_users.analytics.index', compact('formattedDates', 'dates', 'differences', 'vehicles', 'timeInData', 'timeOutData'));
+    }
+
+    public function fetchAllApplicantTime()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owner (applicant) associated with the authenticated user
+        $owner = Applicant::where('user_id', $user_id)->first();
+
+        // Retrieve the owner's ID
+        $owner_id = $owner->id;
+
+        // Query the vehicles owned by the owner
+        $vehicles = Vehicle::where('owner_id', $owner_id)->pluck('id');
+
+        // Query the violations associated with the vehicles owned by the owner
+        $times = Time::whereIn('vehicle_id', $vehicles)->get();
+        $output = '';
+        $row = 1; // Initialize the row counter
+        if ($times->count() > 0) {
+            $output .= '<table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th class="text-center">No.</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Time In</th>
+                <th class="text-center">Time Out</th>
+                <th class="text-center">Time Difference</th>
+              </tr>
+            </thead>
+            <tbody>';
+            foreach ($times as $time) {
+                // Find the vehicle associated with the owner
+                $vehicle = Vehicle::find($time->vehicle_id);
+
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+
+                $current_time_out = $time->time_out ? date('F d, Y \a\t h:i A', strtotime($time->time_out)) : 'Not Yet Out';
+
+                // Convert time_in and time_out to Unix timestamps
+                $time_out = $time->time_out ? date('F d, Y \a\t h:i A', strtotime($time->time_out)) : 'Not Yet Out';
+                $time_in = strtotime($time->time_in);
+                $time_out = $time->time_out ? strtotime($time->time_out) : time(); // If time_out is null, use current time
+
+                // Calculate the time difference in seconds
+                $time_difference = $time_out - $time_in;
+
+                // Convert time difference to days, hours, and minutes
+                $days = floor($time_difference / (60 * 60 * 24));
+                $hours = floor(($time_difference % (60 * 60 * 24)) / (60 * 60));
+                $minutes = floor(($time_difference % (60 * 60)) / 60);
+
+                $output .= '<tr>
+                    <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
+                    <td class="text-center">' . $time->vehicle_id . '</td>
+                    <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($time->time_in)) . '</td>
+                    <td class="text-center">' . $current_time_out . '</td>
+                    <td class="text-center">' . $days . ' days, ' . $hours . ' hours, ' . $minutes . ' minutes</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output .= '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        }
+
+        return $output;
     }
 }

@@ -17,14 +17,35 @@
 
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="22"> //LOGO
+                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="30"> 
                     </span>
                     <span class="logo-lg">
-                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="19"> //LOGO
+                        <img src="<?php echo url('images') ?>/mvis_logo.png" alt="" height="70"> 
                     </span>
                 </a>
             </div>
+
+            <button type="button" class="btn btn-sm px-3 font-size-16 header-item waves-effect" id="vertical-menu-btn">
+                <i class="fa fa-fw fa-bars"></i>
+            </button>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                const verticalMenuBtn = document.getElementById("vertical-menu-btn");
+                const body = document.querySelector("body");
+
+                verticalMenuBtn.addEventListener("click", function() {
+                    if (window.innerWidth <= 985 && window.innerHeight <= 607) {
+                        body.classList.toggle("sidebar-enable");
+                    } else {
+                        body.classList.toggle("vertical-collpsed");
+                    }
+                });
+            });
+            </script>
+
         </div>
+
 
         <div class="d-flex">
             <div class="dropdown d-none d-lg-inline-block ms-1">
@@ -128,7 +149,7 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
+                    <a class="dropdown-item" href="{{ route('applicant_users.user_profile') }}"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
                     <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet">My Wallet</span></a>
                     <a class="dropdown-item d-block" href="#"><span class="badge bg-success float-end">11</span><i class="bx bx-wrench font-size-16 align-middle me-1"></i> <span key="t-settings">Settings</span></a>
                     <a class="dropdown-item" href="#"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span key="t-lock-screen">Lock screen</span></a>
@@ -140,12 +161,12 @@
 
                 </div>
             </div>
-
+            <!-- 
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
                     <i class="bx bx-cog bx-spin"></i>
                 </button>
-            </div>
+            </div> -->
 
         </div>
     </div>

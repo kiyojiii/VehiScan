@@ -231,7 +231,8 @@ class UserController extends Controller
             $photo->move(public_path('images/photos/'), $photoName);
         }
 
-        return redirect()->route('users.index')->withSuccess('User is updated successfully.');
+        // Optionally, you can add a success message to be displayed on the page
+        return back()->withSuccess('Updated successfully.');
     }
 
     /**

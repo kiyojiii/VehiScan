@@ -13,6 +13,20 @@
 
 <body>
 
+        <!-- Loader -->
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner-chase">
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                </div>
+            </div>
+        </div>
+        
     @extends('layouts.app2')
 
     @section('content')
@@ -32,8 +46,7 @@
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Violation</a></li>
-                                    <li class="breadcrumb-item active">Violation List</li>
+                                    <li class="breadcrumb-item active">User Violations</li>
                                 </ol>
                             </div>
 
@@ -59,24 +72,6 @@
 
                 </div><!--end row-->
 
-                <script>
-                           // fetch all violation ajax request
-        fetchAllViolations();
-
-function fetchAllViolations() {
-    $.ajax({
-        url: '{{ route('fetchAllApplicantViolation') }}',
-        method: 'get',
-        success: function(response) {
-            $("#show_all_applicant_violations").html(response);
-            $("table").DataTable({
-                order:[0, 'desc']
-            });
-        }
-    });
-}
-                </script>
-
             </div> <!-- container-fluid -->
         </div><!-- End Page-content -->
 
@@ -85,7 +80,7 @@ function fetchAllViolations() {
 
     </div>
     <!-- END layout-wrapper -->
-
+    @include('applicant_users.violation.violation_js')
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 

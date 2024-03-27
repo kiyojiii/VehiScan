@@ -25,14 +25,12 @@
 </head>
 
 <body>
-@foreach($allRemarks as $ar)
-    ADADSDAS: {{ $ar }}
-@endforeach
-
-
-    
-</script>
-
+<h1>Time Differences</h1>
+    <ul>
+        @foreach ($timeDifferences as $timeDifference)
+            <li>{{ $timeDifference['date'] }} - {{ $timeDifference['difference'] }}</li>
+        @endforeach
+    </ul>
 
 
 </body>

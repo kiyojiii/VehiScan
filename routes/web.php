@@ -61,6 +61,10 @@ Route::post('applicant/vehicles/update', [HomeController::class, 'applicant_vehi
 Route::delete('applicant/vehicles/delete', [HomeController::class, 'applicant_vehicle_delete'])->name('applicant_vehicle.delete');
 Route::get('applicant/vehicles/view', [HomeController::class, 'applicant_vehicle_view'])->name('applicant_vehicle.view');
 
+#APPLICANT GRAPH
+Route::get('/applicant-analytics', [HomeController::class, 'applicant_analytics'])->name('applicant_users.applicant_analytics');
+Route::get('/fetchAllApplicantTime', [HomeController::class, 'fetchAllApplicantTime'])->name('fetchAllApplicantTime');
+
 #APPLICANT APPLY APPLICATION
 Route::get('/applicant-apply', [HomeController::class, 'user_apply'])->name('applicant_users.applicant_apply');
 Route::get('/fetchAllApplicantDetails', [HomeController::class, 'fetchAllApplicantDetails'])->name('fetchAllApplicantDetails');

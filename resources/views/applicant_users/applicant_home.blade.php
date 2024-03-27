@@ -17,6 +17,20 @@
 
 <body>
 
+        <!-- Loader -->
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner-chase">
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                </div>
+            </div>
+        </div>
+        
     @extends('layouts.app2')
 
     @section('content')
@@ -57,9 +71,9 @@
                                             <p>You are an Applicant</p>
                                         </div>
                                     </div>
-                                    <div class="col-5 align-self-end">
+                                    <!-- <div class="col-5 align-self-end">
                                         <img src="assets/images/profile-img.png" alt="" class="img-fluid">
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="card-body pt-0">
@@ -207,7 +221,7 @@
                                                                     <span class="badge {{ $badgeClass }} rounded-circle" style="width: 10px; height: 10px; display: inline-flex; justify-content: center; align-items: center;"></span> &nbsp;&nbsp;&nbsp; <a href="javascript: void(0);" class="text-dark">{{ $remarks }}</a>
                                                                     @endif
                                                                 </h5>
-                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-primary">{{ \Carbon\Carbon::parse($ar->created_at)->format('M, d, Y') }}</span>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-primary">{{ \Carbon\Carbon::parse($ar->created_at)->format('M, d, Y \a\t h:i A') }}</span>
                                                             </div>
                                                         </div>
                                                         <br>

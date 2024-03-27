@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users | List</title>
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
         .user-photo-container {
@@ -67,7 +71,7 @@
                 <!-- end page title -->
 
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12">http://127.0.0.1:8000/
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
@@ -79,7 +83,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="card-body">
                                 <div class="table-responsive">

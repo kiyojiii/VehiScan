@@ -189,45 +189,28 @@
                     </div><!--end col-->
                     <div class="col-xl-7">
                         <div class="card">
+                            @if($vehicles)
+                            @if($vehicles->approval_status == 'Approved' && $vehicles->registration_status == 'Active')
                             <div class="card-body border-bottom">
                                 <div class="d-flex">
-                                    <!-- Assuming $qrCodeBase64 contains the base64-encoded image data -->
-                                    @if($vehicles)
-                                    @if($vehicles->approval_status == 'Approved')
-                                    <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" height="50" class="mx-auto d-block img-modal">
-                                    @elseif($vehicles->approval_status == 'Rejected')
-                                    @elseif($vehicles->approval_status == 'Pending')
-                                    @else
-                                    @endif
-                                    @else
-                                    <strong><span class="badge badge-soft-secondary">No Vehicle Associated</span></strong>
-                                    @endif
-                                    <div class="flex-grow-1 ms-3 d-flex justify-content-end">
-                                        @if($vehicles)
-                                        @if($vehicles->approval_status == 'Approved')
-                                        <h5 class="fw-semibold">Vehicle QR Code <button class="btn btn-primary download-btn" data-qrcode="{{ $vehicles->vehicle_code }} "><i class="fas fa-download"></i> Download QR</button></h5>
-                                        @elseif($vehicles->approval_status == 'Rejected')
-                                        @elseif($vehicles->approval_status == 'Pending')
-                                        @else
-                                        @endif
-                                        @else
-                                        <strong><span class="badge badge-soft-secondary">No Vehicle Associated</span></strong>
-                                        @endif
+                                    <img src="data:image/png;base64,{{ $qrCodeBase64 }}" alt="QR Code" height="60" class="mx-auto d-block img-modal">
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="fw-semibold">Vehicle QR Code</h5>
                                         <ul class="list-unstyled hstack gap-2 mb-0">
                                             <li>
-                                                <button vehicle_id="{{ $vehicles->id }}" class="btn btn-primary mx-1 editIconVehicle" onClick="editVehicle('{{ $vehicles->id }}')">
-                                                    <i class="fas fa-car"></i> Edit Vehicle
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button id="{{ $vehicles && $vehicles->driver ? $vehicles->driver->id : 'null' }}" class="btn btn-secondary mx-1 editIconDriver" onClick="editDriver('{{ $vehicles && $vehicles->driver ? $vehicles->driver->id : 'null' }}')">
-                                                    <i class="fas fa-address-card"></i> Edit Driver
-                                                </button>
+                                                <button class="btn btn-sm btn-primary download-btn" data-qrcode="{{ $vehicles->vehicle_code }} "><i class="fas fa-download"></i> Download QR</button></h5>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
+                            @elseif($vehicles->approval_status == 'Rejected')
+                            @elseif($vehicles->approval_status == 'Pending')
+                            @else
+                            @endif
+                            @else
+                            <strong><span class="badge badge-soft-secondary">No Vehicle Associated</span></strong>
+                            @endif
                             <div class="card-body">
                                 <!-- <h5 class="fw-semibold mb-3">Description</h5>
                                 <p class="text-muted">We are looking to hire a skilled Magento developer to build and maintain eCommerce websites for our clients. As a Magento developer, you will be responsible for liaising with the design team, setting up Magento 1x and 2x sites, building modules and customizing extensions, testing the performance of each site, and maintaining security and feature updates after the installation is complete.</p> -->

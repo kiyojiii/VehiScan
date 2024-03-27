@@ -32,9 +32,9 @@
                 </li>
 
                 <li>
-                    <a href="{{ url('/') }}" class="waves-effect">
+                    <a href="{{ route('applicant_users.applicant_analytics') }}" class="waves-effect">
                         <i class='fas fa-chart-bar'></i>
-                        <span key="t-guests">Visit Analytics</span>
+                        <span key="t-guests">Analytics</span>
                     </a>
                 </li>
 

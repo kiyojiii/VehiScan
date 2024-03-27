@@ -12,8 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Violation extends Model
 {
-    protected $fillable = 
-    ['violation', 
-    'vehicle_id'];
-}
+    protected $fillable =
+    [
+        'violation',
+        'vehicle_id'
+    ];
 
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+}
