@@ -1,15 +1,6 @@
-<!-- App favicon -->
-<link rel="shortcut icon" href="<?php echo url('theme') ?>/dist/assets/images/favicon.ico">
-
-<!-- Bootstrap Css -->
-<link href="<?php echo url('theme') ?>/dist/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
-<!-- Icons Css -->
-<link href="<?php echo url('theme') ?>/dist/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-<!-- App Css-->
-<link href="<?php echo url('theme') ?>/dist/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
-<!-- App js -->
-<script src="<?php echo url('theme') ?>/dist/assets/js/plugin.js"></script>
-
+@include('layouts.head')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
@@ -26,10 +17,10 @@
 
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="22"> //LOGO
+                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="30"> 
                     </span>
                     <span class="logo-lg">
-                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="19"> //LOGO
+                        <img src="<?php echo url('images') ?>/mvis_logo.png" alt="" height="70"> 
                     </span>
                 </a>
             </div>
@@ -38,7 +29,23 @@
                 <i class="fa fa-fw fa-bars"></i>
             </button>
 
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                const verticalMenuBtn = document.getElementById("vertical-menu-btn");
+                const body = document.querySelector("body");
+
+                verticalMenuBtn.addEventListener("click", function() {
+                    if (window.innerWidth <= 985 && window.innerHeight <= 607) {
+                        body.classList.toggle("sidebar-enable");
+                    } else {
+                        body.classList.toggle("vertical-collpsed");
+                    }
+                });
+            });
+            </script>
+
         </div>
+
 
         <div class="d-flex">
             <div class="dropdown d-none d-lg-inline-block ms-1">
@@ -47,7 +54,7 @@
                 </button>
             </div>
 
-            <div class="dropdown d-inline-block">
+            <!-- <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="bx bx-bell bx-tada"></i>
                     <span class="badge bg-danger rounded-pill">3</span>
@@ -128,20 +135,24 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="<?php echo url('theme') ?>/dist/assets/images/users/avatar-1.jpg" alt="Header Avatar">
-                    <span class="d-none d-xl-inline-block ms-1" key="t-henry"></span>
+                    @if (auth()->user()->photo)
+                    <img class="rounded-circle header-profile-user" src="{{ asset('images/photos/' . auth()->user()->photo) }}" alt="Header Avatar">
+                    @else
+                    <div class="no-photo">No Photo</div>
+                    @endif
+                    <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{ auth()->user()->name }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
-                    <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet">My Wallet</span></a>
+                    <a class="dropdown-item" href="{{ route('applicant_users.user_profile') }}"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">Profile</span></a>
+                    <!-- <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet">My Wallet</span></a>
                     <a class="dropdown-item d-block" href="#"><span class="badge bg-success float-end">11</span><i class="bx bx-wrench font-size-16 align-middle me-1"></i> <span key="t-settings">Settings</span></a>
-                    <a class="dropdown-item" href="#"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span key="t-lock-screen">Lock screen</span></a>
+                    <a class="dropdown-item" href="#"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span key="t-lock-screen">Lock screen</span></a> -->
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item text-danger" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">Logout</span></a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -150,38 +161,13 @@
 
                 </div>
             </div>
-
-            <!-- <div class="dropdown d-inline-block">
-                        <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
-                            <i class="bx bx-cog bx-spin"></i>
-                        </button>
-                    </div> -->
+            <!-- 
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
+                    <i class="bx bx-cog bx-spin"></i>
+                </button>
+            </div> -->
 
         </div>
     </div>
 </header>
-
-<!-- JAVASCRIPT -->
-<script src="<?php echo url('theme') ?>/dist/assets/libs/jquery/jquery.min.js"></script>
-<script src="<?php echo url('theme') ?>/dist/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="<?php echo url('theme') ?>/dist/assets/libs/metismenu/metisMenu.min.js"></script>
-<script src="<?php echo url('theme') ?>/dist/assets/libs/simplebar/simplebar.min.js"></script>
-<script src="<?php echo url('theme') ?>/dist/assets/libs/node-waves/waves.min.js"></script>
-
-<!-- dashboard blog init -->
-<script src="<?php echo url('theme') ?>/dist/assets/js/pages/dashboard-blog.init.js"></script>
-<script src="<?php echo url('theme') ?>/dist/assets/js/app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- dashboard blog init -->
-<script src="<?php echo url('theme') ?>/dist/assets/js/pages/dashboard-blog.init.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- file-manager js -->
-<script src="<?php echo url('theme') ?>/dist/assets/js/pages/file-manager.init.js"></script>
-
-<!-- email editor init -->
-<script src="<?php echo url('theme') ?>/dist/assets/js/pages/email-editor.init.js"></script>
-
-<!-- App js -->
-<script src="<?php echo url('theme') ?>/dist/assets/js/app.js"></script>

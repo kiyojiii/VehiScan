@@ -5,14 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Applicant </title>
+    <title>VehiScan | Applicant - History </title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-
     <!-- Loader -->
     <div id="preloader">
         <div id="status">
@@ -42,11 +41,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Violations</h4>
+                            <h4 class="mb-sm-0 font-size-18">Audit Trail</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item active">User Violations</li>
+                                    <li class="breadcrumb-item active">Edit History</li>
                                 </ol>
                             </div>
 
@@ -61,16 +60,12 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body border-bottom">
-
-                                <div class="card-body" id="show_all_applicant_violations">
+                                <div class="card-body" id="show_applicant_audit">
                                     <h1 class="text-center text-secondary my-5"> Loading... </h1>
                                 </div>
-
                             </div>
-
                         </div><!--end card-->
                     </div><!--end col-->
-
                 </div><!--end row-->
 
                 @empty
@@ -84,16 +79,14 @@
 
             </div> <!-- container-fluid -->
         </div><!-- End Page-content -->
-
     </div>
     <!-- end main content-->
 
     </div>
     <!-- END layout-wrapper -->
-    @include('applicant_users.violation.violation_js')
+    @include('applicant_users.history.history_js')
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-
 </body>
 
 </html>

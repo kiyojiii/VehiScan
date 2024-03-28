@@ -41,8 +41,8 @@
                 <li>
                     <strong>Applied Date:</strong>
                     <span>
-                        @if($owners->vehicle && $owners->vehicle->created_at)
-                        {{ \Carbon\Carbon::parse($owners->vehicle->created_at)->format('d F, Y') }}
+                        @if($vehicle && $vehicle->created_at)
+                        {{ \Carbon\Carbon::parse($vehicle->created_at)->format('d F, Y') }}
                         @else
                         N/A
                         @endif
@@ -59,13 +59,32 @@
                 <span class="badge rounded-1 badge-soft-info">{{ $vehicle->body_type ?? 'N/A' }}</span>
             </div>
             <div class="mt-4 hstack gap-2">
-                <a href="{{ route('applicant_users.vehicle_information', $vehicle->id) }}" class="btn btn-soft-success w-100">View Vehicle</a>
+                <a href="{{ route('applicant_users.vehicle_information', $vehicle->id) }}" class="btn btn-soft-primary w-100">View</a>
                 @if($vehicle->registration_status === 'Active')
                 <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle">Deactivate</a>
                 @else
-                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle disabled-link">Inactive</a>
+                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 disabled-link">Inactive</a>
+                @if($no_active_vehicles)
+                @if($has_pending_vehicle)
+                <a href="#" id="{{ $vehicle->id }}" class="btn btn-soft-warning w-100 activateVehicle" onClick="showPendingAlert()">Activate</a>
+                @else
+                <a href="#" id="{{ $vehicle->id }}" class="btn btn-soft-warning w-100 activateVehicle" onClick="activateVehicle()">Activate</a>
                 @endif
+                @endif
+                @endif
+
             </div>
+            <script>
+                function showPendingAlert() {
+                    // Show SweetAlert message
+                    Swal.fire({
+                        title: 'Pending Vehicle Exists',
+                        text: 'You can only have one Pending Vehicle, Please Wait while a Staff reviews your Pending Vehicle',
+                        icon: 'warning'
+                    });
+                }
+            </script>
+
         </div>
     </div>
 </div>
@@ -76,8 +95,8 @@
 @endforelse
 <style>
     .disabled-link {
-    color: #6c757d;
-    cursor: not-allowed;
-    pointer-events: none;
-}
+        color: #6c757d;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
 </style>

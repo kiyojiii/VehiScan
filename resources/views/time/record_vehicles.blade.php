@@ -145,7 +145,7 @@
                 <!-- end row -->
 
                 <!-- JS -->
-                @include('time.test_js')
+                @include('time.record_vehicles_js')
 
             </div> <!-- container-fluid -->
         </div><!-- End Page-content -->

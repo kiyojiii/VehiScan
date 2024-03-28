@@ -41,17 +41,24 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/fetchHomeVehicleRecord', [HomeController::class, 'fetchHomeVehicleRecord'])->name('fetchHomeVehicleRecord');
 
 #APPLICANT PROFILE
 Route::get('/user-profile', [HomeController::class, 'user_profile'])->name('applicant_users.user_profile');
 
 #APPLICANT HOME DASHBOARD
 Route::get('/applicant-dashboard', [HomeController::class, 'user_index'])->name('applicant_users.applicant_home');
+Route::post('applicant/vehicles/store', [HomeController::class, 'applicant_add_vehicle'])->name('applicant_users.store');
+Route::get('applicant/edit', [HomeController::class, 'applicant_edit_owner'])->name('applicant_users.edit_owner');
+Route::post('applicant/update', [HomeController::class, 'applicant_update_owner'])->name('applicant_users.update_owner');
+Route::get('applicant/edit/driver', [HomeController::class, 'applicant_edit_driver'])->name('applicant_users.edit_driver');
+Route::post('applicant/update/driver', [HomeController::class, 'applicant_update_driver'])->name('applicant_users.update_driver');
+Route::get('applicant/vehicles/activate', [HomeController::class, 'applicant_vehicle_activate'])->name('applicant_vehicle.activate_vehicle');
+Route::post('applicant/vehicles/submit-activation', [HomeController::class, 'applicant_vehicle_activate_update'])->name('applicant_vehicle.activate_vehicle_submit');
 
 #APPLICANT VIOLATION
 Route::get('/applicant-violation', [HomeController::class, 'user_violation'])->name('applicant_users.applicant_violation');
 Route::get('/fetchAllApplicantViolation', [HomeController::class, 'fetchAllApplicantViolation'])->name('fetchAllApplicantViolation');
-Route::post('applicant/vehicles/store', [HomeController::class, 'applicant_add_vehicle'])->name('applicant_users.store');
 
 #APPLICANT VEHICLES
 Route::get('/applicant-vehicles', [HomeController::class, 'user_vehicles'])->name('applicant_users.applicant_vehicle');
@@ -68,6 +75,12 @@ Route::get('/fetchAllApplicantTime', [HomeController::class, 'fetchAllApplicantT
 #APPLICANT APPLY APPLICATION
 Route::get('/applicant-apply', [HomeController::class, 'user_apply'])->name('applicant_users.applicant_apply');
 Route::get('/fetchAllApplicantDetails', [HomeController::class, 'fetchAllApplicantDetails'])->name('fetchAllApplicantDetails');
+
+#APPLICANT HISTORY
+Route::get('/applicant-history', [HomeController::class, 'user_history'])->name('applicant_users.applicant_history');
+Route::get('/fetchApplicantAudit', [HomeController::class, 'fetchApplicantAudit'])->name('fetchApplicantAudit');
+Route::get('/fetchApplicantVehicleAudit', [HomeController::class, 'fetchApplicantVehicleAudit'])->name('fetchApplicantVehicleAudit');
+Route::get('/fetchApplicantDriverAudit', [HomeController::class, 'fetchApplicantDriverAudit'])->name('fetchApplicantDriverAudit');
 
 #APPLICANT VEHICLE INFORMATION
 Route::get('applicant/vehicle_information/{id}', [HomeController::class, 'vehicle_information'])->name('applicant_users.vehicle_information');
@@ -168,7 +181,7 @@ Route::middleware(['auth'])->group(function () {
 
     #VEHICLE RECORD ROUTE
     Route::controller(TimeController::class)->group(function () {
-        Route::get('test', 'test')->name('time.test');
+        Route::get('record-vehicles', 'record_vehicle')->name('time.record_vehicles');
         Route::get('/fetchVehicleRecord', 'fetchVehicleRecord')->name('fetchVehicleRecord');
         Route::get("record", 'record');
     });
@@ -198,6 +211,8 @@ Route::middleware(['auth'])->group(function () {
 
     #TEST
     Route::get('scratch', [TestController::class, 'index'])->name('test');
+    Route::get('/fetchTest', [TestController::class, 'fetchTest'])->name('fetchTest');
+    Route::get('/fetchRecordDetails', [TestController::class, 'fetchRecordDetails'])->name('fetchRecordDetails');
 
 
     // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');

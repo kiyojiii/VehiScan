@@ -202,21 +202,21 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $input = $request->all();
-
+    
         if (!empty($request->password)) {
             $input['password'] = Hash::make($request->password);
         } else {
             $input = $request->except('password');
         }
-
+    
         $user->update($input);
-
+    
         $user->syncRoles($request->roles);
-
+    
         // Update user photo
         if ($request->hasFile('photo')) {
             $oldPhoto = $user->photo;
-
+    
             // Delete old photo (if it exists)
             if ($oldPhoto) {
                 $oldPhotoPath = public_path('images/photos/') . $oldPhoto;
@@ -224,16 +224,19 @@ class UserController extends Controller
                     unlink($oldPhotoPath);
                 }
             }
-
-            // Store new photo with the same filename
+    
+            // Store new photo with a unique filename
             $photo = $request->file('photo');
-            $photoName = $user->photo; // Keep the same filename
+            $photoName = 'photo_' . time() . '.' . $photo->getClientOriginalExtension();
             $photo->move(public_path('images/photos/'), $photoName);
+            $user->photo = $photoName;
+            $user->save();
         }
-
+    
         // Optionally, you can add a success message to be displayed on the page
         return back()->withSuccess('Updated successfully.');
     }
+    
 
     /**
      * Remove the specified resource from storage.

@@ -83,7 +83,7 @@ class TimeController extends Controller
 
 
 
-    public function test()
+    public function record_vehicle()
     {
         $role_status = Statuses::all();
         $appointments = Appointment::all();
@@ -91,7 +91,7 @@ class TimeController extends Controller
         $drivers = Driver::all();
         $owners = Applicant::all();
         $vehicleRecords = Vehicle_Record::latest()->paginate(100);
-        return view('time.test', compact('vehicleRecords', 'appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
+        return view('time.record_vehicles', compact('vehicleRecords', 'appointments', 'role_status', 'drivers', 'vehicles', 'owners'));
     }
 
     public function recordTimeIn(Request $request)
@@ -219,7 +219,7 @@ class TimeController extends Controller
     // Fetch Vehicle Record Data
     public function fetchVehicleRecord()
     {
-        $vehicleRecords = Vehicle_Record::latest()->get();
+        $vehicleRecords = Vehicle_Record::latest()->take(25)->get();
 
         return response()->json($vehicleRecords);
     }

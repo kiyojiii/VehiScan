@@ -24,13 +24,19 @@
                 </li>
 
                 <li class="menu-title" key="t-apps">Data</li>
+
                 <li>
-                   
-                    <a href="{{ route('time.test') }}" class="waves-effect">
+                    <a href="#" class="waves-effect">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span key="t-guests">User Requests</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('time.record_vehicles') }}" class="waves-effect">
                         <i class="fas fa-tasks"></i>
                         <span key="t-guests">Record Vehicle Time</span>
                     </a>
-        
                 </li>
 
                 <li>
@@ -54,25 +60,19 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <a href="{{ route('owners.index') }}" class="waves-effect">
                         <i class="fas fa-id-badge"></i>
                         <span key="t-blog">Owners</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('owners.index') }}" key="t-blog-list">Manage Owners</a></li>
-                    </ul>
                     @endcanany
                 </li>
 
                 <li>
                     @canany(['create-driver', 'edit-driver', 'delete-driver', 'view-driver'])
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <a href="{{ route('drivers.index') }}" class="waves-effect">
                         <i class="fas fa-address-card"></i>
                         <span key="t-blog">Drivers</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('drivers.index') }}" key="t-blog-list">Manage Drivers</a></li>
-                    </ul>
                     @endcanany
                 </li>
 
@@ -93,13 +93,10 @@
 
                 <li>
                     @canany(['create-time', 'edit-time', 'delete-time', 'view-time'])
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <a href="{{ route('time.index') }}" class="waves-effect">
                         <i class="fas fa-clock"></i>
                         <span key="t-blog">Time</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('time.index') }}" key="t-blog-list">Manage Time</a></li>
-                    </ul>
                     @endcanany
                 </li>
 

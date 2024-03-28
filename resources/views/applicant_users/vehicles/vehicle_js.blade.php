@@ -56,13 +56,13 @@ $("#edit_vehicle_form").submit(function(e) {
 
     // Show confirmation dialog before submitting the form
     Swal.fire({
-        title: 'Vehicle Update Request',
-        text: 'Updating this vehicle will change its status to Pending. Do you want to proceed?',
+        title: 'Update Vehicle',
+        text: 'Are you sure you want to update your vehicle information?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, update it!'
+        confirmButtonText: 'Yes, Proceed'
     }).then((result) => {
         if (result.isConfirmed) {
             // Proceed with updating the vehicle
@@ -82,9 +82,9 @@ $("#edit_vehicle_form").submit(function(e) {
                         // Close the modal
                         $("#editVehicleModal").modal('hide');
                         Swal.fire(
-                            "Updated",
-                            "Vehicle Updated Successfully",
-                            "success"
+                            'Updated!',
+                            'Your vehicle information has been updated successfully.',
+                            'success'
                         );
                     }
                     $("#edit_vehicle_btn").text('Update Vehicle');

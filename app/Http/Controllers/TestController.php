@@ -22,81 +22,101 @@ class TestController extends Controller
     {
         // Retrieve the authenticated user
         $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Query the applicants_record table
+        $applicants = DB::table('applicants_record')
+            ->where('user_id', $user_id)
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        // Query the applicants_record table
+        $vehicles = DB::table('vehicles_record')
+            ->where('user_id', $user_id)
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        // Query the applicants_record table
+        $drivers = DB::table('drivers_record')
+            ->where('user_id', $user_id)
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('test', compact('applicants', 'vehicles', 'drivers'));
+    }
+
+    public function fetchTest()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
     
         // Retrieve the ID of the authenticated user
         $user_id = $user->id;
     
-        // Find the owners associated with the authenticated user
-        $owners = Applicant::where('user_id', $user_id)->get();
+        // Query all three tables together
+        $records = DB::table('applicants_record')
+            ->select('pk', 'first_name', 'last_name', 'action', 'updated_at', DB::raw("'applicants_record' as `table`"))
+            ->where('user_id', $user_id)
+            ->orderBy('updated_at', 'desc')
+            ->unionAll(
+                DB::table('vehicles_record')
+                    ->select('pk', 'plate_number', 'vehicle_make', 'action', 'updated_at', DB::raw("'vehicles_record' as `table`"))
+                    ->where('user_id', $user_id)
+                    ->orderBy('updated_at', 'desc')
+            )
+            ->unionAll(
+                DB::table('drivers_record')
+                    ->select('pk', 'driver_name', 'authorized_driver_name', 'action', 'updated_at', DB::raw("'drivers_record' as `table`"))
+                    ->where('user_id', $user_id)
+                    ->orderBy('updated_at', 'desc')
+            )
+            ->get();
     
-        // Query the Vehicles
-        $owner_first = $owners->first();
-        $owner_id = $owner_first->id;
-        $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+        $output = '';
     
-        // Initialize array to store time differences
-        $timeDifferences = [];
+        if ($records->isNotEmpty()) {
+            $output .= '<table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>PK</th>
+                                <th>Action</th>
+                                <th>Updated At</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
     
-        // Loop through each vehicle
-        foreach ($vehicles as $vehicle) {
-            // Query the time_in and time_out for the current vehicle
-            $times = Time::where('vehicle_id', $vehicle->id)
-                ->orderBy('created_at')
-                ->get();
-    
-            // Initialize variables to track time for each day
-            $currentDate = null;
-            $totalDifference = 0;
-    
-            foreach ($times as $time) {
-                // Check if both time_in and time_out are available
-                if ($time->time_in && $time->time_out) {
-                    // Calculate time difference in hours
-                    $timeIn = Carbon::parse($time->time_in);
-                    $timeOut = Carbon::parse($time->time_out);
-                    $difference = $timeOut->diffInHours($timeIn);
-                } elseif ($time->time_in && !$time->time_out) {
-                    // If there is time_in but no time_out, mark it as "Not Yet Timed Out"
-                    $difference = 'Not Yet Timed Out';
-                } else {
-                    // If both time_in and time_out are not available, continue to the next iteration
-                    continue;
+            foreach ($records as $record) {
+                $type = '';
+                switch ($record->table) {
+                    case 'applicants_record':
+                        $type = 'Applicant';
+                        break;
+                    case 'vehicles_record':
+                        $type = 'Vehicle';
+                        break;
+                    case 'drivers_record':
+                        $type = 'Driver';
+                        break;
                 }
-    
-                // If it's a new day, store the total difference for the previous day (if any)
-                if ($time->created_at->format('Y-m-d') !== $currentDate) {
-                    if ($currentDate) {
-                        $timeDifferences[] = [
-                            'date' => Carbon::parse($currentDate)->format('M d, Y'),
-                            'difference' => $totalDifference . ' hours',
-                        ];
-                    }
-                    // Reset for the new day
-                    $currentDate = $time->created_at->format('Y-m-d');
-                    $totalDifference = 0;
-                }
-    
-                // Add the difference to the total for the current day
-                if (is_numeric($difference)) {
-                    $totalDifference += $difference;
-                }
+                $output .= '<tr>
+                                <td>' . $type . '</td>
+                                <td>' . $record->pk . '</td>
+                                <td>' . $record->action . '</td>
+                                <td>' . $record->updated_at . '</td>
+                                <td><button class="btn btn-primary view-button" data-pk="' . $record->pk . '">View</button></td>
+                            </tr>';
             }
     
-            // Store the total difference for the last day (if any)
-            if ($currentDate) {
-                $timeDifferences[] = [
-                    'date' => Carbon::parse($currentDate)->format('M d, Y'),
-                    'difference' => $totalDifference . ' hours',
-                ];
-            }
+            $output .= '</tbody></table>';
+        } else {
+            $output = '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
         }
     
-        // Order the time differences by date
-        usort($timeDifferences, function ($a, $b) {
-            return strtotime($a['date']) - strtotime($b['date']);
-        });
-    
-        return view('test', compact('timeDifferences'));
+        return $output; // Return HTML response
     }
     
 }

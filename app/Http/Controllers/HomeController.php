@@ -64,9 +64,12 @@ class HomeController extends Controller
         $currentMonth = now()->format('m');
         $currentYear = now()->format('Y');
 
+        // Get records from the last 15 days
+        $startDate = now()->subDays(15)->startOfDay();
+        $endDate = now()->endOfDay();
+
         $totalTimePerDay = Time::selectRaw('DATE(created_at) as date, COUNT(time_in) as total_time_in, COUNT(time_out) as total_time_out')
-            ->whereMonth('created_at', '=', $currentMonth)
-            ->whereYear('created_at', '=', $currentYear)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->groupByRaw('DATE(created_at)')
             ->orderByRaw('DATE(created_at)')
             ->get();
@@ -92,8 +95,99 @@ class HomeController extends Controller
             $totalDrivers,
         ];
 
+        $pendingApplicants = Applicant::where('approval_status', 'Pending')->count();
+        $pendingVehicles = Vehicle::where('registration_status', 'Pending')->count();
+        $pendingDrivers = Driver::where('approval_status', 'Pending')->count();
+
+        $livecurrentMonth = Carbon::now()->format('F');
+
+        // Get the current month
+        $currentMonth = date('m');
+
+        // Get the plate number of the vehicle with the most records for the current month
+        $vehicleWithMostRecords = Time::select('vehicle_id', DB::raw('COUNT(*) as total'))
+            ->whereMonth('created_at', $currentMonth)
+            ->groupBy('vehicle_id')
+            ->orderByDesc('total')
+            ->first();
+
+        $plateNumber = null;
+        $totalVisits = 0;
+        $percentage = 0;
+
+        if ($vehicleWithMostRecords) {
+            $vehicle = Vehicle::find($vehicleWithMostRecords->vehicle_id);
+            if ($vehicle) {
+                $plateNumber = $vehicle->plate_number;
+            }
+            $totalVisits = $vehicleWithMostRecords->total;
+
+            // Calculate percentage
+            $totalRecords = Time::whereMonth('created_at', $currentMonth)->count();
+            $percentage = ($totalVisits / $totalRecords) * 100;
+        }
+
+        // Query to find the vehicle with the most violation count
+        $mostViolatedVehicle = Violation::select('vehicle_id', DB::raw('COUNT(*) as violation_count'))
+            ->groupBy('vehicle_id')
+            ->orderByDesc('violation_count')
+            ->first();
+
+        $vehiclePlateNumber = null;
+        $violationCount = 0;
+
+        if ($mostViolatedVehicle) {
+            $vehicle = Vehicle::find($mostViolatedVehicle->vehicle_id);
+            if ($vehicle) {
+                $vehiclePlateNumber = $vehicle->plate_number;
+            }
+            $violationCount = $mostViolatedVehicle->violation_count;
+        }
+
+        // Query to find the applicant with the most vehicles associated
+        $mostVehiclesApplicant = Applicant::select('applicants.id', 'applicants.first_name', 'applicants.last_name', DB::raw('COUNT(vehicles.id) as vehicle_count'))
+            ->leftJoin('vehicles', 'applicants.id', '=', 'vehicles.owner_id')
+            ->groupBy('applicants.id', 'applicants.first_name', 'applicants.last_name')
+            ->orderByDesc('vehicle_count')
+            ->first();
+
+        $firstName = null;
+        $lastName = null;
+        $vehicleCount = 0;
+
+        if ($mostVehiclesApplicant) {
+            $firstName = $mostVehiclesApplicant->first_name;
+            $lastName = $mostVehiclesApplicant->last_name;
+            $vehicleCount = $mostVehiclesApplicant->vehicle_count;
+        }
+
+        // Query to find the vehicle with the longest stay
+        $longestStayVehicle = Time::select('vehicles.plate_number', DB::raw('TIMESTAMPDIFF(HOUR, time_in, time_out) as stay_duration'))
+            ->join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
+            ->orderByDesc('stay_duration')
+            ->first();
+
+        $lsplateNumber = null;
+        $stayDuration = 0;
+
+        if ($longestStayVehicle) {
+            $lsplateNumber = $longestStayVehicle->plate_number;
+            $stayDuration = $longestStayVehicle->stay_duration;
+        }
+
+        // Fetch the latest 10 records from the vehicle_record table
+        $vehicleRecords = Vehicle_Record::latest()->take(10)->get();
+        $latestVehicles = Vehicle::latest()->take(10)->get();
+
         // Pass the user data to the view
-        return view('home', compact('series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalTimeOut', 'totalTimeIn', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
+        return view('home', compact('latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalTimeOut', 'totalTimeIn', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
+    }
+    
+    public function fetchHomeVehicleRecord()
+    {
+        $vehicleRecords = Vehicle_Record::latest()->take(10)->get();
+
+        return response()->json($vehicleRecords);
     }
 
     public function user_profile()
@@ -113,8 +207,7 @@ class HomeController extends Controller
         // Extract appointment IDs from the retrieved applicants
         $appointmentIds = $applicants->pluck('appointment_id');
 
-        $appointment = Appointment::where('id', $appointmentIds)->get();
-
+        $appointment = Appointment::whereIn('id', $appointmentIds)->get();
 
         // Check Only Super Admin can update his own Profile
         if ($user->hasRole('Super Admin')) {
@@ -140,10 +233,11 @@ class HomeController extends Controller
 
         // Find the owners associated with the authenticated user
         $owners = Applicant::where('user_id', $user_id)->get();
+        $driver = Driver::where('user_id', $user_id)->first();
 
         // Query the Vehicles
         $owner_first = $owners->first();
-        $owner_id = $owner_first->id;
+        $owner_id = $owner_first->id ?? 'N/A';
         $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->paginate(4);
 
         // Check if the owner has at least one active vehicle
@@ -195,13 +289,15 @@ class HomeController extends Controller
 
         // Loop through each vehicle
         foreach ($chart_vehicles as $vehicle) {
-            // Retrieve the times associated with the vehicle
+            // Retrieve the times associated with the vehicle for the last 7 days
             $times = Time::select(
-                DB::raw('DATE_FORMAT(time_in, "%a") as formatted_date'),
+                DB::raw('DATE_FORMAT(time_in, "%a, %b %e") as formatted_date'),
                 DB::raw('COUNT(time_in) as count_time_in'),
                 DB::raw('COUNT(time_out) as count_time_out')
             )
                 ->where('vehicle_id', $vehicle->id)
+                ->whereDate('time_in', '>=', now()->subDays(7)->startOfDay())
+                ->orderBy('created_at')
                 ->groupBy('formatted_date')
                 ->get();
 
@@ -216,9 +312,24 @@ class HomeController extends Controller
         // Remove duplicate dates
         $dates = array_unique($dates);
 
+        $role_status = Statuses::all();
+        $appointments = Appointment::all();
+
+        // Check if there are any active vehicles
+        $activeVehicles = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Active')
+            ->exists();
+
+        $pendingVehicles = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Pending')
+            ->exists();
+
+        // Define $no_active_vehicles based on the value of $activeVehicles
+        $no_active_vehicles = !$activeVehicles;
+        $has_pending_vehicle = $pendingVehicles;
 
         // Pass the owners data to the view
-        return view('applicant_users.applicant_home', compact('vehicleIds', 'active_vehicle', 'allRemarks', 'dates', 'timeInData', 'timeOutData', 'hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
+        return view('applicant_users.applicant_home', compact('has_pending_vehicle', 'no_active_vehicles', 'driver', 'appointments', 'role_status', 'vehicleIds', 'active_vehicle', 'allRemarks', 'dates', 'timeInData', 'timeOutData', 'hasActiveVehicle', 'totalViolations', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles'));
     }
 
     public function user_apply()
@@ -238,6 +349,20 @@ class HomeController extends Controller
         $owners = Applicant::where('user_id', $user_id)->get();
 
         return view('applicant_users.applicant_apply', compact('drivers', 'vehicles', 'role_status', 'appointments', 'owners'));
+    }
+
+    public function user_violation()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owners associated with the authenticated user
+        $owners = Applicant::where('user_id', $user_id)->get();
+
+        return view('applicant_users.violation.index', compact('owners'));
     }
 
     public function fetchAllApplicantViolation()
@@ -294,11 +419,6 @@ class HomeController extends Controller
         }
     }
 
-    public function user_violation()
-    {
-        return view('applicant_users.violation.index');
-    }
-
     public function fetchAllApplicantDetails()
     {
         // Retrieve the authenticated user
@@ -309,26 +429,36 @@ class HomeController extends Controller
 
         // Find the owners associated with the authenticated user
         $owners = Applicant::where('user_id', $user_id)->get();
+
+        // Find the owner ID
+        $owner_id = $owners->pluck('id')->first();
+
+        // Find the vehicle associated with the owner in descending order
+        $vehicle = Vehicle::where('owner_id', $owner_id)->latest()->first();
+
+        // Find the driver associated with the user
+        $driver = Driver::where('user_id', $user_id)->latest()->first();
+
         $output = '';
         if ($owners->count() > 0) {
             $output .= '<table class="table table-nowrap">
-                <thead>
-                    <tr>
-                        <th class="text-center">Application</th>
-                        <th class="text-center">Application Name</th>
-                        <th class="text-center">Reason (If Rejected)</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Edit</th>
-                    </tr>
-                </thead>
-                <tbody>';
+            <thead>
+                <tr>
+                    <th class="text-center">Application</th>
+                    <th class="text-center">Application Name</th>
+                    <th class="text-center">Reason (If Rejected)</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Edit</th>
+                </tr>
+            </thead>
+            <tbody>';
             foreach ($owners as $owner) {
                 $output .= '<tr>
-                        <td class="text-center">Owner</td>
-                        <td class="text-center">' . $owner->first_name . ' ' . $owner->last_name . '</td>
-                        <td class="text-center">' . ($owner->reason ?? 'N/A') . '</td>
-                        <td class="text-center">' . ($owner->approval_status ?? 'N/A') . '</td>
-                        <td class="text-center">';
+                    <td class="text-center">Owner</td>
+                    <td class="text-center">' . $owner->first_name . ' ' . $owner->last_name . '</td>
+                    <td class="text-center">' . ($owner->reason ?? 'N/A') . '</td>
+                    <td class="text-center">' . ($owner->approval_status ?? 'N/A') . '</td>
+                    <td class="text-center">';
                 // Check if approval status is 'Approved'
                 if ($owner->approval_status === 'Approved') {
                     // If approval status is 'Approved', disable the edit button
@@ -337,64 +467,54 @@ class HomeController extends Controller
                     // If approval status is not 'Approved', enable the edit button
                     $output .= '<a href="#" id="' . $owner->id . '" class="text-success mx-1 editIconOwner" onClick="editOwner()"><i class="bi-pencil-square h4"></i></a>';
                 }
-
-                if ($owner->vehicle) {
-                    $output .= '<tr>
-                        <td class="text-center">Vehicle</td>
-                        <td class="text-center">' . $owner->vehicle->plate_number . '</td>
-                        <td class="text-center">' . ($owner->vehicle->reason ?? 'N/A') . '</td>
-                        <td class="text-center">' . ($owner->vehicle->approval_status ?? 'N/A') . '</td>
-                        <td class="text-center">';
-                    // Check if approval status is 'Approved'
-                    if ($owner->vehicle->approval_status === 'Approved') {
-                        // If approval status is 'Approved', disable the edit button
-                        $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
-                    } else {
-                        // If approval status is not 'Approved', enable the edit button
-                        $output .= '<a href="#" id="' . $owner->vehicle->id . '" class="text-success mx-1 editIconVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>';
-                    }
-                } else {
-                    $output .= '<tr>
-                        <td class="text-center">Vehicle</td>
-                        <td class="text-center">N/A</td>
-                        <td class="text-center">N/A</td>
-                        <td class="text-center">N/A</td>
-                        <td class="text-center"></td>
-                    </tr>';
-                }
-
-                if ($owner->vehicle && $owner->vehicle->driver) {
-                    $output .= '<tr>
-                        <td class="text-center">Driver</td>
-                        <td class="text-center">' . $owner->vehicle->driver->driver_name . '</td>
-                        <td class="text-center">' . ($owner->vehicle->driver->reason ?? 'N/A') . '</td>
-                        <td class="text-center">' . ($owner->vehicle->driver->approval_status ?? 'N/A') . '</td>
-                        <td class="text-center">';
-                    // Check if approval status is 'Approved'
-                    if ($owner->vehicle->driver->approval_status  === 'Approved') {
-                        // If approval status is 'Approved', disable the edit button
-                        $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
-                    } else {
-                        // If approval status is not 'Approved', enable the edit button
-                        $output .= '<a href="#" id="' . $owner->vehicle->driver->id . '" class="text-success mx-1 editIconDriver" onClick="editDriver()"><i class="bi-pencil-square h4"></i></a>';
-                    }
-                } else {
-                    $output .= '<tr>
-                        <td class="text-center">Driver</td>
-                        <td class="text-center">N/A</td>
-                        <td class="text-center">N/A</td>
-                        <td class="text-center">N/A</td>
-                        <td class="text-center"></td>
-                    </tr>';
-                }
+                $output .= '</td>
+                </tr>';
             }
+
+            if ($vehicle) {
+                $output .= '<tr>
+                    <td class="text-center">Vehicle</td>
+                    <td class="text-center">' . $vehicle->plate_number . '</td>
+                    <td class="text-center">' . ($vehicle->reason ?? 'N/A') . '</td>
+                    <td class="text-center">' . ($vehicle->approval_status ?? 'N/A') . '</td>
+                    <td class="text-center">';
+                // Check if approval status is 'Approved'
+                if ($vehicle->approval_status === 'Approved') {
+                    // If approval status is 'Approved', disable the edit button
+                    $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
+                } else {
+                    // If approval status is not 'Approved', enable the edit button
+                    $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIconVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>';
+                }
+                $output .= '</td>
+                </tr>';
+            }
+
+            if ($driver) {
+                $output .= '<tr>
+                    <td class="text-center">Driver</td>
+                    <td class="text-center">' . $driver->driver_name . '</td>
+                    <td class="text-center">' . ($driver->reason ?? 'N/A') . '</td>
+                    <td class="text-center">' . ($driver->approval_status ?? 'N/A') . '</td>
+                    <td class="text-center">';
+                // Check if approval status is 'Approved'
+                if ($driver->approval_status  === 'Approved') {
+                    // If approval status is 'Approved', disable the edit button
+                    $output .= '<span class="text-muted mx-1"><i class="bi-pencil-square h4"></i></span>';
+                } else {
+                    // If approval status is not 'Approved', enable the edit button
+                    $output .= '<a href="#" id="' . $driver->id . '" class="text-success mx-1 editIconDriver" onClick="editDriver()"><i class="bi-pencil-square h4"></i></a>';
+                }
+                $output .= '</td>
+                </tr>';
+            }
+
             $output .= '</tbody></table>';
             echo $output;
         } else {
             echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
         }
     }
-
 
     public function vehicleCodeExists($number)
     {
@@ -1028,7 +1148,7 @@ class HomeController extends Controller
 
         // Query the Vehicles
         $owner_first = $owners->first();
-        $owner_id = $owner_first->id;
+        $owner_id = $owner_first->id ?? 'N/A';
 
         $vehicles = Vehicle::where('owner_id', $owner_id)->first();
 
@@ -1049,7 +1169,7 @@ class HomeController extends Controller
             $vehicleMake = null;
         }
 
-        return view('applicant_users.vehicles.index', compact('activeVehicle', 'totalVehicles', 'vehicles'));
+        return view('applicant_users.vehicles.index', compact('owners', 'activeVehicle', 'totalVehicles', 'vehicles'));
     }
 
     // FETCH APPLICANT VEHICLES
@@ -1089,24 +1209,35 @@ class HomeController extends Controller
             foreach ($vehicles as $vehicle) {
                 $driverName = Driver::find($vehicle->driver_id)->driver_name ?? 'N/A';
                 // Variable to keep track of the count
-                $count = 1;
                 $output .= '<tr>
-                <td>' . \Carbon\Carbon::parse($vehicle->created_at)->format('M, d, Y') . '</td>
-                <td>' . $vehicle->plate_number . '</td>
-                <td>' . $vehicle->vehicle_make . '</td>
-                <td class="text-center">' . $vehicle->vehicle_code . ' </td>
-                <td>' . $vehicle->registration_status . '</td>
-                <td class="text-center">
-                    <!-- For example: -->
-                    <a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="viewVehicle()"><i class="bi bi-eye h4"></i></a>
-                    <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>
-                    <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteVehicle"><i class="bi-trash h4"></i></a>
-                    </td>  
+                    <td>' . \Carbon\Carbon::parse($vehicle->created_at)->format('M, d, Y') . '</td>
+                    <td>' . $vehicle->plate_number . '</td>
+                    <td>' . $vehicle->vehicle_make . '</td>
+                    <td class="text-center">' . $vehicle->vehicle_code . ' </td>
+                    <td>' . $vehicle->registration_status . '</td>
                     <td class="text-center">
-                    <!-- Button to trigger QR code download -->
-                    <button class="btn btn-primary download-btn" data-qrcode="' . $vehicle->vehicle_code . '"><i class="fas fa-download"></i></button>
-                </td>
-            </tr>';
+                        <!-- View button -->
+                        <a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="viewVehicle()"><i class="bi bi-eye h4"></i></a>';
+
+                // Check registration status to determine if edit button should be displayed
+                if ($vehicle->registration_status == 'Active') {
+                    $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>';
+                }
+
+                // Check registration status to determine if delete button should be displayed
+                if ($vehicle->registration_status == 'Active') {
+                    $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteVehicle"><i class="bi-trash h4"></i></a>';
+                }
+                $output .= '</td>';
+
+                $output .= '<td class="text-center">';
+                // Check registration status to determine if download button should be enabled
+                if ($vehicle->registration_status == 'Active') {
+                    $output .= '<button class="btn btn-primary download-btn" data-qrcode="' . $vehicle->vehicle_code . '"><i class="fas fa-download"></i></button>';
+                } else {
+                    $output .= '<button class="btn btn-primary download-btn disabled" data-qrcode="' . $vehicle->vehicle_code . '"><i class="fas fa-download"></i></button>';
+                }
+                $output .= '</td></tr>';
             }
 
             $output .= '</tbody></table>';
@@ -1194,9 +1325,9 @@ class HomeController extends Controller
             }
 
             // Set Approval and Reason Default Value
-            $approval_status = $request->input('approval_status', 'Pending');
-            $reason = $request->input('reason', 'Vehicle Update Request');
-            $registration_status = $request->input('registration_status', 'Pending');
+            $approval_status = $request->input('approval_status', 'Approved');
+            $reason = $request->input('reason', 'None / Approved');
+            $registration_status = $request->input('registration_status', 'Active');
 
             // Update vehicle data
             $vehicle->update([
@@ -1268,7 +1399,7 @@ class HomeController extends Controller
 
         // Query the Vehicles
         $owner_first = $owners->first();
-        $owner_id = $owner_first->id;
+        $owner_id = $owner_first->id ?? 'N/A';
         $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
 
         // Initialize arrays to store the counts
@@ -1387,7 +1518,7 @@ class HomeController extends Controller
         }
 
 
-        return view('applicant_users.analytics.index', compact('formattedDates', 'dates', 'differences', 'vehicles', 'timeInData', 'timeOutData'));
+        return view('applicant_users.analytics.index', compact('owners', 'formattedDates', 'dates', 'differences', 'vehicles', 'timeInData', 'timeOutData'));
     }
 
     public function fetchAllApplicantTime()
@@ -1447,7 +1578,7 @@ class HomeController extends Controller
 
                 $output .= '<tr>
                     <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
-                    <td class="text-center">' . $time->vehicle_id . '</td>
+                    <td class="text-center">' . $vehiclePlate . '</td>
                     <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($time->time_in)) . '</td>
                     <td class="text-center">' . $current_time_out . '</td>
                     <td class="text-center">' . $days . ' days, ' . $hours . ' hours, ' . $minutes . ' minutes</td>
@@ -1459,5 +1590,383 @@ class HomeController extends Controller
         }
 
         return $output;
+    }
+
+    public function applicant_edit_owner(Request $request)
+    {
+        $id = $request->id;
+        $owner = Applicant::find($id);
+        return response()->json($owner);
+    }
+
+    public function applicant_update_owner(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'fname' => 'required|string|max:255',
+                'mi' => 'required|string|size:1',
+                'lname' => 'required|string|max:255',
+                'paddress' => 'required|string|max:255',
+                'email' => 'required|email|unique:applicants,email_address,' . $request->owner_id, // Use ignore rule to exclude the current record
+                'contact' => 'required|string|numeric|digits_between:1,11',
+                'appointment' => 'required|string|max:255',
+                'role_status' => 'required|string|max:255',
+                'department' => 'required|string|max:255',
+                'position' => 'required|string|max:255',
+                'serial_number' => 'required|string|max:255',
+                'id_number' => 'required|string|max:255',
+                'vehicle_details' => 'nullable|integer',
+                'scan_or_photo_of_id' => 'nullable|image|max:2048', // Assuming it's an image file
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            $fileName = '';
+
+            // Retrieve the owner record
+            $owner = Applicant::find($request->owner_id);
+
+            // Process file upload
+            if ($request->hasFile('scan_or_photo_of_id')) {
+                $file = $request->file('scan_or_photo_of_id');
+                $fileName = time() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/images', $fileName);
+                // Delete the old file if it exists
+                if ($owner->scan_or_photo_of_id) {
+                    Storage::delete('public/images/' . $owner->scan_or_photo_of_id);
+                }
+            } else {
+                $fileName = $request->owner_photo;
+            }
+
+            // Set Approval and Reason Default Value
+            $approval_status = $request->input('approval_status', 'Approved');
+            $reason = $request->input('reason', 'None / Approved');
+
+            // Update owner data
+            $ownerData = [
+                'vehicle_id' => $request->vehicle_details,
+                'first_name' => $request->fname,
+                'middle_initial' => $request->mi,
+                'last_name' => $request->lname,
+                'present_address' => $request->paddress,
+                'email_address' => $request->email,
+                'contact_number' => $request->contact,
+                'appointment_id' => $request->appointment,
+                'status_id' => $request->role_status,
+                'office_department_agency' => $request->department,
+                'position_designation' => $request->position,
+                'approval_status' => $approval_status,
+                'reason' => $reason,
+                'serial_number' => $request->serial_number,
+                'id_number' => $request->id_number,
+                'scan_or_photo_of_id' => $fileName,
+            ];
+
+            $owner->update($ownerData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Owner Updated Successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function applicant_edit_driver(Request $request)
+    {
+        $id = $request->id;
+        $driver = Driver::find($id);
+        return response()->json($driver);
+    }
+
+    public function applicant_update_driver(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'dname' => 'required|string|max:255',
+                'driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'adname' => 'string|max:255',
+                'adaddress' => 'string|max:255',
+                'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the driver record
+            $driver = Driver::find($request->driver_id);
+
+            // Process file upload for driver's license image
+            if ($request->hasFile('driver_license_image')) {
+                $dlfile = $request->file('driver_license_image');
+                $dlfileName = Str::uuid() . '.' . $dlfile->getClientOriginalExtension();
+                $dlfile->storeAs('public/images/drivers', $dlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->driver_license_image);
+                }
+            } else {
+                $dlfileName = $driver->driver_license_image;
+            }
+
+            // Process file upload for authorized driver's license image
+            if ($request->hasFile('authorized_driver_license_image')) {
+                $adlfile = $request->file('authorized_driver_license_image');
+                $adlfileName = Str::uuid() . '.' . $adlfile->getClientOriginalExtension();
+                $adlfile->storeAs('public/images/drivers', $adlfileName); //php artisan storage:link
+                // Delete the old file if it exists
+                if ($driver->authorized_driver_license_image) {
+                    Storage::delete('public/images/drivers/' . $driver->authorized_driver_license_image);
+                }
+            } else {
+                $adlfileName = $driver->authorized_driver_license_image;
+            }
+
+            // Set Approval and Reason Default Value
+            $approval_status = $request->input('approval_status', 'Pending');
+            $reason = $request->input('reason', 'Driver Update Request');
+
+            // Update driver data
+            $driverData = [
+                'driver_name' => $request->dname,
+                'authorized_driver_name' => $request->adname,
+                'authorized_driver_address' => $request->adaddress,
+                'approval_status' => $approval_status,
+                'reason' => $reason,
+                'driver_license_image' => $dlfileName,
+                'authorized_driver_license_image' => $adlfileName,
+            ];
+
+            $driver->update($driverData);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Driver Updated Successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    #APPLICANT HISTORY
+    public function user_history()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Find the owners associated with the authenticated user
+        $owners = Applicant::where('user_id', $user->id)->get();
+
+        return view('applicant_users.history.index', compact('owners'));
+    }
+
+    public function fetchApplicantAudit()
+    {
+        // Retrieve the authenticated user
+        $user = Auth::user();
+
+        // Retrieve the ID of the authenticated user
+        $user_id = $user->id;
+
+        // Query all three tables together
+        $records = DB::table('applicants_record')
+            ->select('pk', 'first_name', 'last_name', 'action', 'updated_at', DB::raw("'applicants_record' as `table`"))
+            ->where('user_id', $user_id)
+            ->orderBy('updated_at', 'desc') // Changed to descending order
+            ->unionAll(
+                DB::table('vehicles_record')
+                    ->select('pk', 'plate_number', 'vehicle_make', 'action', 'updated_at', DB::raw("'vehicles_record' as `table`"))
+                    ->where('user_id', $user_id)
+                    ->orderBy('updated_at', 'desc') // Changed to descending order
+            )
+            ->unionAll(
+                DB::table('drivers_record')
+                    ->select('pk', 'driver_name', 'authorized_driver_name', 'action', 'updated_at', DB::raw("'drivers_record' as `table`"))
+                    ->where('user_id', $user_id)
+                    ->orderBy('updated_at', 'desc') // Changed to descending order
+            )
+            ->orderBy('updated_at', 'desc') // Order the unioned results by updated_at column in descending order
+            ->get();
+
+        $output = '';
+
+        if ($records->isNotEmpty()) {
+            $output .= '<table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No.</th>
+                                <th class="text-center">Type</th>
+                                <th class="text-center">Action</th>
+                                <th class="text-center">Updated At</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+            $counter = count($records); // Initialize counter with total number of records
+            foreach ($records as $record) {
+                $type = '';
+                switch ($record->table) {
+                    case 'applicants_record':
+                        $type = 'Applicant';
+                        break;
+                    case 'vehicles_record':
+                        $type = 'Vehicle';
+                        break;
+                    case 'drivers_record':
+                        $type = 'Driver';
+                        break;
+                }
+
+                $output .= '<tr>
+                                <td class="text-center">' . $counter-- . '</td>
+                                <td class="text-center">' . $type . '</td>
+                                <td class="text-center">' . $record->action . '</td>
+                                <td class="text-center">' . \Carbon\Carbon::parse($record->updated_at)->format('M d, Y \a\t h:i A') . '</td>
+                            </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output = '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        }
+
+        return $output; // Return HTML response        
+    }
+
+
+    public function applicant_vehicle_activate(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        return response()->json($vehicle);
+    }
+
+    // UPDATE VEHICLE
+    public function applicant_vehicle_activate_update(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'driver_id' => 'string|max:255',
+                'owner_address' => 'string|max:2048',
+                'plate_number' => 'string|max:255',
+                'vehicle_make' => 'string|max:255',
+                'year_model' => 'string|max:255',
+                'color' => 'string|max:255',
+                'body_type' => 'string|max:255',
+                'official_receipt_image' => 'image|max:2048',
+                'certificate_of_registration_image' => 'image|max:2048',
+                'deed_of_sale_image' => 'image|max:2048',
+                'authorization_letter_image' => 'image|max:2048',
+                'front_photo' => 'image|max:2048',
+                'side_photo' => 'image|max:2048',
+            ]);
+
+            // If validation fails, return error response
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            // Retrieve the vehicle record
+            $vehicle = Vehicle::find($request->vehicle_id);
+
+            // Process file uploads and update filenames
+            $fileFields = [
+                'front_photo',
+                'side_photo',
+            ];
+
+            $fileFieldDoc = [
+                'official_receipt_image',
+                'certificate_of_registration_image',
+                'deed_of_sale_image',
+                'authorization_letter_image',
+            ];
+
+            foreach ($fileFields as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/images/vehicles', $fileName);
+                    // Delete the old file if it exists
+                    if ($vehicle->$field) {
+                        Storage::delete('public/images/vehicles/' . $vehicle->$field);
+                    }
+                    $vehicle->$field = $fileName;
+                }
+            }
+
+            foreach ($fileFieldDoc as $field) {
+                if ($request->hasFile($field)) {
+                    $file = $request->file($field);
+                    $fileName = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/images/vehicles/documents', $fileName);
+                    // Delete the old file if it exists
+                    if ($vehicle->$field) {
+                        Storage::delete('public/images/vehicles/documents/' . $vehicle->$field);
+                    }
+                    $vehicle->$field = $fileName;
+                }
+            }
+
+            // Set Approval and Reason Default Value
+            $approvalStatus = $request->input('approval_status', 'Pending');
+            $reason = $request->input('reason', 'Vehicle Activation Request');
+            $registration_status = $request->input('registration_status', 'Pending');
+
+            // Update vehicle data
+            $vehicle->update([
+                'driver_id' => $request->driver_id,
+                'owner_address' => $request->owner_address,
+                'plate_number' => $request->plate_number,
+                'vehicle_make' => $request->vehicle_make,
+                'year_model' => $request->year_model,
+                'color' => $request->color,
+                'body_type' => $request->body_type,
+                'approval_status' => $approvalStatus,
+                'reason' => $reason,
+                'registration_status' => $registration_status,
+            ]);
+
+            // Return success response
+            return response()->json([
+                'status' => 200,
+                'message' => 'Vehicle Updated Successfully.'
+            ]);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 500,
+                'message' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

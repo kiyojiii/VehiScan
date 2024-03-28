@@ -17,20 +17,20 @@
 
 <body>
 
-        <!-- Loader -->
-        <div id="preloader">
-            <div id="status">
-                <div class="spinner-chase">
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                </div>
+    <!-- Loader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-chase">
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
             </div>
         </div>
-        
+    </div>
+
     <style>
         .wrapper {
             width: 100%;
@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <!-- end page title -->
-                
+                @forelse($owners as $owners)
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
@@ -105,6 +105,16 @@
                 </div><!--end row-->
 
                 @include('applicant_users.vehicles.vehicle_js')
+
+                @empty
+                <h1 class="text-center text-danger my-5"><i class="bx bx-error"></i> You Have Not Applied Yet </h1>
+                <div class="text-center">
+                    <a href="{{ route('applicant_users.applicant_apply') }}" class="btn btn-primary">
+                        Apply Now
+                    </a>
+                </div>
+                @endforelse
+
 
             </div> <!-- container-fluid -->
         </div><!-- End Page-content -->

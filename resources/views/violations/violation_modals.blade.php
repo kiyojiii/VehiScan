@@ -14,7 +14,7 @@
                     <!-- Vehicle Dropdown -->
                     <div class="mb-3">
                         <label for="vehicle_id" class="form-label">Vehicle</label>
-                        <select name="vehicle_id" id="vehicle_id" class="form-select vehicle-select">
+                        <select name="vehicle_id" id="vehicle_id" class="vehicle-select">
                             <option value="">Select Vehicle</option> <!-- Placeholder option -->
                             @forelse($vehicles as $vehicle)
                             <option value="{{ $vehicle->id }}">{{ $vehicle->plate_number }} - {{ $vehicle->vehicle_make }} - {{ $vehicle->color }}</option>

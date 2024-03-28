@@ -17,20 +17,20 @@
 
 <body>
 
-        <!-- Loader -->
-        <div id="preloader">
-            <div id="status">
-                <div class="spinner-chase">
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                    <div class="chase-dot"></div>
-                </div>
+    <!-- Loader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-chase">
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
             </div>
         </div>
-        
+    </div>
+
     @extends('layouts.app2')
 
     @section('content')
@@ -158,12 +158,12 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row">Approval:</th>
-                                                @if($owners->vehicle)
-                                                @if($owners->vehicle->approval_status == 'Approved')
-                                                <td><span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span></td>
-                                                @elseif($owners->vehicle->approval_status == 'Rejected')
+                                                @if($owners)
+                                                @if($owners->approval_status == 'Approved')
+                                                <td><span class="badge badge-soft-success">{{ $owners->approval_status }}</span></td>
+                                                @elseif($owners->approval_status == 'Rejected')
                                                 <td><span class="badge badge-soft-danger">Rejected</span></td>
-                                                @elseif($owners->vehicle->approval_status == 'Pending')
+                                                @elseif($owners->approval_status == 'Pending')
                                                 <td><span class="badge badge-soft-warning">Pending</span></td>
                                                 @else
                                                 <td><span class="badge badge-soft-secondary">Unknown</span></td>
@@ -175,8 +175,8 @@
                                             <tr>
                                                 <th scope="row">Applied Date:</th>
                                                 <td>
-                                                    @if($owners->vehicle && $owners->vehicle->created_at)
-                                                    {{ \Carbon\Carbon::parse($owners->vehicle->created_at)->format('d F, Y') }}
+                                                    @if($owners && $owners->created_at)
+                                                    {{ \Carbon\Carbon::parse($owners->created_at)->format('d F, Y') }}
                                                     @else
                                                     N/A
                                                     @endif
@@ -184,10 +184,19 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row">Reason(If Rejected):</th>
-                                                <td>{{ $owners->vehicle->reason ?? 'N/A' }}</td>
+                                                <td>{{ $owners->reason ?? 'N/A' }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <br>
+                                    <div style="text-align: center;">
+                                        <a href="javascript:void(0)" id="{{ $owners->id }}" class="btn btn-success editOwner" onClick="editOwner()">
+                                            <i class="bx bx-edit"></i> Update <i class="bx bx-user"></i>
+                                        </a>
+                                        <a href="javascript:void(0)" id="{{ $driver->id }}" class="btn btn-warning editDriver" onClick="editDriver()">
+                                            <i class="bx bx-edit"></i> Update Driver
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +325,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title mb-4">My Vehicles</h4>
+                                    <h4 class="card-title mb-3">My Vehicles</h4>
                                     @if($hasActiveVehicle)
                                     <a id="addVehicleBtn" class="btn btn-sm btn-primary my-2" href="javascript:void(0)" onClick="showAlert()">
                                         <i class="bi bi-plus-circle"></i> Add Vehicle
@@ -356,7 +365,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title mb-4">My Driver</h4>
+                                    <h4 class="card-title mb-3">My Driver</h4>
                                     <!-- <a class="btn btn-sm btn-primary my-2" onClick="addDriver()" href="javascript:void(0)">
                                         <i class="bi bi-plus-circle"></i> Add Driver
                                     </a> -->
@@ -366,37 +375,37 @@
                                     <div class="row">
                                         <div class="col">
                                             <h5 class="fw-bold">Driver's Name:</h5>
-                                            <p class="mb-1">{{ $owners->vehicle->driver->driver_name ?? 'N/A' }}</p>
+                                            <p class="mb-1">{{ $driver->driver_name ?? 'N/A' }}</p>
                                         </div>
                                         <div class="col">
                                             <h5 class="fw-bold">Authorized Driver's Name:</h5>
-                                            <p class="mb-1">{{ $owners->vehicle->driver->authorized_driver_name ?? 'N/A' }}</p>
+                                            <p class="mb-1">{{ $driver->authorized_driver_name ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                     <br>
                                     <div class="row">
                                         <div class="col">
                                             <h5 class="fw-bold">Driver's Address:</h5>
-                                            <p class="mb-1">{{ $owners->vehicle->owner_address ?? 'N/A' }}</p>
+                                            <p class="mb-1">{{ $owners->present_address ?? 'N/A' }}</p>
                                         </div>
                                         <div class="col">
                                             <h5 class="fw-bold">Authorized Driver's Address:</h5>
-                                            <p class="mb-1">{{ $owners->vehicle->driver->authorized_driver_address ?? 'N/A' }}</p>
+                                            <p class="mb-1">{{ $driver->authorized_driver_address ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col">
                                             <h5 class="fw-bold">Driver's License Image:</h5>
-                                            @if($owners->vehicle && $owners->vehicle->driver && $owners->vehicle->driver->driver_license_image)
-                                            <img src="{{ asset('storage/images/drivers/' . $owners->vehicle->driver->driver_license_image) }}" alt="Driver's License Image" class="img-thumbnail mx-auto d-block img-modal" style="width: 300px; height: 200px;">
+                                            @if($driver && $driver->driver_license_image)
+                                            <img src="{{ asset('storage/images/drivers/' . $driver->driver_license_image) }}" alt="Driver's License Image" class="img-thumbnail mx-auto d-block img-modal" style="width: 300px; height: 200px;">
                                             @else
                                             <p>No driver's license image available</p>
                                             @endif
                                         </div>
                                         <div class="col">
                                             <h5 class="fw-bold">Authorized Driver's License Image:</h5>
-                                            @if($owners->vehicle && $owners->vehicle->driver && $owners->vehicle->driver->authorized_driver_license_image)
-                                            <img src="{{ asset('storage/images/drivers/' . $owners->vehicle->driver->authorized_driver_license_image) }}" alt="Authorized Driver's License Image" class="img-thumbnail mx-auto d-block img-modal" style="width: 300px; height: 200px;">
+                                            @if($driver && $driver->authorized_driver_license_image)
+                                            <img src="{{ asset('storage/images/drivers/' . $driver->authorized_driver_license_image) }}" alt="Authorized Driver's License Image" class="img-thumbnail mx-auto d-block img-modal" style="width: 300px; height: 200px;">
                                             @else
                                             <p>No authorized driver's license image available</p>
                                             @endif
@@ -405,20 +414,20 @@
                                     <br>
                                     <li>
                                         <strong>Applied Date:</strong>
-                                        @if($owners->vehicle && $owners->vehicle->driver && $owners->vehicle->driver->created_at)
-                                        <span>{{ \Carbon\Carbon::parse($owners->vehicle->driver->created_at)->format('d F, Y') }}</span>
+                                        @if($driver && $driver->created_at)
+                                        <span>{{ \Carbon\Carbon::parse($driver->created_at)->format('d F, Y') }}</span>
                                         @else
                                         <span>N/A</span>
                                         @endif
                                     </li>
                                     <li>
                                         <strong scope="row">Approval Status</strong>
-                                        @if($owners->vehicle && $owners->vehicle->approval_status)
-                                        @if($owners->vehicle->approval_status == 'Approved')
+                                        @if($driver && $driver->approval_status)
+                                        @if($driver->approval_status == 'Approved')
                                         <span class="badge badge-soft-success">Approved</span>
-                                        @elseif($owners->vehicle->approval_status == 'Rejected')
+                                        @elseif($driver->approval_status == 'Rejected')
                                         <span class="badge badge-soft-danger">Rejected</span>
-                                        @elseif($owners->vehicle->approval_status == 'Pending')
+                                        @elseif($driver->approval_status == 'Pending')
                                         <span class="badge badge-soft-warning">Pending</span>
                                         @else
                                         <span class="badge badge-soft-secondary">Unknown</span>
@@ -428,14 +437,19 @@
                                         @endif
                                     </li>
                                     <li>
-                                        <strong>Reason(If Rejected):</strong> <span>{{ $owners->vehicle->driver->reason ?? 'N/A' }}</span>
+                                        <strong>Reason(If Rejected):</strong> <span>{{ $driver->reason ?? 'N/A' }}</span>
                                     </li>
                                 </div>
                             </div>
                         </div>
                     </div>
                     @empty
-                    <p>You have not Applied Yet</p>
+                    <h1 class="text-center text-danger my-5"><i class="bx bx-error"></i> You Have Not Applied Yet </h1>
+                    <div class="text-center">
+                        <a href="{{ route('applicant_users.applicant_apply') }}" class="btn btn-primary">
+                            Apply Now
+                        </a>
+                    </div>
                     @endforelse
                 </div>
             </div>
