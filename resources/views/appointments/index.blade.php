@@ -46,7 +46,7 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Appointment Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Appointment Count: {{ $totalappointment }}</h5>
                                     <div class="flex-shrink-0">
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Appointment</a>
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>

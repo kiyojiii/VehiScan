@@ -141,6 +141,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('vehicles/store', [VehicleController::class, 'store'])->name('vehicles.store');
     Route::get('vehicles/edit', [VehicleController::class, 'edit'])->name('vehicles.edit');
     Route::post('vehicles/update', [VehicleController::class, 'update'])->name('vehicles.update');
+    Route::delete('vehicles/deactivate', [VehicleController::class, 'deactivate_vehicle'])->name('vehicles.deactivate');
     Route::delete('vehicles/delete', [VehicleController::class, 'delete'])->name('vehicles.delete');
     Route::get('vehicles/show/{id}', [VehicleController::class, 'show'])->name('vehicles.show');
 

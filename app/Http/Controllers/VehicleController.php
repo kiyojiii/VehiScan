@@ -38,9 +38,10 @@ class VehicleController extends Controller
 
   public function index()
   {
+    $totalvehicles = Vehicle::count();
     $drivers = Driver::all();
     $owners = Applicant::all();
-    return view('vehicles.index', compact('owners', 'drivers'));
+    return view('vehicles.index', compact('totalvehicles', 'owners', 'drivers'));
   }
 
   // Fetch Vehicle Data
@@ -53,18 +54,21 @@ class VehicleController extends Controller
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Driver Name</th>
-                    <th>Plate Number</th>
-                    <th>Vehicle Make</th>
-                    <th>Vehicle Code</th>
-                    <th>Side Photo</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th class="text-center">Owner</th>
+                    <th class="text-center">Plate Number</th>
+                    <th class="text-center">Vehicle Make</th>
+                    <th class="text-center">Vehicle Code</th>
+                    <th class="text-center">Side Photo</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody>';
       foreach ($vehicles as $vehicle) {
         $driverName = Driver::find($vehicle->driver_id)->driver_name ?? 'N/A';
+        $owner_first = Applicant::find($vehicle->owner_id)->first_name ?? 'N/A';
+        $first_letter = ucfirst(substr($owner_first, 0, 1)); // Capitalize the first letter
+        $owner_last = ucfirst(Applicant::find($vehicle->owner_id)->last_name) ?? 'N/A';
         // Concatenate vehicle_code and color into the data string for QR code
         // $qrData = "Code: {$vehicle->vehicle_code}\nColor: {$vehicle->color}";
         // $qrData = "{$vehicle->vehicle_code}";
@@ -76,31 +80,30 @@ class VehicleController extends Controller
 
         // Concatenate QR code HTML with image HTML
         // Generate QR code with the same parameters as the download method
-        $qrCode = QrCode::format('png')
-          ->size(50)
-          ->errorCorrection('H')
-          ->generate($vehicle->vehicle_code);
+        // $qrCode = QrCode::format('png')
+        //   ->size(50)
+        //   ->errorCorrection('H')
+        //   ->generate($vehicle->vehicle_code);
 
-        // Convert the binary data to base64
-        $qrCodeBase64 = base64_encode($qrCode);
+        // // Convert the binary data to base64
+        // $qrCodeBase64 = base64_encode($qrCode);
 
         $output .= '<tr>
                 <td>' . $vehicle->id . '</td>
-                <td>' . $driverName . '</td>
-                <td>' . $vehicle->plate_number . '</td>
-                <td>' . $vehicle->vehicle_make . '</td>
-                <td class="text-center"><img src="data:image/png;base64,' . $qrCodeBase64 . '" /> ' . $vehicle->vehicle_code . ' </td>
+                <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
+                <td class="text-center">' . $vehicle->plate_number . '</td>
+                <td class="text-center">' . $vehicle->vehicle_make . '</td>
+                <td class="text-center">' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
                     <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                 </td>
-                <td>' . $vehicle->registration_status . '</td>
-                <td>
-                    <!-- Button to trigger QR code download -->
-                    <button class="btn btn-primary download-btn" data-qrcode="' . $vehicle->vehicle_code . '">Download QR</button>
+                <td class="text-center">' . $vehicle->registration_status . '</td>
+                <td class="text-center">
                     <!-- Your other action buttons -->
                     <!-- For example: -->
                     <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                     <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
+                    <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>
                     <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
                 </td>
             </tr>';
@@ -440,6 +443,37 @@ class VehicleController extends Controller
   {
     $drivers = Driver::find($id);
     $vehicles = Vehicle::find($id);
-    return view('vehicles.show', compact('drivers', 'vehicles'));
+
+    // Generate QR code based on the vehicle's code
+    $qrCode = QrCode::format('png')
+      ->size(50)
+      ->errorCorrection('H')
+      ->generate($vehicles->vehicle_code);
+
+    // Convert the binary data to base64
+    $qrCodeBase64 = base64_encode($qrCode);
+
+    return view('vehicles.show', compact('qrCodeBase64', 'drivers', 'vehicles'));
+  }
+
+  public function deactivate_vehicle(Request $request)
+  {
+      $id = $request->id;
+      $vehicle = Vehicle::find($id);
+      if (!$vehicle) {
+          return response()->json([
+              'status' => 'error',
+              'message' => 'Vehicle not found'
+          ], 404);
+      }
+
+      // Change registration_status to Inactive
+      $vehicle->registration_status = 'Inactive';
+      $vehicle->save();
+
+      return response()->json([
+          'status' => 'success',
+          'message' => 'Vehicle registration status changed to Inactive'
+      ]);
   }
 }

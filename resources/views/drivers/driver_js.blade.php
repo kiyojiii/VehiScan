@@ -102,9 +102,9 @@
                     $("#approval").val(response.approval_status);
                     $("#reason").val(response.reason);
                     $("#driver_license_image").html(
-                        `<img src="storage/images/drivers/${response.driver_license_image}" width="100" class="img-fluid img-thumbnail">`);
+                        `<img src="storage/images/drivers/${response.driver_license_image}" width="200" class="img-fluid img-thumbnail">`);
                     $("#authorized_driver_license_image").html(
-                        `<img src="storage/images/drivers/${response.authorized_driver_license_image}" width="100" class="img-fluid img-thumbnail">`);
+                        `<img src="storage/images/drivers/${response.authorized_driver_license_image}" width="200" class="img-fluid img-thumbnail">`);
                     $("#driver_id").val(response.id);
                     $("#dlicense_photo").val(response.driver_license_image);
                     $("#adlicense_photo").val(response.authorized_driver_license_image)

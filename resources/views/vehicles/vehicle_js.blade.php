@@ -169,17 +169,17 @@
                         $("#approval_status").val(response.approval_status);
                         $("#reason").val(response.reason);
                         $("#official_receipt_image").html(
-                            `<img src="storage/images/vehicles/documents/${response.official_receipt_image}" width="100" class="img-fluid img-thumbnail">`);
+                            `<img src="storage/images/vehicles/documents/${response.official_receipt_image}" width="150" class="img-fluid img-thumbnail">`);
                         $("#certificate_of_registration_image").html(
-                            `<img src="storage/images/vehicles/documents/${response.certificate_of_registration_image}" width="100" class="img-fluid img-thumbnail">`);
+                            `<img src="storage/images/vehicles/documents/${response.certificate_of_registration_image}" width="150" class="img-fluid img-thumbnail">`);
                         $("#deed_of_sale_image").html(
-                            `<img src="storage/images/vehicles/documents/${response.deed_of_sale_image}" width="100" class="img-fluid img-thumbnail">`);
+                            `<img src="storage/images/vehicles/documents/${response.deed_of_sale_image}" width="150" class="img-fluid img-thumbnail">`);
                         $("#authorization_letter_image").html(
-                            `<img src="storage/images/vehicles/documents/${response.authorization_letter_image}" width="100" class="img-fluid img-thumbnail">`);
+                            `<img src="storage/images/vehicles/documents/${response.authorization_letter_image}" width="150" class="img-fluid img-thumbnail">`);
                         $("#front_photo").html(
-                            `<img src="storage/images/vehicles/${response.front_photo}" width="100" class="img-fluid img-thumbnail">`);
+                            `<img src="storage/images/vehicles/${response.front_photo}" width="150" class="img-fluid img-thumbnail">`);
                         $("#side_photo").html(
-                            `<img src="storage/images/vehicles/${response.side_photo}" width="100" class="img-fluid img-thumbnail">`);
+                            `<img src="storage/images/vehicles/${response.side_photo}" width="150" class="img-fluid img-thumbnail">`);
                         $("#vehicle_id").val(response.id);
                         $("#official_receipt_image_photo").val(response.official_receipt_image);
                         $("#certificate_of_registration_image_photo").val(response.certificate_of_registration_image)
@@ -240,14 +240,65 @@
                 });
             });
 
+             // delete vehicle ajax request
+             $(document).on('click', '.deactivateIcon', function(e) {
+            e.preventDefault();
+            let id = $(this).attr('id');
+            let csrf = '{{ csrf_token() }}';
+            Swal.fire({
+                title: 'Deactivate Vehicle?',
+                text: "This Vehicle's Status Will Become Inactive",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Deactivate it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('vehicles.deactivate') }}',
+                        method: 'delete',
+                        data: {
+                            id: id,
+                            _token: csrf
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                fetchAllVehicles();
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Vehicle is now Inactive',
+                                    'success'
+                                );
+                                fetchAllVehicles();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to delete vehicle: ' + error,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
             // delete vehicle ajax request
             $(document).on('click', '.deleteIcon', function(e) {
             e.preventDefault();
             let id = $(this).attr('id');
             let csrf = '{{ csrf_token() }}';
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: 'Delete Vehicle?',
+                text: "Deleting this Vehicle will remove all information related to it, Proceed?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

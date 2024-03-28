@@ -15,7 +15,8 @@ class ViolationController extends Controller
     public function index()
     {
         $vehicles = Vehicle::all();
-        return view('violations.index', compact('vehicles'));
+        $totalviolations = Violation::count();
+        return view('violations.index', compact('totalviolations', 'vehicles'));
     }
 
     public function fetchAllViolation()

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Owner</title>
+    <title>VehiScan | Owners </title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -53,25 +53,81 @@
                 </div>
                 <!-- end page title -->
 
-                @if(auth()->check())
-                <p>Authenticated User ID: {{ auth()->id() }}</p>
-                @else
-                <p>User not authenticated</p>
-                @endif
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Owner Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Owner Count: {{ $totalowner }}</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-success btn-sm my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Owner</a>
+                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Owner</a>
+                                        <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+                                        <div class="dropdown d-inline-block">
+
+                                            <button type="menu" class="btn btn-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-body" id="show_all_owners">
-                                <h1 class="text-center text-secondary my-5"> Loading... </h1>
+                            <div class="card-body border-bottom">
+                                <form>
+                                    <div class="row justify-content-center"> <!-- Center the filters -->
+                                        <div class="col-xl col-sm-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Date :</label>
+                                                <input type="text" class="form-control" id="orderid-input" placeholder="Select date" data-date-format="dd M, yyyy" data-date-orientation="bottom auto" data-provide="datepicker" data-date-autoclose="true">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl col-sm-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Coin :</label>
+                                                <select class="form-control select2-search-disable">
+                                                    <option value="BTC" selected>Bitcoin</option>
+                                                    <option value="ETH">Ethereum</option>
+                                                    <option value="LTC">litecoin</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl col-sm-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Type :</label>
+                                                <select class="form-control select2-search-disable">
+                                                    <option value="BU" selected>Buy</option>
+                                                    <option value="SE">Sell</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl col-sm-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Status :</label>
+                                                <select class="form-control select2-search-disable">
+                                                    <option value="CO" selected>Completed</option>
+                                                    <option value="PE">Pending</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl col-sm-6 align-self-end">
+                                            <div class="mb-3">
+                                                <button type="button" class="btn btn-primary w-md">Add Order</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="card-body" id="show_all_owners">
+                                    <h1 class="text-center text-secondary my-5"> Loading... </h1>
+                                </div>
+
                             </div>
 
                             @include('owners.owner_modals')

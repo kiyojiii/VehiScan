@@ -13,7 +13,8 @@ class StatusController extends Controller
 {
     public function index()
     {
-        return view('status.index');
+        $rstotalcount = Statuses::count();
+        return view('status.index', compact('rstotalcount'));
     }
 
     public function fetchAllRoleStatus()

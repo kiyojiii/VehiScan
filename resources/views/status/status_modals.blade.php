@@ -12,8 +12,8 @@
                     @csrf
 
                     <!-- RoleStatus Input -->
-                    <div class="form-group">
-                        <label for="status" class="form-label">Status</label>
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Role Status</label>
                         <input type="text" class="form-control" id="applicant_role_status" name="applicant_role_status" required>
                     </div>
 
@@ -45,8 +45,8 @@
                     <input type="hidden" name="rolestatus_id" id="rolestatus_id">
 
                     <!-- RoleStatus Input -->
-                    <div class="form-group">
-                        <label for="status" class="form-label">Status</label>
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Role Status</label>
                         <input type="text" class="form-control" id="edit_applicant_role_status" name="edit_applicant_role_status" required>
                     </div>
 

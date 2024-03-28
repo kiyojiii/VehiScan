@@ -28,10 +28,11 @@ class OwnerController extends Controller
 
     public function index()
     {
+        $totalowner = Applicant::count();
         $role_status = Statuses::all();
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
-        return view('owners.index', compact('vehicles', 'role_status', 'appointments'));
+        return view('owners.index', compact('totalowner', 'vehicles', 'role_status', 'appointments'));
     }
 
     public function fetchAllOwner()

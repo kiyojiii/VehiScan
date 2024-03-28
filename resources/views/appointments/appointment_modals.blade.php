@@ -11,7 +11,7 @@
                 <form action="javascript:void(0)" id="add_appointment_form" name="add_appointment_form" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="form-group">
+                    <div class="col-md-3">
                         <label for="appointment" class="form-label">Appointment</label>
                         <input type="text" class="form-control" id="appointment" name="appointment" required>
                     </div>
@@ -43,7 +43,7 @@
 
                     <input type="hidden" name="appointment_id" id="appointment_id">
 
-                    <div class="form-group">
+                    <div class="col-md-3">
                         <label for="edit_appointment" class="form-label">Appointment</label>
                         <input type="text" class="form-control" id="edit_appointment" name="edit_appointment" required>
                     </div>

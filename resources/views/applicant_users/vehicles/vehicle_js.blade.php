@@ -115,7 +115,7 @@ $("#edit_vehicle_form").submit(function(e) {
             Swal.fire({
                 title: 'Deactivate Vehicle?',
                 text: "This Vehicle's Status Will Become Inactive",
-                icon: 'warning',
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',

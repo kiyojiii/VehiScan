@@ -18,7 +18,8 @@ class TimeController extends Controller
 {
     public function index()
     {
-        return view('time.index');
+        $totaltime = Time::count();
+        return view('time.index', compact('totaltime'));
     }
 
     public function fetchAllTime()

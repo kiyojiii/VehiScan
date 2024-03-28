@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Driver</title>
+    <title>VehiScan | Drivers </title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -53,18 +53,12 @@
                 </div>
                 <!-- end page title -->
 
-                @if(auth()->check())
-                <p>Authenticated User ID: {{ auth()->id() }}</p>
-                @else
-                <p>User not authenticated</p>
-                @endif
-
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Driver Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Driver Count: {{ $totaldriver }}</h5>
                                     <div class="flex-shrink-0">
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Driver</a>
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>

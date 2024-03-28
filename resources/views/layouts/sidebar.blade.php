@@ -101,6 +101,15 @@
                 </li>
 
                 <li>
+                    @canany(['create-violation', 'edit-violation', 'delete-violation', 'view-violation'])
+                    <a href="{{ route('violations.index') }}" class="waves-effect">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span key="t-guests">Violations</span>
+                    </a>
+                    @endcanany
+                </li>
+                
+                <li>
                     @canany(['create-appointment', 'edit-appointment', 'delete-appointment', 'view-appointment'])
                     <a href="{{ route('appointments.index') }}" class="waves-effect">
                         <i class="fas fa-list-alt"></i>
@@ -118,14 +127,6 @@
                     @endcanany
                 </li>
 
-                <li>
-                    @canany(['create-violation', 'edit-violation', 'delete-violation', 'view-violation'])
-                    <a href="{{ route('violations.index') }}" class="waves-effect">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span key="t-guests">Violations</span>
-                    </a>
-                    @endcanany
-                </li>
 
                 <li class="menu-title" key="t-apps">Permissions</li>
 

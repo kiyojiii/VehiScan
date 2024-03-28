@@ -217,9 +217,6 @@ $(function() {
     $(document).ready(function() {
         // Initialize Select2 for the vehicle dropdown
         $('.vehicle-select').select2({
-            theme: 'bootstrap-5',
-            selectionCssClass: "select2--small",
-    dropdownCssClass: "select2--small",
             dropdownParent: $('#addViolationModal')
         });
 

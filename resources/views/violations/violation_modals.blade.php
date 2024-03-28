@@ -13,21 +13,24 @@
 
                     <!-- Vehicle Dropdown -->
                     <div class="mb-3">
-                        <label for="vehicle_id" class="form-label">Vehicle</label>
-                        <select name="vehicle_id" id="vehicle_id" class="vehicle-select">
-                            <option value="">Select Vehicle</option> <!-- Placeholder option -->
-                            @forelse($vehicles as $vehicle)
-                            <option value="{{ $vehicle->id }}">{{ $vehicle->plate_number }} - {{ $vehicle->vehicle_make }} - {{ $vehicle->color }}</option>
-                            @empty
-                            <option value="">No Vehicles Available</option>
-                            @endforelse
-                        </select>
-                    </div>
-
-                    <!-- Violation Input -->
-                    <div class="mb-3">
-                        <label for="violation" class="form-label">Violation</label>
-                        <input type="text" class="form-control" id="violation" name="violation" required>
+                        <div class="col-md-6">
+                            <label for="vehicle_id" class="form-label">Vehicle</label>
+                            <br>
+                            <select name="vehicle_id" id="vehicle_id" class="vehicle-select">
+                                <option value="">Select Vehicle</option> <!-- Placeholder option -->
+                                @forelse($vehicles as $vehicle)
+                                <option value="{{ $vehicle->id }}">{{ $vehicle->plate_number }} - {{ $vehicle->vehicle_make }} - {{ $vehicle->color }}</option>
+                                @empty
+                                <option value="">No Vehicles Available</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <br>
+                        <!-- Violation Input -->
+                        <div class="col-md-3">
+                            <label for="violation" class="form-label">Violation</label>
+                            <input type="text" class="form-control" id="violation" name="violation" required>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -59,28 +62,30 @@
 
                     <!-- Vehicle Dropdown -->
                     <div class="mb-3">
-                        <label for="edit_vehicle_id" class="form-label">Vehicle</label>
-                        <select name="edit_vehicle_id" id="edit_vehicle_id" class="form-select edit-vehicle-select">
-                            <option value="">Select Vehicle</option> <!-- Placeholder option -->
-                            @forelse($vehicles as $vehicle)
-                            <option value="{{ $vehicle->id }}">{{ $vehicle->plate_number }} - {{ $vehicle->vehicle_make }} - {{ $vehicle->color }}</option>
-                            @empty
-                            <option value="">No Vehicles Available</option>
-                            @endforelse
-                        </select>
-                    </div>
+                        <div class="col-md-6">
+                            <label for="edit_vehicle_id" class="form-label">Vehicle</label>
+                            <br>
+                            <select name="edit_vehicle_id" id="edit_vehicle_id" class="form-select edit-vehicle-select">
+                                <option value="">Select Vehicle</option> <!-- Placeholder option -->
+                                @forelse($vehicles as $vehicle)
+                                <option value="{{ $vehicle->id }}">{{ $vehicle->plate_number }} - {{ $vehicle->vehicle_make }} - {{ $vehicle->color }}</option>
+                                @empty
+                                <option value="">No Vehicles Available</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <br>
+                        <!-- Violation Input -->
+                        <div class="col-md-3">
+                            <label for="violation" class="form-label">Violation</label>
+                            <input type="text" class="form-control" id="edit_violation" name="edit_violation" required>
+                        </div>
 
-                    <!-- Violation Input -->
-                    <div class="mb-3">
-                        <label for="violation" class="form-label">Violation</label>
-                        <input type="text" class="form-control" id="edit_violation" name="edit_violation" required>
-                    </div>
-
-                    <div class="my-2" id="scan_or_photo_of_id"></div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" id="edit_violation_btn" class="btn btn-primary" id="btn-save">Update Violation</button>
-                    </div>
+                        <div class="my-2" id="scan_or_photo_of_id"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" id="edit_violation_btn" class="btn btn-primary" id="btn-save">Update Violation</button>
+                        </div>
                 </form>
             </div>
 

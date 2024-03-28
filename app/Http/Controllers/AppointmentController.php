@@ -13,7 +13,8 @@ class AppointmentController extends Controller
 {
     public function index()
     {
-        return view('appointments.index');
+        $totalappointment = Appointment::count();
+        return view('appointments.index', compact('totalappointment'));
     }
 
     public function fetchAllAppointment()

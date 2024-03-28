@@ -19,7 +19,8 @@ class DriverController extends Controller
 
     public function index()
     {
-        return view('drivers.index');
+        $totaldriver = Driver::count();
+        return view('drivers.index', compact('totaldriver'));
     }
 
     public function fetchAllDriver()
