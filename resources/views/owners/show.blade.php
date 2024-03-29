@@ -50,7 +50,7 @@
                                     <div class="col-7">
                                         <div class="text-primary p-3">
                                             <h5 class="text-primary">Welcome Back !</h5>
-                                            <p>It will seem like simplified</p>
+                                            <p>You are an Applicant</p>
                                         </div>
                                     </div>
                                     <div class="col-5 align-self-end">
@@ -94,8 +94,6 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title mb-4">Personal Information</h4>
-
-                                <p class="text-muted mb-4">Hi I'm {{ $owners->first_name }} {{ $owners->middle_initial }}. {{ $owners->last_name }},has been the industry's standard dummy text To an English person, it will seem like simplified English, as a skeptical Cambridge.</p>
                                 <div class="table-responsive">
                                     <table class="table mb-0">
                                         <tbody>
@@ -173,35 +171,6 @@
                             </div>
                         </div>
                         <!-- end card -->
-
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title mb-5">Vehicle Activity</h4>
-                                <div class="">
-                                    <ul class="verti-timeline list-unstyled">
-                                        @foreach($remarks as $remark)
-                                        <li class="event-list">
-                                            <div class="event-timeline-dot">
-                                                <i class="bx bx-right-arrow-circle"></i>
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <i class="bx bx-code h4 text-primary"></i>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div>
-                                                        <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark">{{ $remark }}</a></h5>
-                                                        <span class="text-primary">2013 - 16</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end card -->
                     </div>
 
                     <div class="col-xl-8">
@@ -252,8 +221,14 @@
                                     <div class="card-body">
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
-                                                <p class="text-muted fw-medium mb-2">Total Revenue</p>
-                                                <h4 class="mb-0">?</h4>
+                                                <p class="text-muted fw-medium mb-2">Active Vehicle</p>
+                                                <h4 class="mb-0">
+                                                    @if ($active_vehicle)
+                                                    <h4 class="mb-0">{{ $active_vehicle->plate_number ?? 'N/A' }}</h4>
+                                                    @else
+                                                    <h4 class="mb-0 text-danger">None</h4>
+                                                    @endif
+                                                </h4>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
@@ -266,12 +241,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title mb-4">Time Chart</h4>
-                                <div id="revenue-chart" class="apex-charts" dir="ltr"></div>
                             </div>
                         </div>
 
@@ -300,9 +269,6 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-4">My Driver</h4>
-                                    <a class="btn btn-sm btn-primary my-2" onClick="addDriver()" href="javascript:void(0)">
-                                        <i class="bi bi-plus-circle"></i> Add Driver
-                                    </a>
                                 </div>
 
                                 <div class="row">

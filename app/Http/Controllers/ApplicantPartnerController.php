@@ -130,4 +130,119 @@ class ApplicantPartnerController extends Controller
             echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
         }
     }
+
+    public function index_vehicles_partner_supplier()
+    {
+        $drivers = Driver::all();
+        
+        $owners = Applicant::whereHas('appointment', function ($query) {
+            $query->where('appointment', 'Partner/Supplier');
+        })->get();
+
+        $vehicles = Vehicle::all();
+
+        // Query applicants with associated appointments where the appointment is 'Partner/Supplier'
+        $applicants = Applicant::whereHas('appointment', function ($query) {
+            $query->where('appointment', 'Partner/Supplier');
+        })->get();
+
+        // Extract the IDs of the applicants
+        $applicantIds = $applicants->pluck('id');
+
+        // Query vehicles of the selected applicants
+        $totalpartnervehicles = Vehicle::whereIn('owner_id', $applicantIds)->count();
+
+        return view('partner_supplier.index_vehicles', compact('vehicles', 'totalpartnervehicles', 'owners', 'drivers'));
+    }
+
+    public function fetchAllPartnerVehicle()
+    {
+        // Query applicants with associated appointments where the appointment is 'Partner/Supplier'
+        $applicants = Applicant::whereHas('appointment', function ($query) {
+            $query->where('appointment', 'Partner/Supplier');
+        })->get();
+
+        // Extract the IDs of the applicants
+        $applicantIds = $applicants->pluck('id');
+
+        // Query vehicles of the selected applicants
+        $vehicles = Vehicle::whereIn('owner_id', $applicantIds)->get();
+
+        $output = '';
+        if ($vehicles->count() > 0) {
+            $output .= '<table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th class="text-center">Owner</th>
+                            <th class="text-center">Plate Number</th>
+                            <th class="text-center">Vehicle Make</th>
+                            <th class="text-center">Vehicle Code</th>
+                            <th class="text-center">Side Photo</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+            foreach ($vehicles as $vehicle) {
+                $driverName = Driver::find($vehicle->driver_id)->driver_name ?? 'N/A';
+                $owner_first = Applicant::find($vehicle->owner_id)->first_name ?? 'N/A';
+                $first_letter = ucfirst(substr($owner_first, 0, 1)); // Capitalize the first letter
+                $owner_last = ucfirst(Applicant::find($vehicle->owner_id)->last_name) ?? 'N/A';
+                // Concatenate vehicle_code and color into the data string for QR code
+                // $qrData = "Code: {$vehicle->vehicle_code}\nColor: {$vehicle->color}";
+                // $qrData = "{$vehicle->vehicle_code}";
+                // $barcode = new DNS2D();
+                // $qrCodeHTML = $barcode->getBarcodeHTML($qrData, 'QRCODE', 4, 4);
+
+                // Path to the image
+                // $imagePath = asset('images/seal.jpg');
+
+                // Concatenate QR code HTML with image HTML
+                // Generate QR code with the same parameters as the download method
+                // $qrCode = QrCode::format('png')
+                //   ->size(50)
+                //   ->errorCorrection('H')
+                //   ->generate($vehicle->vehicle_code);
+
+                // // Convert the binary data to base64
+                // $qrCodeBase64 = base64_encode($qrCode);
+
+                $output .= '<tr>
+                <td>' . $vehicle->id . '</td>
+                <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
+                <td class="text-center">' . $vehicle->plate_number . '</td>
+                <td class="text-center">' . $vehicle->vehicle_make . '</td>
+                <td class="text-center">' . $vehicle->vehicle_code . ' </td>
+                <td class="text-center">
+                    <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                </td>
+                <td class="text-center">' . $vehicle->registration_status . '</td>
+                <td class="text-center">
+                    <!-- Your other action buttons -->
+                    <!-- For example: -->
+                    <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                    <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                    
+                $output .= '<style>.disabled-link { pointer-events: none; opacity: 0.5; }</style>';
+
+                // Check vehicle registration status
+                if ($vehicle->registration_status == 'Inactive') {
+                    // If registration status is 'Inactive', disable the deactivate button
+                    $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon disabled-link"><i class="bi-dash-circle h4"></i></a>';
+                } else {
+                    // Otherwise, display the deactivate button as a link
+                    $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>';
+                }
+
+                $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
+                </td>
+            </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output = '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        }
+        return $output;
+    }
 }

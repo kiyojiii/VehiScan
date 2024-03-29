@@ -34,58 +34,24 @@
 </head>
 
 <body>
-    @foreach($applicants as $a)
+@foreach($applicants as $a)
     {{ $a->first_name }}
-    @endforeach
+@endforeach
 
-    @foreach($vehicles as $v)
+@foreach($vehicles as $v)
     {{ $v->plate_number }}
-    @endforeach
+@endforeach
 
-    @foreach($drivers as $d)
-    {{ $d->driver_name }}
-    @endforeach
+<!-- Display applicant IDs -->
+@foreach($applicants as $a)
+    Applicant ID: {{ $a->id }}<br>
+@endforeach
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-body border-bottom">
-                    <div class="card-body" id="test">
-                        <h1 class="text-center text-secondary my-5"> Loading... </h1>
-                    </div>
-                </div>
-            </div><!--end card-->
-        </div><!--end col-->
-    </div><!--end row-->
+@foreach($vehicles as $vehicle)
+    Vehicle Plate Number: {{ $vehicle->plate_number }}<br>
+    <!-- Display other vehicle information as needed -->
+@endforeach
 
-<script>
-    // fetch all violation ajax request
-    fetchTests();
-
-    function fetchTests() {
-        $.ajax({
-            url: '{{ route('fetchTest') }}',
-            method: 'get',
-            success: function(response) {
-                $("#test").html(response);
-                initializeDataTable(); // Initialize DataTables after table is loaded
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-                // Handle error here
-            }
-        });
-    }
-
-    // Function to initialize DataTable
-    function initializeDataTable() {
-        $("table").DataTable({
-            order: [0, 'desc'],
-            pageLength: 5, // Display only 5 rows per page
-            lengthMenu: [5, 25, 50, -1], // Custom length menu options
-        });
-    }
-</script>
 
 </body>
 

@@ -33,7 +33,7 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        @include('layouts.header')
+        @include('layouts.header2')
 
         @include('layouts.user-sidebar')
 

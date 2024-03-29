@@ -18,7 +18,10 @@ use App\Http\Controllers\TimeController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
+
 
 
 /*
@@ -228,11 +231,46 @@ Route::middleware(['auth'])->group(function () {
     Route::get('applicants-partner-rejected', [ApplicantPartnerController::class, 'rejected'])->name('applicants.rejected-partner');
     Route::get('/fetchAllPartnerApplicant', [ApplicantPartnerController::class, 'fetchAllPartnerApplicant'])->name('fetchAllPartnerApplicant');
     Route::get('/fetchAllRejectedPartnerApplicant', [ApplicantPartnerController::class, 'fetchAllRejectedPartnerApplicant'])->name('fetchAllRejectedPartnerApplicant');
+    #VEHICLE PARTNER/SUPPLIER
+    Route::get('vehicles/partner-supplier', [ApplicantPartnerController::class, 'index_vehicles_partner_supplier'])->name('vehicles.index-partner-supplier');
+    Route::get('/fetchAllPartnerVehicle', [ApplicantPartnerController::class, 'fetchAllPartnerVehicle'])->name('fetchAllPartnerVehicle');
 
     #FORMS
     Route::get('applicants-form', [ApplicantController::class, 'form'])->name('forms.applicant');
+
+    #ADMIN PROFILE 
+    Route::get('/admin-profile', [ProfileController::class, 'admin_profile'])->name('admin.profile');
+
+    #PERMISSIONS
+    Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('permissions', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::put('/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
+    Route::get('/permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+
+    #USER REQUEST
+    Route::get('user-requests', [RequestController::class, 'index'])->name('user_requests');
+    Route::get('/fetchUserRequest', [RequestController::class, 'fetchUserRequest'])->name('fetchUserRequest');
+    Route::get('user-request/edit', [RequestController::class, 'edit'])->name('user_request.edit');
+    Route::post('user-request/update', [RequestController::class, 'update'])->name('user_request.update');
+    Route::get('user-request/view', [RequestController::class, 'view'])->name('user_request.view');
+
 });
 
+#USER / ROLE / PERMISSION ROUTES
+Route::get('/delete-user', [UserController::class, 'destroy'])->name('user.delete');
+Route::get('/pagination/paginate-data-user', [UserController::class, 'paginateUser'])->name('paginate.user');
+Route::get('/search-user', [UserController::class, 'searchUser'])->name('search.user');
+Route::get('/filter-user', [UserController::class, 'filterUser'])->name('filter.user');
+
+Route::get('/pagination/paginate-data-permission', [PermissionController::class, 'paginatePermission'])->name('paginate.permission');
+Route::get('/search-permission', [PermissionController::class, 'searchPermission'])->name('search.permission');
+Route::get('/filter-permission', [PermissionController::class, 'filterPermission'])->name('filter.permission');
+
+Route::get('/pagination/paginate-data-role', [RoleController::class, 'paginateRole'])->name('paginate.role');
+Route::get('/search-role', [RoleController::class, 'searchRole'])->name('search.role');
+Route::get('/filter-role', [RoleController::class, 'filterRole'])->name('filter.role');
 
 Route::resources([
     'roles' => RoleController::class,
@@ -241,5 +279,3 @@ Route::resources([
 ]);
 
 
-Route::view('/example-page', 'example-page');
-Route::view('/example-auth', 'example-auth');

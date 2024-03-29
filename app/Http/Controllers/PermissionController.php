@@ -3,173 +3,166 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Permission;
+use App\Models\Notification;
+use App\Models\ChMessage;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use \Illuminate\Support\Facades\Facade;
+use RealRashid\SweetAlert\Facades\Alert;
+
 
 class PermissionController extends Controller
-{  
-    public function index()
+{
+    public function __construct()
     {
-        $permissions = Permission::all();
-        return view('permissions.index', compact('permissions'));
+        $this->middleware('auth');
+        $this->middleware('permission:create-permission|edit-permission|delete-permission', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-permission', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-permission', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-permission', ['only' => ['destroy']]);
     }
 
-    public function fetchAllPermission()
+    public function index(Request $request)
     {
-        $permission = Permission::all();
-        $output = '';
-        $row = 1; // Initialize the row counter
-        if ($permission->count() > 0) {
-            $output .= '<table class="table table-striped align-middle">
-            <thead>
-              <tr>
-                <th class="text-center">No.</th>
-                <th class="text-center">Permission Name</th>
-                <th class="text-center">Date</th>
-                <th class="text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>';
-            foreach ($permission as $p) {
-                $output .= '<tr>
-                    <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
-                    <td class="text-center">' . $p->name . '</td>
-                    <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($p->created_at)) . '</td>
-                    <td class="text-center">
-                        <a href="#" id="' . $p->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $p->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
-                </tr>';
-            }
-            $output .= '</tbody></table>';
-            echo $output;
+        $totalpermissioncount = Permission::count();
+        $permissions = Permission::latest()->paginate(5);
+        return view('permissions.index', compact('totalpermissioncount', 'permissions'));
+    }
+
+    //paginate permission
+    public function paginatePermission(Request $request)
+    {
+        $searchString = $request->query('search_string');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        // Query builder for filtering by search string if it's provided
+        $query = Permission::query();
+        if ($searchString) {
+            $query->where('name', 'like', '%' . $searchString . '%');
+        }
+
+        // Apply date range filter if start date and end date are provided
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                ->whereDate('created_at', '<=', $endDate);
+        }
+
+        // Paginate the results
+        $permissions = $query->latest()->paginate(5);
+
+        // Pass the start date and end date to the view
+        $permissions->appends(['start_date' => $startDate, 'end_date' => $endDate]);
+
+        // Render the view with paginated permissions
+        return view('permissions.permission_pagination', compact('permissions'))->render();
+    }
+
+    //search permission
+    public function searchPermission(Request $request)
+    {
+        $permissions = Permission::where('name', 'like', '%' . $request->search_string . '%')
+            ->orderBy('id', 'desc')
+            ->paginate(5);
+
+        if ($permissions->count() >= 1) {
+            return view('permissions.permission_pagination', compact('permissions'))->render();
         } else {
-            echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+            return response()->json([
+                'status' => 'nothing_found',
+            ]);
         }
     }
 
-    // insert a new role status ajax request
+    //filter permission
+    public function filterPermission(Request $request)
+    {
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+
+        $permissions = Permission::whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date)
+            ->orderBy('created_at', 'desc') // Order by created_at in descending order
+            ->paginate(5);
+
+        return view('permissions.permission_pagination', compact('permissions'))->render();
+    }
+
+
+    public function create()
+    {
+        $permissions = Permission::paginate(5);
+        return view('permissions.create', compact('permissions'));
+    }
     public function store(Request $request)
     {
         try {
-            // Define custom error messages
-            $customMessages = [
-                'unique' => 'The Permission ' . $request->permission . ' already exists.',
-            ];
+            $request->validate([
+                'name.*' => 'required|string|max:255', // Validate each name field in the array
+            ]);
 
-            // Validate incoming request data
-            $validator = Validator::make($request->all(), [
-                'permission' => 'required|string|max:255|unique:permissions,name', // Add unique rule
-            ], $customMessages);
+            $names = $request->input('name'); // Get array of names from the form
 
-            // If validation fails, return error response
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 400,
-                    'message' => $validator->errors()->first()
-                ], 400);
+            // Iterate over each name and create a new Permission instance
+            foreach ($names as $name) {
+                Permission::create([
+                    'name' => $name,
+                    'guard_name' => 'web',
+                ]);
             }
 
-            // Create new applicant data with user_id
-            $permissionData = [
-                'name' => $request->permission,
-                'guard_name' => "web",
-            ];            
+            // Set success message in session
+            session()->flash('permission_created_success', 'Permission created successfully.');
 
-            // Create the applicant record
-            Permission::create($permissionData);
-
-            return response()->json([
-                'status' => 200,
-                'message' => 'Permission created successfully.'
-            ]);
+            return redirect()->route('permissions.index');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Error: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
-    public function edit(Request $request)
+
+
+    public function edit($id)
     {
-        $id = $request->id;
-        $permission = Permission::find($id);
-        return response()->json($permission);
+
+        $permission = Permission::findOrFail($id);
+
+        return view('permissions.edit', compact('permission'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         try {
-            // Define custom error messages
-            $customMessages = [
-                'unique' => 'The Permission ' . $request->edit_permission . ' already exists.',
-            ];
+            $validatedData = $request->validate([
+                'name.*' => 'required|string|max:255', // Validate each name field in the array
+            ]);
 
-            // Validate incoming request data
-            $validator = Validator::make($request->all(), [
-                'edit_permission' => 'required|string|max:255|unique:permissions,name', // Add unique rule
-            ], $customMessages);
+            $permission = Permission::findOrFail($id);
 
-            // If validation fails, return error response
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 400,
-                    'message' => $validator->errors()->first()
-                ], 400);
+            // Update each permission name individually
+            foreach ($validatedData['name'] as $index => $name) {
+                $permission->update([
+                    'name' => $name,
+                    'guard_name' => 'web',
+                ]);
             }
 
-            // Retrieve the permissions record
-            $permissions = Permission::find($request->permission_id);
+            // Set success message in session
+            session()->flash('permission_created_success', 'Permission has been updated successfully.');
 
-            // Update permission data
-            $permissionData = [
-                'name' => $request->edit_permission,
-            ];
-
-            $permissions->update($permissionData);
-
-            // Return success response
-            return response()->json([
-                'status' => 200,
-                'message' => 'Permission updated successfully.'
-            ]);
+            return redirect()->route('permissions.index');
         } catch (\Exception $e) {
-            // Return error response
-            return response()->json([
-                'status' => 500,
-                'message' => 'Error: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
-        // delete an permission ajax request
-        public function delete(Request $request)
-        {
-            $id = $request->id;
-            $permission = Permission::find($id);
-    
-            if (!$permission) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Permission not found'
-                ], 404);
-            }
-    
-            // Attempt to delete the permission
-            try {
-                $permission->delete();
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Permission deleted successfully'
-                ], 200);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Failed to delete permission: ' . $e->getMessage()
-                ], 500);
-            }
-        }
+    public function destroy($id)
+    {
+        $permission = Permission::findOrFail($id);
+        $permission->delete();
+
+        return redirect()->route('permissions.index');
+    }
 }

@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users | List</title>
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <!-- Toastr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title> Vehiscan - Users </title>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .user-photo-container {
@@ -36,6 +35,7 @@
             color: #fff;
         }
     </style>
+
 </head>
 
 <body>
@@ -71,91 +71,82 @@
                 <!-- end page title -->
 
                 <div class="row">
-                    <div class="col-lg-12">http://127.0.0.1:8000/
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Users Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">User Count: {{ $totalusercount }} </h5>
                                     <div class="flex-shrink-0">
                                         @can('create-role')
-                                        <a href="{{ route('users.create') }}" class="btn btn-success btn-sm my-2"><i class="bi bi-plus-circle"></i> Add New User</a>
-                                        @endcan
+                                        <a href="{{ route('users.create') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add New User</a>
+                                        @endcanany
+                                        <button class="btn btn-light" type="button" id="refresh_table"><i class="mdi mdi-refresh"></i></button>
+                                        <div class="dropdown d-inline-block">
+                                            <button type="menu" class="btn btn-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <div class="card-body border-bottom">
+                                <form method="POST" action="/filter">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-xxl-2 col-lg-3">
+                                            <label>Search:</label>
+                                            <input type="search" name="search" class="form-control" id="searchInput" placeholder="Search for ...">
+                                        </div>
+                                        <div class="col-sm-2 col-sm-3">
+                                            <label>Start Date:</label>
+                                            <div class="input-group">
+                                                <input type="date" name="start_date" class="form-control" id="start_date">
+                                                <button class="btn btn-primary" type="button" id="set_today_start">Today</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-1 col-lg-3">
+                                            <label>End Date:</label>
+                                            <div class="input-group">
+                                                <input type="date" name="end_date" class="form-control" id="end_date">
+                                                <button class="btn btn-primary" type="button" id="set_today_end">Today</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-2 col-md-1 d-grid">
+                                            <label>&nbsp;</label>
+                                            <button type="button" class="btn btn-primary" id="showCheckboxesBtn">Roles</button>
+                                        </div>
+                                        <div class="col-xxl-2 col-md-1 d-grid">
+                                            <label>&nbsp;</label>
+                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                        </div>
+                                        <div class="col-xxl-2 col-md-1 d-grid">
+                                            <label>&nbsp;</label>
+                                            <button class="btn btn-secondary" type="button" id="clear_filter">Clear</button>
+                                        </div>
+
+                                        <!-- Checkboxes section (initially hidden) -->
+                                        <div id="checkboxesSection" style="display: none; text-align: center;">
+                                            <!-- Checkboxes will be inserted here dynamically -->
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered align-middle nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">User Image</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Email</th>
-                                                <th scope="col">Roles</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($users as $user)
-                                            <tr>
-                                                <td style="text-align: center;">
-                                                    <div class="user-photo-container">
-                                                        @if ($user->photo)
-                                                        <img src="{{ asset('images/photos/' . $user->photo) }}" alt="Profile Photo" class="rounded-circle user-photo" width="50" height="50">
-                                                        @else
-                                                        <div class="no-photo">No Photo</div>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                                <td>{{ $user->name }}</td>
-                                                <td>{{ $user->email }}</td>
-                                                <td>
-                                                    @forelse ($user->getRoleNames() as $role)
-                                                    <span class="badge bg-primary">{{ $role }}</span>
-                                                    @empty
-                                                    @endforelse
-                                                </td>
-                                                <td>
-                                                    <form action="{{ route('users.destroy', $user->id) }}" method="post">
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                        <a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-eye"></i></a>
-
-                                                        @if (in_array('Super Admin', $user->getRoleNames()->toArray() ?? []) )
-                                                        @if (Auth::user()->hasRole('Super Admin'))
-                                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i></a>
-                                                        @endif
-                                                        @else
-                                                        @can('edit-user')
-                                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i></a>
-                                                        @endcan
-
-                                                        @can('delete-user')
-                                                        @if (Auth::user()->id!=$user->id)
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete this user?');"><i class="bi bi-trash"></i></button>
-                                                        @endif
-                                                        @endcan
-                                                        @endif
-
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            @empty
-                                            <td colspan="5">
-                                                <span class="text-danger">
-                                                    <strong>No User Found!</strong>
-                                                </span>
-                                            </td>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-
-                                    {{ $users->links() }}
-
+                                    <div class="table-data">
+                                        <table class="table table-bordered align-middle nowrap">
+                                            @include('users.user_pagination')
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
+                                @include('users.users_js')
+                            </div><!--end card-->
+
                         </div><!--end card-->
                     </div><!--end col-->
 

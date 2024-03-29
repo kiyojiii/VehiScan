@@ -26,7 +26,7 @@
                 <li class="menu-title" key="t-apps">Data</li>
 
                 <li>
-                    <a href="#" class="waves-effect">
+                    <a href="{{ route('user_requests')}}" class="waves-effect">
                         <i class="fas fa-clipboard-list"></i>
                         <span key="t-guests">User Requests</span>
                     </a>
@@ -46,19 +46,29 @@
                         <span key="t-blog">Applicants</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('applicants.index') }}" key="t-blog-list">Pending Staff Applicants</a></li>
-                    </ul>
-                    <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('applicants.manage') }}" key="t-blog-list">Manage Staff Applicants</a></li>
-                    </ul>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="#" key="t-blog-list">Pending Partner/Supplier Applicants</a></li>
                     </ul>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('applicants.index-partner') }}" key="t-blog-list">Manage Partner/Supplier Applicants</a></li>
                     </ul>
                 </li>
 
+                <li>
+                    @canany(['create-vehicle', 'edit-vehicle', 'delete-vehicle', 'view-vehicle'])
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="fas fa-car"></i>
+                        <span key="t-blog">Vehicles</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('vehicles.index') }}" key="t-blog-list">Staff Vehicles</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('vehicles.index-partner-supplier') }}" key="t-blog-list">Partner/Supplier Vehicles</a></li>
+                    </ul>
+                    @endcanany
+                </li>
+
+                
                 <li>
                     <a href="{{ route('owners.index') }}" class="waves-effect">
                         <i class="fas fa-id-badge"></i>
@@ -73,21 +83,6 @@
                         <i class="fas fa-address-card"></i>
                         <span key="t-blog">Drivers</span>
                     </a>
-                    @endcanany
-                </li>
-
-                <li>
-                    @canany(['create-vehicle', 'edit-vehicle', 'delete-vehicle', 'view-vehicle'])
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="fas fa-car"></i>
-                        <span key="t-blog">Vehicles</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('vehicles.index') }}" key="t-blog-list">Manage Staff Vehicles</a></li>
-                    </ul>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="#" key="t-blog-list">Manage Partner/Supplier Vehicles</a></li>
-                    </ul>
                     @endcanany
                 </li>
 
@@ -129,13 +124,6 @@
 
 
                 <li class="menu-title" key="t-apps">Permissions</li>
-
-                <li>
-                    <a href="{{ route('applicant_users.user_profile') }}" class="waves-effect">
-                        <i class="far fa-user-circle"></i>
-                        <span key="t-user">Profile</span>
-                    </a>
-                </li>
 
                 <li>
                     @canany(['create-user', 'edit-user', 'delete-user', 'view-user'])

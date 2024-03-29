@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Models\Comment;
 use App\Models\Concern;
 use App\Models\Template;
+use App\Models\Notification;
+use App\Models\Category;
+use App\Models\ChMessage;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
@@ -18,6 +21,9 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
+
+
 
 class UserController extends Controller
 {
@@ -27,7 +33,6 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:create-user|edit-user|delete-user', ['only' => ['index', 'show']]);
         $this->middleware('permission:create-user', ['only' => ['create', 'store']]);
         $this->middleware('permission:edit-user', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete-user', ['only' => ['destroy']]);
@@ -38,10 +43,122 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        return view('users.index', [
-            'users' => User::latest('id')->paginate(3)
+
+        $totalusercount = User::count();
+        $roles = Role::all();
+
+        return view('users.index', compact('totalusercount'), [
+            'users' => User::latest('id')->paginate(5),
+            'roles' => $roles,
         ]);
     }
+
+    //paginate user
+    public function paginateUser(Request $request)
+    {
+        $searchString = $request->query('search_string');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $selectedRoles = $request->query('roles'); // Get the selected roles
+
+        // Query builder for filtering by search string if it's provided
+        $query = User::query();
+        if ($searchString) {
+            $query->where(function ($query) use ($searchString) {
+                $query->where('name', 'like', '%' . $searchString . '%')
+                    ->orWhere('email', 'like', '%' . $searchString . '%');
+            });
+        }
+
+        // Apply date range filter if start date and end date are provided
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                ->whereDate('created_at', '<=', $endDate);
+        }
+
+        // Apply role filter if selected roles are provided
+        if ($selectedRoles) {
+            // Join with model_has_roles table to get users with selected roles
+            $query->join('model_has_roles', function ($join) use ($selectedRoles) {
+                $join->on('users.id', '=', 'model_has_roles.model_id')
+                    ->whereIn('model_has_roles.role_id', $selectedRoles)
+                    ->where('model_has_roles.model_type', '=', 'App\Models\User');
+            });
+        }
+
+        // Paginate the results
+        $users = $query->latest()->paginate(5);
+
+        // Pass the start date, end date, and selected roles to the view
+        $users->appends([
+            'search_string' => $searchString,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'roles' => $selectedRoles
+        ]);
+
+        // Render the view with paginated users
+        return view('users.user_pagination', compact('users'))->render();
+    }
+
+    //search user
+    public function searchUser(Request $request)
+    {
+        $users = User::where(function ($query) use ($request) {
+            $query->where('name', 'like', '%' . $request->search_string . '%')
+                ->orWhere('email', 'like', '%' . $request->search_string . '%');
+        })
+            ->orderBy('id', 'desc')
+            ->paginate(5);
+
+        if ($users->count() >= 1) {
+            return view('users.user_pagination', compact('users'))->render();
+        } else {
+            return response()->json([
+                'status' => 'nothing_found',
+            ]);
+        }
+    }
+
+    //filter user
+    public function filterUser(Request $request)
+    {
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $selectedRoles = $request->roles; // Get the selected roles
+
+        $query = User::query();
+
+        // Apply date range filter if start date and end date are provided
+        if ($start_date && $end_date) {
+            $query->whereDate('created_at', '>=', $start_date)
+                ->whereDate('created_at', '<=', $end_date);
+        }
+
+        // Apply role filter if selected roles are provided
+        if ($selectedRoles) {
+            // Join with model_has_roles table to get users with selected roles
+            $query->join('model_has_roles', function ($join) use ($selectedRoles) {
+                $join->on('users.id', '=', 'model_has_roles.model_id')
+                    ->whereIn('model_has_roles.role_id', $selectedRoles)
+                    ->where('model_has_roles.model_type', '=', 'App\Models\User');
+            });
+        }
+
+        // Paginate the results
+        $users = $query->latest()->paginate(5);
+
+        // Pass the start date, end date, and selected roles to the view
+        $users->appends([
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'roles' => $selectedRoles
+        ]);
+
+        // Render the view with paginated users
+        return view('users.user_pagination', compact('users'))->render();
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -49,7 +166,7 @@ class UserController extends Controller
     public function create(): View
     {
         return view('users.create', [
-            'roles' => Role::pluck('name')->all()
+            'roles' => Role::pluck('name')->all(),
         ]);
     }
 
@@ -74,108 +191,11 @@ class UserController extends Controller
             $user->save();
         }
 
-        return redirect()->route('users.index')
-            ->withSuccess('New user is added successfully.');
+        // Set success message in session
+        session()->flash('user_created_success', 'User created successfully.');
+
+        return redirect()->route('users.index');
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user): View
-    {
-        // Get the authenticated user
-        // $user = Auth::user();
-
-        $templates = Template::where('user_id', auth()->id())->get();
-
-        // Retrieve the templates published by the user whose profile is being viewed
-        $userTemplates = Template::where('user_id', $user->id)->paginate(5);
-
-        // Calculate monthly posting data
-        $monthlyPostingsData = $userTemplates->groupBy(function ($date) {
-            return Carbon::parse($date->created_at)->format('Y-m');
-        })->map(function ($item, $key) {
-            return $item->count();
-        });
-
-        // Retrieve the 4 most viewed templates
-        $mostViewedTemplates = Template::orderBy('views', 'desc')->take(4)->get();
-
-        // Loop through each template to count the likes
-        foreach ($mostViewedTemplates as $template) {
-            $template->likeCount = $template->likes()->count(); // Count the likes for each template
-        }
-
-        // Retrieve comments in descending order of creation date
-        $comments = Comment::orderBy('created_at', 'desc')->get();
-
-        // Retrieve concerns in descending order of creation date
-        $concerns = Concern::orderBy('created_at', 'desc')->get();
-
-        // Count the total number of posts, concerns, comments, and likes
-        $totalPosts = Template::count();
-        $totalConcerns = Concern::count();
-        $totalComments = Comment::count();
-        $totalLikes = Like::count();
-
-        // Get the total number of posts created by the authenticated user
-        $totalUserPosts = Template::where('user_id', $user->id)->count();
-
-        // Get the total number of comments made by the authenticated user
-        $totalUserComments = Comment::whereIn('temp_id', function ($query) use ($user) {
-            $query->select('id')->from('templates')->where('user_id', $user->id);
-        })->count();
-
-        // Get the total number of comments made by the authenticated user
-        $totalUserLikes = Like::whereIn('temp_id', function ($query) use ($user) {
-            $query->select('id')->from('templates')->where('user_id', $user->id);
-        })->count();
-
-        // Get the total number of views for templates created by the authenticated user
-        $totalUserViews = Template::where('user_id', $user->id)->sum('views');
-
-        // Retrieve the latest template creation
-        $latestTemplate = Template::latest('created_at')->first();
-        $activityTemplate = Template::latest('created_at')->get();
-
-        // Get the total number of views for templates created by each user
-        $userViews = Template::select('user_id', DB::raw('SUM(views) as total_views'))
-            ->groupBy('user_id')
-            ->get();
-
-        // You can also get the total views for the current user separately
-        $currentUserViews = $userViews->where('user_id', $user->id)->first()->total_views ?? 0;
-
-        // Get the total number of views for templates created by each user
-        $userViews = Template::select('user_id', DB::raw('SUM(views) as total_views'))
-            ->groupBy('user_id')
-            ->get();
-
-        // Retrieve the 4 most viewed templates for the current user
-        $mostViewedTemplates = Template::where('user_id', $user->id)
-            ->orderBy('views', 'desc')
-            ->take(4)
-            ->get();
-
-        // Retrieve all users
-        $users = User::all();
-
-        // return view('users.show', [
-        //     'user' => $user
-        // ]);
-
-        // Pass the variables to the view
-        return view('users.show', compact('users', 'userViews', 'userTemplates', 'monthlyPostingsData', 'currentUserViews', 'activityTemplate', 'latestTemplate', 'templates', 'mostViewedTemplates', 'comments', 'concerns', 'user', 'totalPosts', 'totalUserLikes', 'totalConcerns', 'totalComments', 'totalLikes', 'totalUserPosts', 'totalUserComments', 'totalUserViews'));
-    }
-    public function show_pagination(Request $request)
-    {
-        if ($request->ajax()) {
-            $userId = $request->input('user_id');
-            $userTemplates = Template::where('user_id', $userId)->paginate(5);
-            return view('users.show_pagination', compact('userTemplates', 'userId'))->render();
-        }
-    }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -192,7 +212,7 @@ class UserController extends Controller
         return view('users.edit', [
             'user' => $user,
             'roles' => Role::pluck('name')->all(),
-            'userRoles' => $user->roles->pluck('name')->all()
+            'userRoles' => $user->roles->pluck('name')->all(),
         ]);
     }
 
@@ -202,41 +222,47 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         $input = $request->all();
-    
+
         if (!empty($request->password)) {
             $input['password'] = Hash::make($request->password);
         } else {
             $input = $request->except('password');
         }
-    
+
         $user->update($input);
-    
+
         $user->syncRoles($request->roles);
-    
-        // Update user photo
+
+        // Delete old photo and upload new photo
         if ($request->hasFile('photo')) {
             $oldPhoto = $user->photo;
-    
-            // Delete old photo (if it exists)
+
+            // Delete old photo
             if ($oldPhoto) {
                 $oldPhotoPath = public_path('images/photos/') . $oldPhoto;
                 if (file_exists($oldPhotoPath)) {
                     unlink($oldPhotoPath);
                 }
             }
-    
-            // Store new photo with a unique filename
+
+            // Upload new photo
             $photo = $request->file('photo');
             $photoName = 'photo_' . time() . '.' . $photo->getClientOriginalExtension();
             $photo->move(public_path('images/photos/'), $photoName);
-            $user->photo = $photoName;
-            $user->save();
+            $user->update(['photo' => $photoName]);
         }
-    
-        // Optionally, you can add a success message to be displayed on the page
-        return back()->withSuccess('Updated successfully.');
+
+
+        // Set success message in session
+        session()->flash('user_created_success', 'User has been updated successfully.');
+
+        // Check if the user has the "applicant" role
+        if ($user->hasRole('Applicant')) {
+            return redirect()->route('users.index')->withSuccess('User has been updated successfully.');
+        }
+
+        return redirect()->route('applicant_users.user_profile')->withSuccess('Your Profile has been updated successfully.');;
     }
-    
 
     /**
      * Remove the specified resource from storage.
@@ -250,7 +276,7 @@ class UserController extends Controller
 
         $user->syncRoles([]);
         $user->delete();
-        return redirect()->route('users.index')
-            ->withSuccess('User is deleted successfully.');
+
+        return redirect()->route('users.index');
     }
 }

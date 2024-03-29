@@ -20,41 +20,30 @@ class TestController extends Controller
 {
     public function index()
     {
-        // Retrieve the authenticated user
-        $user = Auth::user();
+// Query applicants with associated appointments where the appointment is 'Partner/Supplier'
+$applicants = Applicant::whereHas('appointment', function($query) {
+    $query->where('appointment', 'Partner/Supplier');
+})->get();
 
-        // Retrieve the ID of the authenticated user
-        $user_id = $user->id;
+// Extract the IDs of the applicants
+$applicantIds = $applicants->pluck('id');
 
-        // Query the applicants_record table
-        $applicants = DB::table('applicants_record')
-            ->where('user_id', $user_id)
-            ->orderBy('updated_at', 'desc')
-            ->get();
+// Query vehicles of the selected applicants
+$vehicles = Vehicle::whereIn('owner_id', $applicantIds)->get();
 
-        // Query the applicants_record table
-        $vehicles = DB::table('vehicles_record')
-            ->where('user_id', $user_id)
-            ->orderBy('updated_at', 'desc')
-            ->get();
+return view('test', compact('vehicles', 'applicants'));
 
-        // Query the applicants_record table
-        $drivers = DB::table('drivers_record')
-            ->where('user_id', $user_id)
-            ->orderBy('updated_at', 'desc')
-            ->get();
 
-        return view('test', compact('applicants', 'vehicles', 'drivers'));
     }
 
     public function fetchTest()
     {
         // Retrieve the authenticated user
         $user = Auth::user();
-    
+
         // Retrieve the ID of the authenticated user
         $user_id = $user->id;
-    
+
         // Query all three tables together
         $records = DB::table('applicants_record')
             ->select('pk', 'first_name', 'last_name', 'action', 'updated_at', DB::raw("'applicants_record' as `table`"))
@@ -73,9 +62,9 @@ class TestController extends Controller
                     ->orderBy('updated_at', 'desc')
             )
             ->get();
-    
+
         $output = '';
-    
+
         if ($records->isNotEmpty()) {
             $output .= '<table class="table table-striped align-middle">
                         <thead>
@@ -88,7 +77,7 @@ class TestController extends Controller
                             </tr>
                         </thead>
                         <tbody>';
-    
+
             foreach ($records as $record) {
                 $type = '';
                 switch ($record->table) {
@@ -110,13 +99,12 @@ class TestController extends Controller
                                 <td><button class="btn btn-primary view-button" data-pk="' . $record->pk . '">View</button></td>
                             </tr>';
             }
-    
+
             $output .= '</tbody></table>';
         } else {
             $output = '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
         }
-    
+
         return $output; // Return HTML response
     }
-    
 }

@@ -43,8 +43,8 @@
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Manage Applicant</a></li>
-                                    <li class="breadcrumb-item active">Manage Applicant List</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Applicant</a></li>
+                                    <li class="breadcrumb-item active">Manage Applicants</li>
                                 </ol>
                             </div>
 
@@ -53,18 +53,12 @@
                 </div>
                 <!-- end page title -->
 
-                @if(auth()->check())
-                <p>Authenticated User ID: {{ auth()->id() }}</p>
-                @else
-                <p>User not authenticated</p>
-                @endif
-
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Applicant Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Applicant Count: {{ $applicantcount }}</h5>
                                     <div class="flex-shrink-0">
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Applicant</a>
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>

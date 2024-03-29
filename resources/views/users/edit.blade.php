@@ -5,10 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users | Edit</title>
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <!-- Toastr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
 
@@ -36,22 +32,10 @@
                     </div>
                 </div>
                 <!-- end page title -->
-
-                
-                @if(session('success'))
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script>
-                        Swal.fire(
-                            'Success!',
-                            '{{ session('success') }}',
-                            'success'
-                        );
-                    </script>
-                @endif
-
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
+                        <a href="{{ route('users.index') }}" class="col-md-1 offset-md-0 btn btn-sm btn-danger"><i class="bx bx-arrow-back"></i> Go Back</a>
                             <div class="card-body">
                                 <form action="{{ route('users.update', $user->id) }}" method="post" enctype="multipart/form-data">
                                     @csrf
@@ -59,7 +43,7 @@
 
                                     <div class="mb-3 row">
                                         <label for="photo" class="col-md-4 col-form-label text-md-end text-start">User Photo</label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 text-center">
                                             <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
                                             @if ($user->photo)
                                             <img src="{{ asset('images/photos/' . $user->photo) }}" alt="Current Photo" class="img-thumbnail" width="100" height="100">

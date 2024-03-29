@@ -53,18 +53,12 @@
                 </div>
                 <!-- end page title -->
 
-                @if(auth()->check())
-                <p>Authenticated User ID: {{ auth()->id() }}</p>
-                @else
-                <p>User not authenticated</p>
-                @endif
-
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Applicant Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Applicant Count: {{ $applicantcount }}</h5>
                                     <div class="flex-shrink-0">
                                         <a class="btn btn-success btn-sm my-2" href="{{ route('applicants.manage') }}"><i class="bi bi-plus-circle"></i> Add Applicant</a>
                                     </div>

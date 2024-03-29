@@ -1,5 +1,5 @@
 <!-- Add Modal -->
-<div class="modal fade" id="addApplicantModal" tabindex="-1" data-bs-backdrop="static"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addApplicantModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -18,12 +18,26 @@
                             <div class="row">
                                 <div class="col-md">
                                     <label for="serial_number">Serial Number</label>
-                                    <input type="text" name="serial_number" class="form-control" placeholder="Serial Number" required>
+                                    <input type="text" id="add_serial_number" name="serial_number" class="form-control" placeholder="Serial Number" required>
                                 </div>
+                                <script>
+                                    // JavaScript code to enforce numeric input for the serial number field
+                                    document.getElementById('add_serial_number').addEventListener('input', function() {
+                                        // Remove any non-numeric characters from the input value
+                                        this.value = this.value.replace(/\D/g, '');
+                                    });
+                                </script>
                                 <div class="col-md">
                                     <label for="id_number">ID Number</label>
-                                    <input type="text" name="id_number" class="form-control" placeholder="ID Number" required>
+                                    <input type="text" id="add_id_number" name="id_number" class="form-control" placeholder="ID Number" required>
                                 </div>
+                                <script>
+                                    // JavaScript code to enforce numeric input for the ID number field
+                                    document.getElementById('add_id_number').addEventListener('input', function() {
+                                        // Remove any characters except numbers and hyphens from the input value
+                                        this.value = this.value.replace(/[^\d-]/g, '');
+                                    });
+                                </script>
                             </div> <br>
                             <div class="row">
                                 <div class="col-md">
@@ -149,6 +163,7 @@
                                         <option value="">Select Vehicle Status</option>
                                         <option value="Active" selected>Active</option>
                                         <option value="Inactive">Inactive</option>
+                                        <option value="Pending">Pending</option>
                                         <option value="Other">Other</option>
                                     </select>
                                 </div>

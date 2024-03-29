@@ -63,6 +63,7 @@
                             <select name="registration_status" class="form-control" id="registration_status" required>
                                 <option value="Active">Active</option>
                                 <option value="Inactive">Inactive</option>
+                                <option value="Pending">Pending</option>
                                 <option value="Other">Other</option>
                             </select>
                         </div>
@@ -81,71 +82,86 @@
                     </div>
                     <div class="row mb-3">
                         <h4>Vehicle Documents</h4>
-                        <div class="col-md-6">
+                        <p class="text-danger">If the image doesn't change, please reload the page.</p>
+                        <div class="col-md-3">
                             <label for="official_receipt_image" class="form-label">Official Receipt Image</label>
                             <input type="file" class="form-control" name="official_receipt_image">
                         </div>
-                        @if($owners->vehicle)
-                        <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->official_receipt_image) }}" alt="official_receipt_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
-                        @else
-                        <!-- Display a placeholder image or message -->
-                        <p>No vehicle associated</p>
-                        @endif
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            @if($owners->vehicle)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->official_receipt_image) }}" alt="official_receipt_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
+                        </div>
+                        <div class="col-md-3">
                             <label for="certificate_of_registration_image" class="form-label">Certificate of Registration Image</label>
                             <input type="file" class="form-control" name="certificate_of_registration_image">
                         </div>
-                        @if($owners->vehicle)
-                        <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->certificate_of_registration_image) }}" alt="certificate_of_registration_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
-                        @else
-                        <!-- Display a placeholder image or message -->
-                        <p>No vehicle associated</p>
-                        @endif
+                        <div class="col-md-3">
+                            @if($owners->vehicle)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->certificate_of_registration_image) }}" alt="certificate_of_registration_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
+                        </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="deed_of_sale_image" class="form-label">Deed of Sale Image</label>
                             <input type="file" class="form-control" name="deed_of_sale_image">
                         </div>
-                        @if($owners->vehicle)
-                        <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->deed_of_sale_image) }}" alt="deed_of_sale_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
-                        @else
-                        <!-- Display a placeholder image or message -->
-                        <p>No vehicle associated</p>
-                        @endif
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            @if($owners->vehicle)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->deed_of_sale_image) }}" alt="deed_of_sale_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
+                        </div>
+
+                        <div class="col-md-3">
                             <label for="authorization_letter_image" class="form-label">Authorization Letter Image</label>
                             <input type="file" class="form-control" name="authorization_letter_image">
                         </div>
-                        @if($owners->vehicle)
-                        <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->authorization_letter_image) }}" alt="authorization_letter_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
-                        @else
-                        <!-- Display a placeholder image or message -->
-                        <p>No vehicle associated</p>
-                        @endif
+                        <div class="col-md-3">
+                            @if($owners->vehicle)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $owners->vehicle->authorization_letter_image) }}" alt="authorization_letter_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <h4>Vehicle Images</h4>
-                        <div class="col-md-6">
+                        <p class="text-danger">If the image doesn't change, please reload the page.</p>
+                        <div class="col-md-3">
                             <label for="front_photo" class="form-label">Front Photo</label>
                             <input type="file" class="form-control" name="front_photo">
                         </div>
-                        @if($owners->vehicle)
-                        <img src="{{ asset('storage/images/vehicles/' . $owners->vehicle->front_photo) }}" alt="front_photo" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
-                        @else
-                        <!-- Display a placeholder image or message -->
-                        <p>No vehicle associated</p>
-                        @endif
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            @if($owners->vehicle)
+                            <img src="{{ asset('storage/images/vehicles/' . $owners->vehicle->front_photo) }}" alt="front_photo" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
+                        </div>
+                        <div class="col-md-3">
                             <label for="side_photo" class="form-label">Side Photo</label>
                             <input type="file" class="form-control" name="side_photo">
                         </div>
-                        @if($owners->vehicle)
-                        <img src="{{ asset('storage/images/vehicles/' . $owners->vehicle->side_photo) }}" alt="side_photo" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
-                        @else
-                        <!-- Display a placeholder image or message -->
-                        <p>No vehicle associated</p>
-                        @endif
+                        <div class="col-md-3">
+                            @if($owners->vehicle)
+                            <img src="{{ asset('storage/images/vehicles/' . $owners->vehicle->side_photo) }}" alt="side_photo" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

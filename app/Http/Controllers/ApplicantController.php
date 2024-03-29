@@ -23,11 +23,12 @@ class ApplicantController extends Controller
 
     public function index()
     {
+        $applicantcount = Applicant::count();
         $role_status = Statuses::all();
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
-        return view('applicants.index', compact('drivers', 'vehicles', 'role_status', 'appointments'));
+        return view('applicants.index', compact('applicantcount', 'drivers', 'vehicles', 'role_status', 'appointments'));
     }
 
     public function fetchPendingApplicant()
@@ -76,11 +77,12 @@ class ApplicantController extends Controller
 
     public function manage()
     {
+        $applicantcount = Applicant::count();
         $role_status = Statuses::all();
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
-        return view('applicants.manage', compact('drivers', 'vehicles', 'role_status', 'appointments'));
+        return view('applicants.manage', compact('applicantcount', 'drivers', 'vehicles', 'role_status', 'appointments'));
     }
 
     public function ManageApplicant()
@@ -116,7 +118,6 @@ class ApplicantController extends Controller
                 <td>' . $rs->approval_status . '</td>
                 <td>
                     <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                    <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
                     <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
                 </td>
             </tr>';

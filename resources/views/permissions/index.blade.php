@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Permissions</title>
+    <title> Vehiscan - Permissions </title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <link href="assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </head>
 
 <body>
@@ -31,7 +33,7 @@
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Permission</a></li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Permissions</a></li>
                                     <li class="breadcrumb-item active">Permissions List</li>
                                 </ol>
                             </div>
@@ -47,12 +49,13 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Permission Lists</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Permission Count: {{ $totalpermissioncount }}</h5>
                                     <div class="flex-shrink-0">
-                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Permission</a>
-                                        <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+                                    @can('create-permission')
+                                        <a href="{{ route('permissions.create') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add New Permission</a>
+                                    @endcanany 
+                                        <button class="btn btn-light" type="button" id="refresh_table"><i class="mdi mdi-refresh"></i></button>
                                         <div class="dropdown d-inline-block">
-
                                             <button type="menu" class="btn btn-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                 <li><a class="dropdown-item" href="#">Action</a></li>
@@ -64,17 +67,52 @@
                                 </div>
                             </div>
 
-                            <div class="card-body" id="show_all_permissions">
-                                <h1 class="text-center text-secondary my-5"> Loading... </h1>
+                            <div class="card-body border-bottom">
+                                <form method="GET" action="/filter">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-xxl-2 col-lg-4">
+                                            <label>Search:</label>
+                                            <input type="search" name="search" class="form-control" id="searchInput" placeholder="Search for ...">
+                                        </div>
+                                        <div class="col-xxl-2 col-lg-3">
+                                            <label>Start Date:</label>
+                                            <div class="input-group">
+                                                <input type="date" name="start_date" class="form-control" id="start_date">
+                                                <button class="btn btn-primary" type="button" id="set_today_start">Today</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-2 col-lg-3">
+                                            <label>End Date:</label>
+                                            <div class="input-group">
+                                                <input type="date" name="end_date" class="form-control" id="end_date">
+                                                <button class="btn btn-primary" type="button" id="set_today_end">Today</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-2 col-lg-1 d-grid">
+                                            <label>&nbsp;</label>
+                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                        </div>
+                                        <div class="col-xxl-2 col-lg-1 d-grid">
+                                            <label>&nbsp;</label>
+                                            <button class="btn btn-secondary" type="button" id="clear_filter">Clear</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
 
-                            @include('permissions.permission_modals')
-
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <div class="table-data">
+                                        <table class="table table-bordered align-middle nowrap">
+                                            @include('permissions.permission_pagination')
+                                        </table>
+                                    </div>
+                                </div>
+                                @include('permissions.permissions_js')
+                            </div><!--end card-->
                         </div><!--end card-->
-                    </div><!--end col-->
-
+                    </div><!-- end col -->
                 </div><!--end row-->
-
 
             </div> <!-- container-fluid -->
         </div><!-- End Page-content -->
@@ -87,10 +125,8 @@
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-
-    @include('permissions.permission_js')
+    @endsection
 
 </body>
 
 </html>
-@endsection

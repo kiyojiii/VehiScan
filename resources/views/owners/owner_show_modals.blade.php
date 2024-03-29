@@ -1,3 +1,18 @@
+<!-- Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Select2 JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- Add this style to adjust z-index -->
+<style>
+    .select2-container--open {
+        z-index: 1600 !important;
+        /* Adjust the z-index as needed */
+    }
+</style>
+
 @forelse($owners as $owner)
 <!-- Add Modal -->
 <div class="modal fade" id="addVehicleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">

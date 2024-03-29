@@ -101,8 +101,8 @@ class OwnerController extends Controller
                 'reason' => 'nullable|string|max:255',
                 'scan_or_photo_of_id' => 'image|max:2048', // Assuming it's an image file
                 'vehicle' => 'nullable|integer',
-                'serial_number' => 'required|string|max:255',
-                'id_number' => 'required|string|max:255',
+                'serial_number' => 'required|string|unique:applicants,serial_number,' . $request->owner_id,
+                'id_number' => 'required|string|unique:applicants,id_number,' . $request->owner_id,
             ]);
 
             // If validation fails, return error response
@@ -190,8 +190,8 @@ class OwnerController extends Controller
                 'position' => 'required|string|max:255',
                 'approval' => 'required|string|max:255',
                 'reason' => 'nullable|string|max:255',
-                'serial_number' => 'required|string|max:255',
-                'id_number' => 'required|string|max:255',
+                'serial_number' => 'required|string|unique:applicants,serial_number,' . $request->owner_id,
+                'id_number' => 'required|string|unique:applicants,id_number,' . $request->owner_id,
                 'vehicle_details' => 'nullable|integer',
                 'scan_or_photo_of_id' => 'nullable|image|max:2048', // Assuming it's an image file
             ]);
@@ -294,11 +294,20 @@ class OwnerController extends Controller
         // Retrieve the vehicles associated with the owner
         $vehicles = Vehicle::where('owner_id', $owners->id)->orderBy('created_at', 'desc')->paginate(4);
 
+        // Retrieve the vehicles associated with the owner
+        $all_vehicles = Vehicle::where('owner_id', $owners->id)->orderBy('created_at', 'desc')->get();
+
+        // Query the Vehicles
+        $owner_id = $owners->id ?? 'N/A';
+        $active_vehicle = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Active')
+            ->first();
+
         // Count the total number of vehicles associated with the owner
         $totalVehicles = Vehicle::where('owner_id', $owners->id)->count();
 
         // Count the total number of violations associated with the owner
-        $totalViolations = Violation::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
+        $totalViolations = Violation::whereIn('vehicle_id', $all_vehicles->pluck('id'))->count();
 
         // Calculate the total time in for all vehicles associated with the owner
         $totalTimeIn = Time::whereIn('vehicle_id', $vehicles->pluck('id'))->count();
@@ -311,7 +320,7 @@ class OwnerController extends Controller
             ->pluck('remarks');
 
         // Pass the data to the view
-        return view('owners.show', compact('drivers', 'allowners', 'remarks', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles', 'totalViolations'));
+        return view('owners.show', compact('owner_id', 'active_vehicle', 'drivers', 'allowners', 'remarks', 'totalTimeOut', 'totalVehicles', 'totalTimeIn', 'owners', 'vehicles', 'totalViolations'));
     }
 
     public function vehicle_information($id)
@@ -352,7 +361,7 @@ class OwnerController extends Controller
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'owner_address' => 'string|max:2048',
-                'plate_number' => 'string|max:255',
+                'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
@@ -563,11 +572,11 @@ class OwnerController extends Controller
                 'message' => 'Vehicle not found'
             ], 404);
         }
-    
+
         // Change registration_status to Inactive
         $vehicle->registration_status = 'Inactive';
         $vehicle->save();
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Vehicle registration status changed to Inactive'

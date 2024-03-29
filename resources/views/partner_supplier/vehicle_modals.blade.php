@@ -13,12 +13,13 @@
     }
 </style>
 
+@foreach($vehicles as $vehicles)
 <!-- Add Modal -->
 <div class="modal fade" id="addVehicleModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Vehicle</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Partner/Supplier Vehicle</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -30,7 +31,7 @@
                         <div class="col-md-3">
                             <label for="owner_id">Owner Name</label>
                             <br>
-                            <select name="owner_id" id="owner_id" class="col-md-3 form-control owner-select">
+                            <select name="owner_id" id="owner_id" class="form-control owner-select">
                                 <option value="">Select Owner</option> <!-- Placeholder option -->
                                 @forelse($owners as $owner)
                                 <option value="{{ $owner->id }}">{{ $owner->first_name }} {{ $owner->middle_initial }}. {{ $owner->last_name }}</option>
@@ -186,7 +187,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Vehicle</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Partner/Supplier Vehicle</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -270,15 +271,27 @@
                             <label for="official_receipt_image" class="form-label">Official Receipt Image</label>
                             <input type="file" class="form-control" name="official_receipt_image">
                         </div>
-                        <div class="my-2 col-md">
-                            <div id="official_receipt_image"></div>
+                        <!-- Previous Official Receipt Image -->
+                        <div class="col-md-3">
+                            @if($vehicles)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $vehicles->official_receipt_image) }}" alt="official_receipt_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
                         </div>
                         <div class="col-md">
                             <label for="certificate_of_registration_image" class="form-label">Certificate of Registration Image</label>
                             <input type="file" class="form-control" name="certificate_of_registration_image">
                         </div>
-                        <div class="my-2 col-md">
-                            <div id="certificate_of_registration_image"></div>
+                        <!-- Previous Certificate of Registration Image -->
+                        <div class="col-md-3">
+                            @if($vehicles)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $vehicles->certificate_of_registration_image) }}" alt="certificate_of_registration_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
                         </div>
                     </div>
 
@@ -287,15 +300,27 @@
                             <label for="deed_of_sale_image" class="form-label">Deed of Sale Image</label>
                             <input type="file" class="form-control" name="deed_of_sale_image">
                         </div>
-                        <div class="my-2 col-md">
-                            <div id="deed_of_sale_image"></div>
+                        <!-- Previous Deed of Sale Image -->
+                        <div class="col-md-3">
+                            @if($vehicles)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $vehicles->deed_of_sale_image) }}" alt="deed_of_sale_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
                         </div>
                         <div class="col-md">
                             <label for="authorization_letter_image" class="form-label">Authorization Letter Image</label>
                             <input type="file" class="form-control" name="authorization_letter_image">
                         </div>
-                        <div class="my-2 col-md">
-                            <div id="authorization_letter_image"></div>
+                        <!-- Previous Authorization Letter Image -->
+                        <div class="col-md-3">
+                            @if($vehicles)
+                            <img src="{{ asset('storage/images/vehicles/documents/' . $vehicles->authorization_letter_image) }}" alt="authorization_letter_image" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
                         </div>
                     </div>
 
@@ -306,15 +331,27 @@
                             <label for="front_photo" class="form-label">Front Photo</label>
                             <input type="file" class="form-control" name="front_photo">
                         </div>
-                        <div class="my-2 col-md">
-                            <div class="my-2" id="front_photo"></div>
+                        <!-- Previous Front Photo -->
+                        <div class="col-md-3">
+                            @if($vehicles)
+                            <img src="{{ asset('storage/images/vehicles/' . $vehicles->front_photo) }}" alt="front_photo" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
                         </div>
                         <div class="col-md">
                             <label for="side_photo" class="form-label">Side Photo</label>
                             <input type="file" class="form-control" name="side_photo">
                         </div>
-                        <div class="my-2 col-md">
-                            <div id="side_photo"></div>
+                        <!-- Previous Side Photo -->
+                        <div class="col-md-3">
+                            @if($vehicles)
+                            <img src="{{ asset('storage/images/vehicles/' . $vehicles->side_photo) }}" alt="side_photo" class="img-thumbnail mx-auto d-block" style="width: 300px; height: 200px;">
+                            @else
+                            <!-- Display a placeholder image or message -->
+                            <p>No vehicle associated</p>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -343,3 +380,4 @@
         </div>
     </div>
 </div>
+@endforeach

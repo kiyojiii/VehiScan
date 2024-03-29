@@ -17,6 +17,7 @@ use File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Validation\Rule;
 
 class VehicleController extends Controller
 {
@@ -166,7 +167,7 @@ class VehicleController extends Controller
         'owner_id' => '|string|max:255',
         'driver_id' => '|string|max:255',
         'owner_address' => 'required|string|max:2048',
-        'plate_number' => 'required|string|max:255',
+        'plate_number' => 'required|string|max:255|unique:vehicles,plate_number',
         'vehicle_make' => 'required|string|max:255',
         'year_model' => 'required|string|max:255',
         'color' => 'required|string|max:255',
@@ -288,12 +289,12 @@ class VehicleController extends Controller
       $request->merge([
         'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
       ]);
-
+      
       // Validate incoming request data
       $validator = Validator::make($request->all(), [
         'driver_name' => 'string|max:255',
         'owner_address' => 'string|max:2048',
-        'plate_number' => 'string|max:255',
+        'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
         'vehicle_make' => 'string|max:255',
         'year_model' => 'string|max:255',
         'color' => 'string|max:255',
@@ -458,22 +459,22 @@ class VehicleController extends Controller
 
   public function deactivate_vehicle(Request $request)
   {
-      $id = $request->id;
-      $vehicle = Vehicle::find($id);
-      if (!$vehicle) {
-          return response()->json([
-              'status' => 'error',
-              'message' => 'Vehicle not found'
-          ], 404);
-      }
-
-      // Change registration_status to Inactive
-      $vehicle->registration_status = 'Inactive';
-      $vehicle->save();
-
+    $id = $request->id;
+    $vehicle = Vehicle::find($id);
+    if (!$vehicle) {
       return response()->json([
-          'status' => 'success',
-          'message' => 'Vehicle registration status changed to Inactive'
-      ]);
+        'status' => 'error',
+        'message' => 'Vehicle not found'
+      ], 404);
+    }
+
+    // Change registration_status to Inactive
+    $vehicle->registration_status = 'Inactive';
+    $vehicle->save();
+
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Vehicle registration status changed to Inactive'
+    ]);
   }
 }
