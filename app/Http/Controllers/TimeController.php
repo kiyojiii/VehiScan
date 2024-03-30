@@ -220,7 +220,7 @@ class TimeController extends Controller
     // Fetch Vehicle Record Data
     public function fetchVehicleRecord()
     {
-        $vehicleRecords = Vehicle_Record::latest()->take(25)->get();
+        $vehicleRecords = Vehicle_Record::latest()->take(15)->get();
 
         return response()->json($vehicleRecords);
     }

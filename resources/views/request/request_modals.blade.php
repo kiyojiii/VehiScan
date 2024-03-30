@@ -247,6 +247,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                    <button type="button" class="btn btn-primary view-btn" data-bs-dismiss="modal">View Full Details</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
@@ -256,3 +257,17 @@
     </div>
 </div>
 <!-- End Modal -->
+
+<script>
+    // JavaScript code to handle click event on the view button
+    document.addEventListener('DOMContentLoaded', function () {
+        const viewButton = document.querySelector('.view-btn');
+        viewButton.addEventListener('click', function () {
+            // Get the ID of the vehicle
+            const vehicleId = document.getElementById('view_vehicle_id').value;
+            // Redirect to the vehicle's show page using the ID
+            window.location.href = '/vehicles/show/' + vehicleId;
+        });
+    });
+</script>
+

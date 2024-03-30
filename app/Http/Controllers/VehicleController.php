@@ -470,6 +470,8 @@ class VehicleController extends Controller
 
     // Change registration_status to Inactive
     $vehicle->registration_status = 'Inactive';
+    $vehicle->approval_status = 'Pending';
+    $vehicle->reason = 'Deactivated';
     $vehicle->save();
 
     return response()->json([

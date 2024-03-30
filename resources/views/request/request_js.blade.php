@@ -148,6 +148,109 @@
                 });
             });
 
+             // activate vehicle ajax request
+        $(document).on('click', '.approveVehicle', function(e) {
+            e.preventDefault();
+            let id = $(this).attr('id');
+            let csrf = '{{ csrf_token() }}';
+            Swal.fire({
+                title: 'Approve Vehicle?',
+                text: "This Vehicle's Status Will Become Active",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Approve it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ route('user_request.activate') }}',
+                        method: 'post',
+                        data: {
+                            id: id,
+                            _token: csrf
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                fetchUserRequests();
+                                Swal.fire(
+                                    'Approved!',
+                                    'Vehicle is now Active',
+                                    'success'
+                                )
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to activate vehicle: ' + error,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+         // Reject vehicle ajax request
+$(document).on('click', '.rejectVehicle', function(e) {
+    e.preventDefault();
+    let id = $(this).attr('id');
+    let csrf = '{{ csrf_token() }}';
+    Swal.fire({
+        title: 'Reject Vehicle?',
+        html: '<input type="text" id="rejectReason" class="swal2-input" placeholder="Reason for rejection">',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Reject it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let reason = $('#rejectReason').val(); // Get the reason input value
+            $.ajax({
+                url: '{{ route('user_request.reject') }}',
+                method: 'post',
+                data: {
+                    id: id,
+                    reason: reason, // Pass the reason to the server
+                    _token: csrf
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        fetchUserRequests();
+                        Swal.fire(
+                            'Rejected!',
+                            'Vehicle Has Been Rejected',
+                            'success'
+                        )
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to reject vehicle: ' + error,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+
             // Fetch all vehicles via AJAX and initialize DataTable
             fetchUserRequests();
 

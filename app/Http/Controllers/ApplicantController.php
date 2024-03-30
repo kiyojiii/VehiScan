@@ -133,7 +133,7 @@ class ApplicantController extends Controller
     {
         return Vehicle::whereVehicleCode($number)->exists();
     }
-    
+
     // insert a new applicant ajax request
     public function store(Request $request)
     {
@@ -692,5 +692,199 @@ class ApplicantController extends Controller
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
         return view('forms.applicant', compact('drivers', 'vehicles', 'role_status', 'appointments'));
+    }
+
+    public function approve_applicant(Request $request)
+    {
+        $id = $request->id;
+        $applicant = Applicant::find($id);
+        if (!$applicant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Applicant not found'
+            ], 404);
+        }
+
+        // Change Approval Status
+        $applicant->approval_status = 'Approved';
+        $applicant->reason = 'None / Approved';
+        $applicant->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Applicant Approved'
+        ]);
+    }
+
+
+    public function approve_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+
+        // Change Approval Status
+        $vehicle->registration_status = 'Active';
+        $vehicle->approval_status = 'Approved';
+        $vehicle->reason = 'None / Approved';
+        $vehicle->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicle Approved'
+        ]);
+    }
+
+    public function approve_driver(Request $request)
+    {
+        $id = $request->id;
+        $driver = Driver::find($id);
+        if (!$driver) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Driver not found'
+            ], 404);
+        }
+
+        // Change Approval Status
+        $driver->approval_status = 'Approved';
+        $driver->reason = 'None / Approved';
+        $driver->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Driver Approved'
+        ]);
+    }
+
+    public function reject_applicant(Request $request)
+    {
+        $id = $request->id;
+        $reason = $request->reason; // Get the reason from the request
+
+        // Find the vehicle
+        $applicant = Applicant::find($id);
+        if (!$applicant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Applicant not found'
+            ], 404);
+        }
+
+        // Change registration_status to Inactive
+        $applicant->approval_status = 'Rejected';
+        $applicant->reason = $reason; // Assign the provided reason
+        $applicant->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Applicant Has Been Rejected'
+        ]);
+    }
+
+    public function reject_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $reason = $request->reason; // Get the reason from the request
+
+        // Find the vehicle
+        $vehicle = Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+
+        // Change registration_status to Inactive
+        $vehicle->approval_status = 'Inactive';
+        $vehicle->approval_status = 'Rejected';
+        $vehicle->reason = $reason; // Assign the provided reason
+        $vehicle->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicle Has Been Rejected'
+        ]);
+    }
+
+    public function reject_driver(Request $request)
+    {
+        $id = $request->id;
+        $reason = $request->reason; // Get the reason from the request
+
+        // Find the Driver
+        $driver = Driver::find($id);
+        if (!$driver) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Driver not found'
+            ], 404);
+        }
+
+        // Change registration_status to Inactive
+        $driver->approval_status = 'Rejected';
+        $driver->reason = $reason; // Assign the provided reason
+        $driver->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Driver Has Been Rejected'
+        ]);
+    }
+
+    public function approve_all(Request $request)
+    {
+        $ownerId = $request->owner_id;
+        $vehicleId = $request->vehicle_id;
+        $driverId = $request->driver_id;
+
+        $owner = Applicant::find($ownerId);
+        $vehicle = Vehicle::find($vehicleId);
+        $driver = Driver::find($driverId);
+        if (!$owner) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Applicant not found'
+            ], 404);
+        }
+
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+
+        if (!$driver) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Driver not found'
+            ], 404);
+        }
+
+        // Owner Approval Status
+        $owner->approval_status = 'Approved';
+        $owner->reason = 'None / Approved';
+        $owner->save();
+        // Vehicle Approval Status
+        $vehicle->registration_status = 'Active';
+        $vehicle->approval_status = 'Approved';
+        $vehicle->reason = 'None / Approved';
+        $vehicle->save();
+        // Driver Approval Status
+        $driver->approval_status = 'Approved';
+        $driver->reason = 'None / Approved';
+        $driver->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'All Approved'
+        ]);
     }
 }

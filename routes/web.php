@@ -20,6 +20,7 @@ use App\Http\Controllers\QRCodeController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\Auth\RegisterController;
 
 
@@ -174,6 +175,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
 
+    Route::post('user-request/approve-all', [ApplicantController::class, 'approve_all'])->name('applicant.approve_all');
+    Route::post('user-request/approve-applicant', [ApplicantController::class, 'approve_applicant'])->name('applicant.approve_applicant');
+    Route::post('user-request/approve-vehicle', [ApplicantController::class, 'approve_vehicle'])->name('applicant.approve_vehicle');
+    Route::post('user-request/approve-driver', [ApplicantController::class, 'approve_driver'])->name('applicant.approve_driver');
+    Route::post('user-request/reject-applicant', [ApplicantController::class, 'reject_applicant'])->name('applicant.reject_applicant');
+    Route::post('user-request/reject-vehicle', [ApplicantController::class, 'reject_vehicle'])->name('applicant.reject_vehicle');
+    Route::post('user-request/reject-driver', [ApplicantController::class, 'reject_driver'])->name('applicant.reject_driver');
+
     #VEHICLE INFORMATION UPDATE
     Route::get('vehicle_information/edit_vehicle', [OwnerController::class, 'edit_vehicle'])->name('owners.edit_vehicle');
     Route::post('vehicle_information/update_vehicle', [OwnerController::class, 'update_vehicle'])->name('owners.update_vehicle');
@@ -255,7 +264,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('user-request/edit', [RequestController::class, 'edit'])->name('user_request.edit');
     Route::post('user-request/update', [RequestController::class, 'update'])->name('user_request.update');
     Route::get('user-request/view', [RequestController::class, 'view'])->name('user_request.view');
+    Route::post('user-request/activate', [RequestController::class, 'activate_vehicle'])->name('user_request.activate');
+    Route::post('user-request/reject', [RequestController::class, 'reject_vehicle'])->name('user_request.reject');
 
+    #ANALYTICS
+    Route::get('analytics', [AnalysisController::class, 'index'])->name('analytics');
 });
 
 #USER / ROLE / PERMISSION ROUTES

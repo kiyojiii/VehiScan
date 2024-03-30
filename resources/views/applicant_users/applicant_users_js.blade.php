@@ -155,7 +155,7 @@ $("#edit_activate_form").submit(function(e) {
                         error: function(xhr, status, error) {
                             Swal.fire(
                                 'Error!',
-                                'Failed to delete vehicle: ' + error,
+                                'Failed to deactivate vehicle: ' + error,
                                 'error'
                             );
                         }

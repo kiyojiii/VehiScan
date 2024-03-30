@@ -26,33 +26,49 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Include DataTables JS -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">  
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
     <!-- Include DataTables library -->
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <!-- Include DataTables Bootstrap 4 integration -->
     <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Include Bootstrap Datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+    <!-- Include Bootstrap Datepicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert library -->
 </head>
 
 <body>
-@foreach($applicants as $a)
-    {{ $a->first_name }}
-@endforeach
-
-@foreach($vehicles as $v)
-    {{ $v->plate_number }}
-@endforeach
-
-<!-- Display applicant IDs -->
-@foreach($applicants as $a)
-    Applicant ID: {{ $a->id }}<br>
-@endforeach
-
-@foreach($vehicles as $vehicle)
-    Vehicle Plate Number: {{ $vehicle->plate_number }}<br>
-    <!-- Display other vehicle information as needed -->
-@endforeach
+    <h1>Time Data for {{ $date }}</h1>
+    <table>
+        <tr>
+            <th>Hour</th>
+            <th>Time In Count</th>
+            <th>Time Out Count</th>
+        </tr>
+        @foreach($processedData as $hour => $counts)
+        <tr>
+            <td>{{ $hour }}</td>
+            <td>{{ $counts['time_in_count'] }}</td>
+            <td>{{ $counts['time_out_count'] }}</td>
+        </tr>
+        @endforeach
+    </table>
 
 
-</body>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Line with Data Labels</h4>
 
+                <div id="line_chart_datalabel" data-colors='["--bs-primary", "--bs-success"]' class="apex-charts" dir="ltr"></div>
+            </div>
+        </div><!--end card-->
+    </div>
+
+
+@include('test_js')
 </html>

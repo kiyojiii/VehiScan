@@ -23,6 +23,15 @@
                     </a>
                 </li>
 
+                <li>
+
+                    <a href="{{ route('analytics') }}" class="waves-effect">
+                        <i class="fas fa-chart-area"></i>
+                        <span key="t-blog">Analytics</span>
+                    </a>
+
+                </li>
+
                 <li class="menu-title" key="t-apps">Data</li>
 
                 <li>

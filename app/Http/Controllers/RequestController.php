@@ -35,9 +35,9 @@ class RequestController extends Controller
                         <th class="text-center">Owner</th>
                         <th class="text-center">Plate Number</th>
                         <th class="text-center">Vehicle Make</th>
-                        <th class="text-center">Vehicle Code</th>
                         <th class="text-center">Side Photo</th>
                         <th class="text-center">Status</th>
+                        <th class="text-center">Request</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>
@@ -53,18 +53,18 @@ class RequestController extends Controller
                     <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
                     <td class="text-center">' . $vehicle->plate_number . '</td>
                     <td class="text-center">' . $vehicle->vehicle_make . '</td>
-                    <td class="text-center">' . $vehicle->vehicle_code . ' </td>
                     <td class="text-center">
                         <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                     </td>
                     <td class="text-center">' . $vehicle->registration_status . '</td>
+                    <td class="text-center">' . $vehicle->reason . ' </td>
                     <td class="text-center">
                         <!-- Your other action buttons -->
                         <!-- For example: -->
                         <a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="view()"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editVehicle" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
+                        <a href="#" id="' . $vehicle->id . '" class="text-warning mx-1 editVehicle" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
+                        <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 approveVehicle"><i class="bx bx-check-circle h4"></i></a>
+                        <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 rejectVehicle"><i class="bx bx-x-circle h4"></i></a>
                     </td>
                 </tr>';
             }
@@ -196,4 +196,54 @@ class RequestController extends Controller
         $vehicle = Vehicle::find($id);
         return response()->json($vehicle);
     }
+
+    public function activate_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $vehicle = Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+
+        // Change registration_status to Inactive
+        $vehicle->registration_status = 'Active';
+        $vehicle->approval_status = 'Approved';
+        $vehicle->reason = 'None / Approved';
+        $vehicle->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicle Registration Status changed to Active'
+        ]);
+    }
+
+    public function reject_vehicle(Request $request)
+    {
+        $id = $request->id;
+        $reason = $request->reason; // Get the reason from the request
+    
+        // Find the vehicle
+        $vehicle = Vehicle::find($id);
+        if (!$vehicle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vehicle not found'
+            ], 404);
+        }
+    
+        // Change registration_status to Inactive
+        $vehicle->registration_status = 'Inactive';
+        $vehicle->approval_status = 'Rejected';
+        $vehicle->reason = $reason; // Assign the provided reason
+        $vehicle->save();
+    
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicle Has Been Rejected'
+        ]);
+    }
+    
 }

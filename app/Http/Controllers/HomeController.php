@@ -1369,6 +1369,8 @@ class HomeController extends Controller
         }
 
         // Change registration_status to Inactive
+        $vehicle->approval_status = 'Approved';
+        $vehicle->reason = 'Deactivated';
         $vehicle->registration_status = 'Inactive';
         $vehicle->save();
 
@@ -1742,8 +1744,8 @@ class HomeController extends Controller
             }
 
             // Set Approval and Reason Default Value
-            $approval_status = $request->input('approval_status', 'Pending');
-            $reason = $request->input('reason', 'Driver Update Request');
+            $approval_status = $request->input('approval_status', 'Approved');
+            $reason = $request->input('reason', 'Driver Has Been Updated');
 
             // Update driver data
             $driverData = [
@@ -1938,7 +1940,7 @@ class HomeController extends Controller
             }
 
             // Set Approval and Reason Default Value
-            $approvalStatus = $request->input('approval_status', 'Pending');
+            $approvalStatus = $request->input('approval_status', 'Approved');
             $reason = $request->input('reason', 'Vehicle Activation Request');
             $registration_status = $request->input('registration_status', 'Pending');
 

@@ -1,3 +1,388 @@
+<!-- APPROVE JS -->
+<script>
+        $(function() {
+        // approve all ajax request
+        $(document).on('click', '.approveAll', function(e) {
+    e.preventDefault();
+    let ownerId = $(this).data('owner-id');
+    let vehicleId = $(this).data('vehicle-id');
+    let driverId = $(this).data('driver-id');
+    let csrf = '{{ csrf_token() }}';
+
+    Swal.fire({
+        title: 'Approve All?',
+        text: "Applicant, Vehicle, and Driver will be Approved",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Approve it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '{{ route('applicant.approve_all') }}',
+                method: 'post',
+                data: {
+                    owner_id: ownerId,
+                    vehicle_id: vehicleId,
+                    driver_id: driverId,
+                    _token: csrf
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(
+                            'Approved!',
+                            'All have been approved!',
+                            'success'
+                        ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to approve all: ' + error,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+
+        // approve driver ajax request
+        $(document).on('click', '.approveDriver', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        let csrf = '{{ csrf_token() }}';
+        Swal.fire({
+            title: 'Approve Driver?',
+            text: "This Driver will be Approved",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Approve it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route('applicant.approve_driver') }}',
+                    method: 'post',
+                    data: {
+                        id: id,
+                        _token: csrf
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire(
+                                'Approved!',
+                                'Driver Has Been Approved!',
+                                'success'
+                            ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to approve driver: ' + error,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+        // approve vehicle ajax request
+        $(document).on('click', '.approveVehicle', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        let csrf = '{{ csrf_token() }}';
+        Swal.fire({
+            title: 'Approve Vehicle?',
+            text: "This Vehicle will be Approved",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Approve it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route('applicant.approve_vehicle') }}',
+                    method: 'post',
+                    data: {
+                        id: id,
+                        _token: csrf
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire(
+                                'Approved!',
+                                'Vehicle Has Been Approved!',
+                                'success'
+                            ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to approve vehicle: ' + error,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+        // activate applicant ajax request
+        $(document).on('click', '.approveApplicant', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        let csrf = '{{ csrf_token() }}';
+        Swal.fire({
+            title: 'Approve Applicant?',
+            text: "This Applicant will be Approved",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Approve it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route('applicant.approve_applicant') }}',
+                    method: 'post',
+                    data: {
+                        id: id,
+                        _token: csrf
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire(
+                                'Approved!',
+                                'Applicant Has Been Approved!',
+                                'success'
+                            ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to approve applicant: ' + error,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+<!-- REJECT JS -->
+<script>
+        $(function() {
+   // Reject applicant ajax request
+$(document).on('click', '.rejectApplicant', function(e) {
+    e.preventDefault();
+    let id = $(this).attr('id');
+    let csrf = '{{ csrf_token() }}';
+    Swal.fire({
+        title: 'Reject Applicant?',
+        html: '<input type="text" id="rejectReason" class="swal2-input" placeholder="Reason for rejection">',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Reject it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let reason = $('#rejectReason').val(); // Get the reason input value
+            $.ajax({
+                url: '{{ route('applicant.reject_applicant') }}',
+                method: 'post',
+                data: {
+                    id: id,
+                    reason: reason, // Pass the reason to the server
+                    _token: csrf
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(
+                            'Rejected!',
+                            'Applicant Has Been Rejected',
+                            'success'
+                        ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to reject applicant: ' + error,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+ // Reject vehicle ajax request
+ $(document).on('click', '.rejectVehicle', function(e) {
+    e.preventDefault();
+    let id = $(this).attr('id');
+    let csrf = '{{ csrf_token() }}';
+    Swal.fire({
+        title: 'Reject Vehicle?',
+        html: '<input type="text" id="rejectReason" class="swal2-input" placeholder="Reason for rejection">',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Reject it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let reason = $('#rejectReason').val(); // Get the reason input value
+            $.ajax({
+                url: '{{ route('applicant.reject_vehicle') }}',
+                method: 'post',
+                data: {
+                    id: id,
+                    reason: reason, // Pass the reason to the server
+                    _token: csrf
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(
+                            'Rejected!',
+                            'Vehicle Has Been Rejected',
+                            'success'
+                        ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to reject vehicle: ' + error,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+ // Reject driver ajax request
+ $(document).on('click', '.rejectDriver', function(e) {
+    e.preventDefault();
+    let id = $(this).attr('id');
+    let csrf = '{{ csrf_token() }}';
+    Swal.fire({
+        title: 'Reject Driver?',
+        html: '<input type="text" id="rejectReason" class="swal2-input" placeholder="Reason for rejection">',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Reject it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let reason = $('#rejectReason').val(); // Get the reason input value
+            $.ajax({
+                url: '{{ route('applicant.reject_driver') }}',
+                method: 'post',
+                data: {
+                    id: id,
+                    reason: reason, // Pass the reason to the server
+                    _token: csrf
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(
+                            'Rejected!',
+                            'Driver Has Been Rejected',
+                            'success'
+                        ).then((result) => {
+                            // Reload the page after the Swal notification is closed
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            response.message,
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to reject driver: ' + error,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+});
+</script>
 <script>
     document.getElementById('toggleVehicleImagesBtn').addEventListener('click', function() {
         var imagesDiv = document.getElementById('vehicleImages');

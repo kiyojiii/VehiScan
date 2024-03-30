@@ -175,11 +175,11 @@
                                 </ul>
                                 <div class="mt-4">
                                     @role('Applicant')
-                                    <a href="{{ route('vehicles.index') }}" class="btn btn-soft-danger btn-hover w-100 rounded">
+                                    <a href="#" onclick="history.back();" class="btn btn-soft-danger btn-hover w-100 rounded">
                                         <i class="mdi mdi-keyboard-return"></i> Go Back
                                     </a>
                                     @else
-                                    <a href="{{ route('vehicles.index') }}" class="btn btn-soft-danger btn-hover w-100 rounded">
+                                    <a href="#" onclick="history.back();" class="btn btn-soft-danger btn-hover w-100 rounded">
                                         <i class="mdi mdi-keyboard-return"></i> Go Back
                                     </a>
                                     @endrole

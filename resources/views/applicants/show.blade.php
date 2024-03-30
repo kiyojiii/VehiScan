@@ -56,7 +56,28 @@
                     <div class="col-xl-5">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="fw-semibold">Overview</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h5 class="fw-semibold me-3">Overview</h5>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Action <i class="fas fa-cog"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <a class="dropdown-item text-success mx-1 approveAll" href="#" data-owner-id="{{ $owners->id }}" data-vehicle-id="{{ $owners->vehicle->id }}" data-driver-id="{{ $owners->vehicle->driver->id }}">
+                                                    <i class="bx bx-check-double"></i> Approve All
+                                                </a>
+                                            </li>
+                                            <li><a class="dropdown-item text-success mx-1 approveApplicant" href="#" id="{{ $owners->id }}"><i class="bx bx-check-circle"></i> Approve Applicant</a></li>
+                                            <li><a class="dropdown-item text-success mx-1 approveVehicle" href="#" id="{{ $owners->vehicle->id }}" href="#"><i class="bx bx-check-circle"></i> Approve Vehicle</a></li>
+                                            <li><a class="dropdown-item text-success mx-1 approveDriver" href="#" id="{{ $owners->vehicle->driver->id }}" href="#"><i class="bx bx-check-circle"></i> Approve Driver</a></li>
+                                            <li><a class="dropdown-item text-danger mx-1 rejectApplicant" href="#" id="{{ $owners->id }}"><i class="bx bx-x-circle"></i> Reject Applicant</a></li>
+                                            <li><a class="dropdown-item text-danger mx-1 rejectVehicle" href="#" id="{{ $owners->vehicle->id }}"><i class="bx bx-x-circle"></i> Reject Vehicle</a></li>
+                                            <li><a class="dropdown-item text-danger mx-1 rejectDriver" href="#" id="{{ $owners->vehicle->driver->id }}"><i class="bx bx-x-circle"></i> Reject Driver</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
                                 <div class="table-responsive">
                                     <table class="table">
                                         <tbody>
@@ -91,9 +112,11 @@
                                             <tr>
                                                 <th scope="row">Approval Status</th>
                                                 @if($owners->approval_status == 'Approved')
-                                                <td><span class="badge badge-soft-success">{{ $owners->approval_status }}</span></td>
+                                                <td><span class="badge badge-soft-success">Approved</span></td>
                                                 @elseif($owners->approval_status == 'Rejected')
                                                 <td><span class="badge badge-soft-danger">Rejected</span></td>
+                                                @elseif($owners->approval_status == 'Pending')
+                                                <td><span class="badge badge-soft-warning">Pending</span></td>
                                                 @else
                                                 <td><span class="badge badge-soft-secondary">Unknown</span></td>
                                                 @endif
@@ -122,8 +145,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="text-center">
-                                <h5 class="fw-semibold">Association</h5> 
-                                <br>
+                                    <h5 class="fw-semibold">Association</h5>
+                                    <br>
                                     @if($owners->appointment->appointment != 'Partner/Supplier' && $owners->appointment->appointment != 'Supplier')
                                     <img src="{{ asset('images/seal.png') }}" alt="" height="50" class="mx-auto d-block">
                                     <h5 class="mt-3 mb-1">Mindanao State University - Iligan Institute of Technology</h5>
@@ -243,9 +266,11 @@
                                         <strong scope="row">Approval Status</strong>
                                         @if($owners->vehicle)
                                         @if($owners->vehicle->approval_status == 'Approved')
-                                        <strong><span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span></strong>
+                                        <strong><span class="badge badge-soft-success">Approved</span></strong>
                                         @elseif($owners->vehicle->approval_status == 'Rejected')
                                         <strong><span class="badge badge-soft-danger">Rejected</span></strong>
+                                        @elseif($owners->vehicle->approval_status == 'Pending')
+                                        <strong><span class="badge badge-soft-warning">Pending</span></strong>
                                         @else
                                         <strong><span class="badge badge-soft-secondary">Unknown</span></strong>
                                         @endif
@@ -363,13 +388,15 @@
                                         </li>
                                         <li>
                                             <strong scope="row">Approval Status</strong>
-                                            @if($owners->vehicle && $owners->vehicle->approval_status)
-                                            @if($owners->vehicle->approval_status == 'Approved')
-                                            <span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span>
-                                            @elseif($owners->vehicle->approval_status == 'Rejected')
-                                            <span class="badge badge-soft-danger">{{ $owners->vehicle->approval_status }}</span>
+                                            @if($owners->vehicle->driver)
+                                            @if($owners->vehicle->driver->approval_status == 'Approved')
+                                            <span class="badge badge-soft-success">Approved</span>
+                                            @elseif($owners->vehicle->driver->approval_status == 'Rejected')
+                                            <span class="badge badge-soft-danger">Rejected</span>
+                                            @elseif($owners->vehicle->driver->approval_status == 'Pending')
+                                            <span class="badge badge-soft-danger">Pending</span>
                                             @else
-                                            <span class="badge badge-soft-secondary">{{ $owners->vehicle->approval_status }}</span>
+                                            <span class="badge badge-soft-secondary">Unknown</span>
                                             @endif
                                             @else
                                             <span class="badge badge-soft-secondary">No Driver Associated</span>
