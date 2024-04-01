@@ -1,5 +1,5 @@
 <!-- Add Modal -->
-<div class="modal fade" id="addApplicantModal" tabindex="-1" data-bs-backdrop="static"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addApplicantModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -18,12 +18,26 @@
                             <div class="row">
                                 <div class="col-md">
                                     <label for="serial_number">Serial Number</label>
-                                    <input type="text" name="serial_number" class="form-control" placeholder="Serial Number" required>
+                                    <input type="text" id="serial_number" name="serial_number" class="form-control" placeholder="Serial Number" required>
                                 </div>
+                                <script>
+                                    // JavaScript code to enforce numeric input for the serial number field
+                                    document.getElementById('serial_number').addEventListener('input', function() {
+                                        // Remove any non-numeric characters from the input value
+                                        this.value = this.value.replace(/\D/g, '');
+                                    });
+                                </script>
                                 <div class="col-md">
                                     <label for="id_number">ID Number</label>
-                                    <input type="text" name="id_number" class="form-control" placeholder="ID Number" required>
+                                    <input type="text" id="id_number" name="id_number" class="form-control" placeholder="ID Number" required>
                                 </div>
+                                <script>
+                                    // JavaScript code to enforce numeric input for the ID number field
+                                    document.getElementById('id_number').addEventListener('input', function() {
+                                        // Remove any characters except numbers and hyphens from the input value
+                                        this.value = this.value.replace(/[^\d-]/g, '');
+                                    });
+                                </script>
                             </div> <br>
                             <div class="row">
                                 <div class="col-md">
@@ -205,18 +219,18 @@
                             <div class="row">
                                 <div class="col-md">
                                     <label for="adname">Authorized Driver Name (If Available)</label>
-                                    <input type="text" name="adname" class="form-control" placeholder="Authorized Driver Name" required>
+                                    <input type="text" name="adname" class="form-control" placeholder="Authorized Driver Name">
                                 </div>
                                 <div class="col-md">
                                     <label for="adaddress">Authorized Driver Address</label>
-                                    <input type="text" name="adaddress" class="form-control" placeholder="Authorized Driver Address" required>
+                                    <input type="text" name="adaddress" class="form-control" placeholder="Authorized Driver Address">
                                 </div>
                             </div>
                             <br>
                             <div class="row">
                                 <div class="col-md">
                                     <label for="authorized_driver_license_image">Authorized Driver's License</label>
-                                    <input type="file" name="authorized_driver_license_image" class="form-control" required>
+                                    <input type="file" name="authorized_driver_license_image" class="form-control">
                                 </div>
                             </div>
                             <div class="modal-footer" id="modalFooterButtons">

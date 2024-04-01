@@ -81,7 +81,7 @@
                                     <div class="col-sm-5">
                                         <div class="avatar-md profile-user-wid mb-">
                                             @if($owners->scan_or_photo_of_id)
-                                            <img src="{{ asset('storage/images/' . $owners->scan_or_photo_of_id) }}" alt="" class="img-thumbnail rounded-circle">
+                                            <img src="{{ asset('storage/images/' . $owners->scan_or_photo_of_id) }}" alt="" class="img-thumbnail rounded-circle" style="width: 70px; height: 70px;">
                                             @else
                                             <p>No Scan or Photo of ID available</p>
                                             @endif

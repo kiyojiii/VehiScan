@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>VehiScan | Dashboard</title>
+
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
     <!-- Include Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -86,41 +88,47 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-4 align-self-center">
+                                    <div class="col-lg-6 align-self-center">
                                         <div class="text-lg-center mt-4 mt-lg-0">
                                             <div class="row">
-                                                <div class="col-4">
+                                                <div class="col-3">
                                                     <div>
-                                                        <p class="text-muted text-truncate mb-2">Total Users</p>
+                                                        <p class="text-muted text-truncate mb-2">Total Vehicles</p>
                                                         <h5 class="mb-0">{{ $totalVehicles }}</h5>
                                                     </div>
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="col-3">
                                                     <div>
-                                                        <p class="text-muted text-truncate mb-2">Time In's</p>
-                                                        <h5 class="mb-0">{{ $totalTimeIn }}</h5>
+                                                        <p class="text-muted text-truncate mb-2">Active Vehicles</p>
+                                                        <h5 class="mb-0">{{ $totalActiveVehicles }}</h5>
                                                     </div>
                                                 </div>
-                                                <div class="col-4">
+                                                <div class="col-3">
                                                     <div>
-                                                        <p class="text-muted text-truncate mb-2">Time Out's</p>
-                                                        <h5 class="mb-0">{{ $totalTimeOut }}</h5>
+                                                        <p class="text-muted text-truncate mb-2">Inactive Vehicles</p>
+                                                        <h5 class="mb-0">{{ $totalInactiveVehicles }}</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div>
+                                                        <p class="text-muted text-truncate mb-2">Pending Vehicles</p>
+                                                        <h5 class="mb-0">{{ $totalPendingVehicles }}</h5>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-4 d-none d-lg-block">
+                                    <div class="col-lg-2 d-none d-lg-block">
                                         <div class="clearfix mt-4 mt-lg-0">
                                             <div class="dropdown float-end">
                                                 <button class="btn btn-primary" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="bx bxs-cog align-middle me-1"></i> Setting
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else</a>
+                                                    <a class="dropdown-item" href="{{ route('vehicles.index') }}"> <i class="fas fa-car"></i> Vehicles</a>
+                                                    <a class="dropdown-item" href="{{ route('owners.index') }}"> <i class="fas fa-id-badge"></i> Owners</a>
+                                                    <a class="dropdown-item" href="{{ route('drivers.index') }}"> <i class="fas fa-address-card"></i> Drivers</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -191,12 +199,12 @@
                                                     <i class="fas fa-car"></i>
                                                 </span>
                                             </div>
-                                            <h5 class="font-size-14 mb-0">Total Vehicles</h5>
+                                            <h5 class="font-size-14 mb-0">Active Vehicles</h5>
                                         </div>
                                         <div class="text-muted mt-4">
-                                            <h4>{{ $totalVehicles }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                            <h4>{{ $totalActiveVehicles }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
                                             <div class="d-flex">
-                                                <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous month</span>
+                                                <span class="badge badge-soft-success font-size-12"> + {{ $recentVehicles }} </span> <span class="ms-2 text-truncate"> Recent Vehicles </span>
                                             </div>
                                         </div>
                                     </div>
@@ -209,15 +217,15 @@
                                         <div class="d-flex align-items-center mb-3">
                                             <div class="avatar-xs me-3">
                                                 <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
-                                                    <i class="fas fa-id-badge"></i>
+                                                    <i class="fas fa-sign-in-alt"></i>
                                                 </span>
                                             </div>
-                                            <h5 class="font-size-14 mb-0">Total Owners</h5>
+                                            <h5 class="font-size-14 mb-0">Vehicles Inside</h5>
                                         </div>
                                         <div class="text-muted mt-4">
-                                            <h4>{{ $totalOwners}}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                            <h4>{{ $totalVehicleIn}}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
                                             <div class="d-flex">
-                                                <span class="badge badge-soft-success font-size-12"> + 0.2% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                                <span class="badge badge-soft-primary font-size-12"> {{ $VehicleInPercentage }}% </span> <span class="ms-2 text-truncate"> Of Total Vehicles</span>
                                             </div>
                                         </div>
                                     </div>
@@ -230,16 +238,16 @@
                                         <div class="d-flex align-items-center mb-3">
                                             <div class="avatar-xs me-3">
                                                 <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
-                                                    <i class="fas fa-address-card"></i>
+                                                    <i class="fas fa-sign-out-alt"></i>
                                                 </span>
                                             </div>
-                                            <h5 class="font-size-14 mb-0">Total Drivers</h5>
+                                            <h5 class="font-size-14 mb-0">Vehicles Outside </h5>
                                         </div>
                                         <div class="text-muted mt-4">
-                                            <h4>{{ $totalDrivers }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                            <h4>{{ $totalVehicleOut }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
 
                                             <div class="d-flex">
-                                                <span class="badge badge-soft-warning font-size-12"> 0% </span> <span class="ms-2 text-truncate">From previous period</span>
+                                                <span class="badge badge-soft-primary font-size-12"> {{ $VehicleOutPercentage }}% </span> <span class="ms-2 text-truncate"> Of Total Vehicles </span>
                                             </div>
                                         </div>
                                     </div>
@@ -268,21 +276,35 @@
                                                 <p>This month</p>
                                                 <h4>{{$totalTimeCurrentMonth}}</h4>
                                                 @php
-                                                // Calculate the absolute difference between the current month and previous month total time counts
-                                                $absoluteDifference = abs($totalTimeCurrentMonth - $totalTimePreviousMonth);
-
+                                                // Calculate the difference between the current month and previous month total time counts
+                                                $difference = $totalTimeCurrentMonth - $totalTimePreviousMonth;
                                                 // Calculate the percentage difference
-                                                if ($totalTimePreviousMonth != 0) {
-                                                $percentageDifference = ($absoluteDifference / $totalTimeCurrentMonth) * 100;
+                                                $percentageDifference = ($difference / $totalTimePreviousMonth) * 100;
+                                                // Check if the difference is positive (increase) or negative (decrease)
+                                                if ($difference > 0) {
+                                                    $changeType = 'increase';
+                                                } elseif ($difference < 0) {
+                                                    $changeType = 'decrease';
                                                 } else {
-                                                $percentageDifference = 0;
+                                                    $changeType = 'no change';
                                                 }
-
                                                 // Format the percentage difference
-                                                $formattedPercentageDifference = number_format($percentageDifference, 2) . '%';
-                                                @endphp
+                                                $formattedPercentageDifference = number_format(abs($percentageDifference), 2) . '% ' . $changeType;
 
-                                                <div><span class="badge badge-soft-success font-size-12 me-1">{{$formattedPercentageDifference}}</span> From previous period</div>
+                                                $badgeClass = '';
+                                                switch($changeType) {
+                                                    case 'increase':
+                                                        $badgeClass = 'badge-soft-success';
+                                                        break;
+                                                    case 'decrease':
+                                                        $badgeClass = 'badge-soft-danger';
+                                                        break;
+                                                    case 'no change':
+                                                        $badgeClass = 'badge-soft-secondary';
+                                                        break;
+                                                }
+                                                @endphp
+                                                <div><span class="badge {{$badgeClass}} font-size-12 me-1">{{$formattedPercentageDifference}}</span> From previous Month</div>
                                             </div>
 
                                             <div>
@@ -308,7 +330,7 @@
                     <div class="col-xl-4">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title mb-4">Vehicle Owner Driver Ratio</h4>
+                                <h4 class="card-title mb-4">Vehicle - Owner - Driver Ratio</h4>
 
                                 <div class="col-lg-12">
                                     <div id="pie_chart" data-colors='["--bs-danger", "--bs-primary", "--bs-success"]' class="apex-charts" dir="ltr"></div>
@@ -365,7 +387,11 @@
 
                                 <div class="text-muted text-center">
                                     <p class="mb-2">{{ $plateNumber }}</p>
-                                    <h4>{{ $totalVisits }} visits</h4>
+                                    @if($totalRecords > 1) 
+                                        <h4>{{ $totalRecords ?? 'No Data' }} visits</h4>
+                                    @else
+                                        <h4>{{ $totalRecords ?? 'No Data' }} visit</h4>
+                                    @endif
                                     <p class="mt-4 mb-0">
                                         <span class="badge badge-soft-success font-size-11 me-2">
                                             {{ number_format($percentage, 2) }}% <i class="mdi mdi-arrow-up"></i>
@@ -379,14 +405,14 @@
                                             <tr>
                                                 <td>
                                                     <h5 class="font-size-14 mb-1">Most Violations</h5>
-                                                    <p class="text-muted mb-0">{{ $vehiclePlateNumber }}</p>
+                                                    <p class="text-muted mb-0">{{ $vehiclePlateNumber ?? 'No Data' }}</p>
                                                 </td>
                                                 <td>
                                                     <div id="radialchart-1" data-colors='["--bs-primary"]' class="apex-charts"></div>
                                                 </td>
                                                 <td>
                                                     <p class="text-muted mb-1">Violations</p>
-                                                    <h5 class="mb-0">{{ $violationCount }}</h5>
+                                                    <h5 class="mb-0">{{ $violationCount ?? 'No Data' }}</h5>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -399,35 +425,40 @@
                                                 </td>
                                                 <td>
                                                     <p class="text-muted mb-1">Vehicles</p>
-                                                    <h5 class="mb-0">{{ $vehicleCount }}</h5>
+                                                    <h5 class="mb-0">{{ $vehicleCount ?? 'No Data' }}</h5>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <h5 class="font-size-14 mb-1">Longest Stay</h5>
-                                                    <p class="text-muted mb-0">{{ $lsplateNumber }}</p>
+                                                    <p class="text-muted mb-0">{{ $lsplateNumber ?? 'No Data' }}</p>
                                                 </td>
 
                                                 <td>
                                                     <div id="radialchart-3" data-colors='["--bs-danger"]' class="apex-charts"></div>
                                                 </td>
                                                 <td>
-                                                    <p class="text-muted mb-1">Hrs</p>
-                                                    <h5 class="mb-0">{{ $stayDuration }}</h5>
+                                                    <p class="text-muted mb-1">Duration</p>
+                                                    <h5 class="mb-0">@if ($recentLongestStayVehicle)
+                                                    {{ $stayDuration }}
+                                                    </h5>
+                                                    @else
+                                                        <p class="text-muted mb-0">No data available</p>
+                                                    @endif
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <h5 class="font-size-14 mb-1">Longest Stay</h5>
-                                                    <p class="text-muted mb-0">{{ $lsplateNumber }}</p>
+                                                    <h5 class="font-size-14 mb-1">Peak Hour</h5>
+                                                    <p class="text-muted mb-0">{{ $hour ?? 'No Data' }}</p>
                                                 </td>
 
                                                 <td>
                                                     <div id="radialchart-3" data-colors='["--bs-danger"]' class="apex-charts"></div>
                                                 </td>
                                                 <td>
-                                                    <p class="text-muted mb-1">Hrs</p>
-                                                    <h5 class="mb-0">{{ $stayDuration }}</h5>
+                                                    <p class="text-muted mb-1">Count</p>
+                                                    <h5 class="mb-0">{{ $count ?? 'No Data' }}</h5>
                                                 </td>
                                             </tr>
                                         </tbody>

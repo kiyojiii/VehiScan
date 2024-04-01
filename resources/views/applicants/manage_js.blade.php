@@ -96,11 +96,15 @@
                 });
             });
 
-        // delete driver ajax request
-        $(document).on('click', '.deleteIcon', function(e) {
+            // DELETE APPLICANT
+            $(document).ready(function () {
+    $(document).on('click', '.deleteApplicant', function (e) {
         e.preventDefault();
-        let id = $(this).attr('id');
-        let csrf = '{{ csrf_token() }}';
+        var id = $(this).data('applicant-id');
+        var vehicleId = $(this).data('vehicle-id');
+        var driverId = $(this).data('driver-id');
+        var csrf = '{{ csrf_token() }}';
+
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -116,16 +120,18 @@
                     method: 'delete',
                     data: {
                         id: id,
+                        vehicle_id: vehicleId,
+                        driver_id: driverId,
                         _token: csrf
                     },
                     success: function(response) {
                         if (response.status === 'success') {
                             Swal.fire(
                                 'Deleted!',
-                                'Applicant Deleted Successfully',
+                                response.message,
                                 'success'
                             );
-                            fetchAllApplicants();
+                            ManageApplicants();
                         } else {
                             Swal.fire(
                                 'Error!',
@@ -145,6 +151,8 @@
             }
         });
     });
+});
+
 
 
         // fetch all pending ajax request

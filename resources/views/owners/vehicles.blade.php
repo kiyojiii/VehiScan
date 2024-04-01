@@ -26,9 +26,11 @@
                     <strong scope="row">Approval Status</strong>
                     @if($owners->vehicle)
                     @if($owners->vehicle->approval_status == 'Approved')
-                    <strong><span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span></strong>
+                    <strong><span class="badge badge-soft-success">Approved</span></strong>
                     @elseif($owners->vehicle->approval_status == 'Rejected')
                     <strong><span class="badge badge-soft-danger">Rejected</span></strong>
+                    @elseif($owners->vehicle->approval_status == 'Pending')
+                    <strong><span class="badge badge-soft-danger">Pending</span></strong>
                     @else
                     <strong><span class="badge badge-soft-secondary">Unknown</span></strong>
                     @endif

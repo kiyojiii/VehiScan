@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Applicant - Show</title>
+    <title>VehiScan | Applicant - Details</title>
+
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -235,6 +237,10 @@
                                 <h5 class="fw-semibold mb-3">Vehicle Details:</h5>
                                 <ul class="vstack gap-3">
                                     <li>
+                                        <strong>Vehicle Code:</strong>
+                                        <span>{{ $owners->vehicle->vehicle_code ?? 'N/A' }}</span>
+                                    </li>
+                                    <li>
                                         <strong>Plate Number:</strong>
                                         <span>{{ $owners->vehicle->plate_number ?? 'N/A' }}</span>
                                     </li>
@@ -394,7 +400,7 @@
                                             @elseif($owners->vehicle->driver->approval_status == 'Rejected')
                                             <span class="badge badge-soft-danger">Rejected</span>
                                             @elseif($owners->vehicle->driver->approval_status == 'Pending')
-                                            <span class="badge badge-soft-danger">Pending</span>
+                                            <span class="badge badge-soft-warning">Pending</span>
                                             @else
                                             <span class="badge badge-soft-secondary">Unknown</span>
                                             @endif

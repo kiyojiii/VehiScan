@@ -42,8 +42,8 @@ $.ajaxSetup({
                         // Close the modal
                         $("#addApplicantModal").modal('hide');
                         Swal.fire(
-                            "Successful",
-                            "Applicant Added Successfully",
+                            "Applicant Submitted Successfully",
+                            "A Staff will evaluate your Application",
                             "success"
                         );
                     } else {
@@ -494,7 +494,7 @@ $(function() {
 </script>
 <!-- Accept Only 11 Numbers in Contact -->
 <script>
-    document.getElementById('contact').addEventListener('input', function(event) {
+    document.getElementById('add_contact').addEventListener('input', function(event) {
         // Remove non-numeric characters
         this.value = this.value.replace(/\D/g, '');
 

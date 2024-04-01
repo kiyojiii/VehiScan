@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permissions | Create</title>
+    <title> VehiScan | Permissions - Create</title>
+
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
+
 </head>
 
 <body>

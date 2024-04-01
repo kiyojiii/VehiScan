@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Applicant-Partner/Supplier</title>
+    <title>VehiScan | Applicant - Pending</title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
-
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -41,12 +41,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Applicant-Partner/Supplier List</h4>
+                            <h4 class="mb-sm-0 font-size-18">Pending Applicant List</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Applicants</a></li>
-                                    <li class="breadcrumb-item active"> Manage Applicant-Partner/Supplier</li>
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Applicant</a></li>
+                                    <li class="breadcrumb-item active">Manage Pending Applicants</li>
                                 </ol>
                             </div>
 
@@ -60,7 +60,7 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Partner/Supplier Count: {{ $totalpartnersupplier }}</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Pending Applicant Count: {{ $pendingcount }}</h5>
                                     <div class="flex-shrink-0">
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
@@ -125,9 +125,10 @@
                                     </div>
                                 </form>
 
-                                <div class="card-body" id="show_all_partner_applicants">
+                                <div class="card-body" id="pending_applicants">
                                     <h1 class="text-center text-secondary my-5"> Loading... </h1>
                                 </div>
+
                             </div>
 
                         </div><!--end card-->
@@ -148,7 +149,7 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    @include('applicants.index-partner-js')
+    @include('applicants.pending.pending_js')
 </body>
 
 </html>

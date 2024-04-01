@@ -58,7 +58,7 @@ lineChartdashedColors &&
     markers: { size: 0, hover: { sizeOffset: 6 } },
     xaxis: {
         categories: @json($totalTimePerDay->pluck('date')->map(function($date) {
-            return \Carbon\Carbon::parse($date)->format('d');
+            return \Carbon\Carbon::parse($date)->format('M d');
         })),
 
     },

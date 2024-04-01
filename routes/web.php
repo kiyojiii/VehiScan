@@ -174,6 +174,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('applicants/update_driver', [ApplicantController::class, 'update_driver'])->name('applicants.update_driver');
 
     Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
+    
+    #APPLICANT PENDING
+    Route::get('applicants-pending', [ApplicantController::class, 'pending'])->name('applicants.applicants_pending');
+    Route::get('/PendingApplicant', [ApplicantController::class, 'PendingApplicant'])->name('PendingApplicant');
 
     Route::post('user-request/approve-all', [ApplicantController::class, 'approve_all'])->name('applicant.approve_all');
     Route::post('user-request/approve-applicant', [ApplicantController::class, 'approve_applicant'])->name('applicant.approve_applicant');
@@ -244,9 +248,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('vehicles/partner-supplier', [ApplicantPartnerController::class, 'index_vehicles_partner_supplier'])->name('vehicles.index-partner-supplier');
     Route::get('/fetchAllPartnerVehicle', [ApplicantPartnerController::class, 'fetchAllPartnerVehicle'])->name('fetchAllPartnerVehicle');
 
-    #FORMS
-    Route::get('applicants-form', [ApplicantController::class, 'form'])->name('forms.applicant');
-
     #ADMIN PROFILE 
     Route::get('/admin-profile', [ProfileController::class, 'admin_profile'])->name('admin.profile');
 
@@ -258,17 +259,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
     Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
 
-    #USER REQUEST
-    Route::get('user-requests', [RequestController::class, 'index'])->name('user_requests');
-    Route::get('/fetchUserRequest', [RequestController::class, 'fetchUserRequest'])->name('fetchUserRequest');
-    Route::get('user-request/edit', [RequestController::class, 'edit'])->name('user_request.edit');
-    Route::post('user-request/update', [RequestController::class, 'update'])->name('user_request.update');
-    Route::get('user-request/view', [RequestController::class, 'view'])->name('user_request.view');
-    Route::post('user-request/activate', [RequestController::class, 'activate_vehicle'])->name('user_request.activate');
-    Route::post('user-request/reject', [RequestController::class, 'reject_vehicle'])->name('user_request.reject');
+    Route::controller(RequestController::class)->group(function () {
+        Route::get('user-requests', 'index')->name('user_requests');
+        Route::get('/fetchUserRequest', 'fetchUserRequest')->name('fetchUserRequest');
+        Route::get('user-request/edit', 'edit')->name('user_request.edit');
+        Route::post('user-request/update', 'update')->name('user_request.update');
+        Route::get('user-request/view', 'view')->name('user_request.view');
+        Route::post('user-request/activate', 'activate_vehicle')->name('user_request.activate');
+        Route::post('user-request/reject', 'reject_vehicle')->name('user_request.reject');
+    });
 
     #ANALYTICS
     Route::get('analytics', [AnalysisController::class, 'index'])->name('analytics');
+
 });
 
 #USER / ROLE / PERMISSION ROUTES

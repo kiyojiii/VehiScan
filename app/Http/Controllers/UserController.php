@@ -256,12 +256,7 @@ class UserController extends Controller
         // Set success message in session
         session()->flash('user_created_success', 'User has been updated successfully.');
 
-        // Check if the user has the "applicant" role
-        if ($user->hasRole('Applicant')) {
-            return redirect()->route('users.index')->withSuccess('User has been updated successfully.');
-        }
-
-        return redirect()->route('applicant_users.user_profile')->withSuccess('Your Profile has been updated successfully.');;
+        return back()->withSuccess('Your Profile has been updated successfully.');
     }
 
     /**

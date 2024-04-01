@@ -176,10 +176,28 @@ class TimeController extends Controller
 
             // If vehicle found
             if ($vehicle) {
-                // Check if the vehicle is active
-                if ($vehicle->registration_status !== 'Active') {
-                    // Vehicle is not active, return error
-                    return response()->json(['error' => 'Vehicle Is Not Active'], 400);
+                // Check if approval_status is 'Inactive'
+                if ($vehicle->approval_status === 'Inactive') {
+                    // Approval status is Inactive, return specific error
+                    return response()->json(['error' => 'Vehicle Approval is Inactive'], 400);
+                }
+
+                // Check if registration_status is 'Inactive'
+                if ($vehicle->registration_status === 'Inactive') {
+                    // Registration status is Inactive, return specific error
+                    return response()->json(['error' => 'Vehicle Registration is Inactive'], 400);
+                }
+
+                // Check if both approval_status and registration_status are 'Pending'
+                if ($vehicle->approval_status === 'Pending') {
+                    // Both statuses are Pending, return specific error
+                    return response()->json(['error' => 'Vehicle Approval is Still Pending'], 400);
+                }
+
+                // Check if both approval_status and registration_status are 'Pending'
+                if ($vehicle->registration_status === 'Pending') {
+                    // Both statuses are Pending, return specific error
+                    return response()->json(['error' => 'Vehicle Registration is Still Pending'], 400);
                 }
 
                 // Check if there's a recent time_in record for the vehicle
@@ -216,6 +234,7 @@ class TimeController extends Controller
             }
         }
     }
+
 
     // Fetch Vehicle Record Data
     public function fetchVehicleRecord()

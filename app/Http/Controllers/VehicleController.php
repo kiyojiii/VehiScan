@@ -59,7 +59,7 @@ class VehicleController extends Controller
                     <th class="text-center">Plate Number</th>
                     <th class="text-center">Vehicle Make</th>
                     <th class="text-center">Vehicle Code</th>
-                    <th class="text-center">Side Photo</th>
+                    <th class="text-center">Front Photo</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Action</th>
                 </tr>
@@ -96,7 +96,7 @@ class VehicleController extends Controller
                 <td class="text-center">' . $vehicle->vehicle_make . '</td>
                 <td class="text-center">' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
-                    <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                    <img src="' . asset('storage/images/vehicles/' . $vehicle->front_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                 </td>
                 <td class="text-center">' . $vehicle->registration_status . '</td>
                 <td class="text-center">
@@ -289,7 +289,7 @@ class VehicleController extends Controller
       $request->merge([
         'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
       ]);
-      
+
       // Validate incoming request data
       $validator = Validator::make($request->all(), [
         'driver_name' => 'string|max:255',

@@ -133,12 +133,7 @@ var maxTimeInData = [];
 var maxTimeOutData = [];
 
 @foreach($third_weeklyProcessedData as $data)
-    // Format the date to display only the first three letters of the month
-    var formattedDate = "{{ \Carbon\Carbon::parse($data['date'])->format('M d') }}";
-    var month = formattedDate.substring(0, 3); // Get the first three letters of the month
-    var day = formattedDate.substring(4); // Get the day and year part
-    var category = month + ' ' + day; // Combine the month and day
-    categories.push(category);
+    categories.push("{{ \Carbon\Carbon::parse($data['date'])->format('M d') }}");
     maxTimeInData.push({{ $data['max_time_in_hour'] ?? 0 }});
     maxTimeOutData.push({{ $data['max_time_out_hour'] ?? 0 }});
 @endforeach

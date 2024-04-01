@@ -32,7 +32,7 @@
 
                 </li>
 
-                <li class="menu-title" key="t-apps">Data</li>
+                <li class="menu-title" key="t-apps">Overview</li>
 
                 <li>
                     <a href="{{ route('user_requests')}}" class="waves-effect">
@@ -45,6 +45,13 @@
                     <a href="{{ route('time.record_vehicles') }}" class="waves-effect">
                         <i class="fas fa-tasks"></i>
                         <span key="t-guests">Record Vehicle Time</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('applicants.applicants_pending') }}" class="waves-effect">
+                        <i class="fas fa-user-clock"></i>
+                        <span key="t-guests">Pending Applicants</span>
                     </a>
                 </li>
 

@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>VehiScan | Owner - Show</title>
 
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -139,11 +141,13 @@
                                             </tr>
                                             <tr>
                                                 <th scope="row">Approval:</th>
-                                                @if($owners->vehicle)
-                                                @if($owners->vehicle->approval_status == 'Approved')
-                                                <td><span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span></td>
-                                                @elseif($owners->vehicle->approval_status == 'Rejected')
+                                                @if($owners)
+                                                @if($owners->approval_status == 'Approved')
+                                                <td><span class="badge badge-soft-success">Approved</span></td>
+                                                @elseif($owners->approval_status == 'Rejected')
                                                 <td><span class="badge badge-soft-danger">Rejected</span></td>
+                                                @elseif($owners->approval_status == 'Pending')
+                                                <td><span class="badge badge-soft-warning">Pending</span></td>
                                                 @else
                                                 <td><span class="badge badge-soft-secondary">Unknown</span></td>
                                                 @endif
@@ -322,13 +326,15 @@
                                     </li>
                                     <li>
                                         <strong scope="row">Approval Status</strong>
-                                        @if($owners->vehicle && $owners->vehicle->approval_status)
-                                        @if($owners->vehicle->approval_status == 'Approved')
-                                        <span class="badge badge-soft-success">{{ $owners->vehicle->approval_status }}</span>
-                                        @elseif($owners->vehicle->approval_status == 'Rejected')
-                                        <span class="badge badge-soft-danger">{{ $owners->vehicle->approval_status }}</span>
+                                        @if($owners->vehicle->driver && $owners->vehicle->driver->approval_status)
+                                        @if($owners->vehicle->driver->approval_status == 'Approved')
+                                        <span class="badge badge-soft-success">Approved</span>
+                                        @elseif($owners->vehicle->driver->approval_status == 'Rejected')
+                                        <span class="badge badge-soft-danger">Rejected</span>
+                                        @elseif($owners->vehicle->driver->approval_status == 'Pending')
+                                        <span class="badge badge-soft-warning">Pending</span>
                                         @else
-                                        <span class="badge badge-soft-secondary">{{ $owners->vehicle->approval_status }}</span>
+                                        <span class="badge badge-soft-secondary">Unknown</span>
                                         @endif
                                         @else
                                         <span class="badge badge-soft-secondary">No Driver Associated</span>

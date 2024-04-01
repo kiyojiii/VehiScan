@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Vehiscan - Users </title>
+    <title> VehiScan | Users </title>
 
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
+    s
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

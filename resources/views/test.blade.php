@@ -39,36 +39,100 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert library -->
+
+    <!-- Include moment.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 </head>
 
 <body>
-    <h1>Time Data for {{ $date }}</h1>
-    <table>
-        <tr>
-            <th>Hour</th>
-            <th>Time In Count</th>
-            <th>Time Out Count</th>
-        </tr>
-        @foreach($processedData as $hour => $counts)
-        <tr>
-            <td>{{ $hour }}</td>
-            <td>{{ $counts['time_in_count'] }}</td>
-            <td>{{ $counts['time_out_count'] }}</td>
-        </tr>
-        @endforeach
-    </table>
-
-
-    <div class="col-xl-6">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Line with Data Labels</h4>
-
-                <div id="line_chart_datalabel" data-colors='["--bs-primary", "--bs-success"]' class="apex-charts" dir="ltr"></div>
+<div class="col-xl-6">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title mb-4" id="chartTitle">Line with Data Labels {{ $third_date }}</h4>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="datePicker" placeholder="Select Date">
+                <button class="btn btn-outline-secondary" type="button" id="applyDateFilter">Filter</button>
             </div>
-        </div><!--end card-->
-    </div>
+            <div id="third_line_chart_datalabel" data-colors='["--bs-success", "--bs-danger"]' class="apex-charts" dir="ltr"></div>
+        </div>
+    </div><!--end card-->
+</div>
 
 
-@include('test_js')
+    <script>
+        $(document).ready(function() {
+    // Initialize datepicker
+    $('#datePicker').datepicker({
+        format: 'yyyy-mm-dd', // Date format
+        autoclose: true, // Close the datepicker when date is selected
+        todayHighlight: true // Highlight today's date
+    });
+
+    // Apply date filter on button click
+    $('#applyDateFilter').click(function() {
+        var selectedDate = $('#datePicker').val();
+
+        // Perform action with selectedDate, e.g., update chart data
+        // You may use AJAX to fetch new data based on the selected date and update the chart accordingly
+        // For simplicity, I'll just redirect to the same page with the selected date as query parameter
+        window.location.href = '{{ route("test") }}?date=' + selectedDate;
+    });
+});
+    </script>
+<div class="col-xl-6">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Dashed Line {{ $third_startDate }} - {{ $third_endDate}} </h4>
+
+            <!-- Weekly date picker -->
+            <div class="input-group mb-2">
+                <input type="text" id="weekStartDatePicker" class="form-control" placeholder="Select Week Start Date">
+                <button class="btn btn-primary" id="applyWeekStartDateFilter">Apply</button> 
+            </div>
+
+            <div id="third_line_chart_dashed" data-colors='["--bs-primary", "--bs-danger", "--bs-success"]' class="apex-charts" dir="ltr"></div>
+        </div>
+    </div><!--end card-->
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize date picker for selecting the week start date
+        $('#weekStartDatePicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            orientation: 'bottom'
+        });
+
+        // Apply filter when 'Apply' button for week start date is clicked
+        $('#applyWeekStartDateFilter').click(function() {
+            var selectedStartDate = $('#weekStartDatePicker').datepicker('getDate');
+
+            // Check if a date is selected
+            if (selectedStartDate === null) {
+                // If no date is chosen, show SweetAlert message
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Date Chosen',
+                    text: 'Please choose a date before filtering.',
+                });
+                return;
+            }
+
+            // Calculate the previous Monday
+            var previousMonday = new Date(selectedStartDate);
+            previousMonday.setDate(previousMonday.getDate() - (previousMonday.getDay() + 6) % 7 + 1);
+            // Calculate the following Sunday
+            var followingSunday = new Date(previousMonday);
+            followingSunday.setDate(followingSunday.getDate() + 6);
+
+            // Redirect to the index route with the adjusted start and end dates as query parameters
+            window.location.href = "{{ route('test') }}?start_date=" + previousMonday.toISOString().slice(0, 10) + "&end_date=" + followingSunday.toISOString().slice(0, 10);
+        });
+    });
+</script>
+
+    @include('test_js')
+
 </html>

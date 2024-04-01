@@ -19,16 +19,20 @@ class ApplicantPartnerController extends Controller
         $role_status = Statuses::all();
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
-        return view('applicants.index-partner', compact('vehicles', 'role_status', 'appointments'));
+
+        $totalpartnersupplier = Applicant::join('appointments', 'applicants.appointment_id', '=', 'appointments.id')
+            ->where('appointments.appointment', 'Partner/Supplier')
+            ->count();
+
+        return view('applicants.index-partner', compact('totalpartnersupplier', 'vehicles', 'role_status', 'appointments'));
     }
 
     public function fetchAllPartnerApplicant()
     {
         // Query applicants with associated appointments where the appointment is 'Partner/Supplier'
-        $applicants = Applicant::where('approval_status', 'Pending')
-            ->join('appointments', 'applicants.appointment_id', '=', 'appointments.id')
-            ->where('appointments.appointment', 'Partner/Supplier')
-            ->get();
+        $applicants = Applicant::whereHas('appointment', function ($query) {
+            $query->where('appointment', 'Partner/Supplier');
+        })->get();
 
         $output = '';
 
@@ -60,9 +64,8 @@ class ApplicantPartnerController extends Controller
                     <td>' . $rs->position_designation . '</td>
                     <td>' . $rs->approval_status . '</td>
                     <td>
-                        <a href="' . route('owners.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
+                        <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                        <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteApplicant"><i class="bi-trash h4"></i></a>
                     </td>
                 </tr>';
             }
@@ -134,7 +137,7 @@ class ApplicantPartnerController extends Controller
     public function index_vehicles_partner_supplier()
     {
         $drivers = Driver::all();
-        
+
         $owners = Applicant::whereHas('appointment', function ($query) {
             $query->where('appointment', 'Partner/Supplier');
         })->get();
@@ -178,7 +181,7 @@ class ApplicantPartnerController extends Controller
                             <th class="text-center">Plate Number</th>
                             <th class="text-center">Vehicle Make</th>
                             <th class="text-center">Vehicle Code</th>
-                            <th class="text-center">Side Photo</th>
+                            <th class="text-center">Front Photo</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
                         </tr>
@@ -215,7 +218,7 @@ class ApplicantPartnerController extends Controller
                 <td class="text-center">' . $vehicle->vehicle_make . '</td>
                 <td class="text-center">' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
-                    <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                    <img src="' . asset('storage/images/vehicles/' . $vehicle->front_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                 </td>
                 <td class="text-center">' . $vehicle->registration_status . '</td>
                 <td class="text-center">
@@ -223,7 +226,7 @@ class ApplicantPartnerController extends Controller
                     <!-- For example: -->
                     <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                     <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
-                    
+
                 $output .= '<style>.disabled-link { pointer-events: none; opacity: 0.5; }</style>';
 
                 // Check vehicle registration status

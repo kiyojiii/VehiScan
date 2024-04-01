@@ -99,7 +99,6 @@ if (columnChartColors) {
     chart.render();
 }
 
-$(document).ready(function() {
     var columnChartColors = getChartColorsArray("MonthlyBarTimeCount");
     if (columnChartColors) {
         var options = {
@@ -165,6 +164,5 @@ $(document).ready(function() {
         );
 
         chart.render();
-    }
-});
+}
 </script>

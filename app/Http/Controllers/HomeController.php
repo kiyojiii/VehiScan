@@ -53,8 +53,50 @@ class HomeController extends Controller
         $totalOwners = Applicant::count();
         $totalUsers = User::count();
         $totalDrivers = Driver::count();
-        $totalTimeIn = Time::whereNotNull('time_in')->count();
-        $totalTimeOut = Time::whereNotNull('time_out')->count();
+        // Total vehicles with time_out as null and active registration status
+        $totalVehicleIn = Time::join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
+            ->whereNull('time_out')
+            ->where('vehicles.registration_status', 'active')
+            ->distinct('times.vehicle_id')
+            ->count('times.vehicle_id');
+
+        // Total vehicles with both time_in and time_out not null and active registration status
+        $totalVehicleOut = Time::join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
+            ->whereNotNull('time_in')
+            ->whereNotNull('time_out')
+            ->where('vehicles.registration_status', 'active')
+            ->distinct('times.vehicle_id')
+            ->count('times.vehicle_id');
+
+        $totalActiveVehicles = Vehicle::where('registration_status', 'Active')->count();
+        $totalInactiveVehicles = Vehicle::where('registration_status', 'Inactive')->count();
+        $totalPendingVehicles = Vehicle::where('registration_status', 'Pending')->count();
+
+        // Get the date 7 days ago from the current date
+        $sevenDaysAgo = Carbon::now()->subDays(7);
+
+        // Query vehicles created in the past 7 days
+        $recentVehicles = Vehicle::where('created_at', '>=', $sevenDaysAgo)->where('registration_status', 'Active')->count();
+
+        // Calculate the VehicleInPercentage
+        if ($totalActiveVehicles > 0) {
+            $vehicleInPercentage = ($totalVehicleIn / $totalActiveVehicles) * 100;
+        } else {
+            $vehicleInPercentage = 0; // Handle division by zero error
+        }
+
+        // Format the percentage to display up to two decimal places
+        $VehicleInPercentage = number_format($vehicleInPercentage, 2);
+
+        // Calculate the VehicleOutPercentage
+        if ($totalActiveVehicles > 0) {
+            $vehicleOutPercentage = ($totalVehicleOut / $totalActiveVehicles) * 100;
+        } else {
+            $vehicleOutPercentage = 0; // Handle division by zero error
+        }
+
+        // Format the percentage to display up to two decimal places
+        $VehicleOutPercentage = number_format($vehicleOutPercentage, 2);
 
         // CHARTS QUERY
         $applicants = Applicant::all();
@@ -64,29 +106,60 @@ class HomeController extends Controller
         $currentMonth = now()->format('m');
         $currentYear = now()->format('Y');
 
-        // Get records from the last 15 days
-        $startDate = now()->subDays(15)->startOfDay();
+        // Get records from the last 7 days
+        $startDate = now()->subDays(7)->startOfDay();
         $endDate = now()->endOfDay();
 
         $totalTimePerDay = Time::selectRaw('DATE(created_at) as date, COUNT(time_in) as total_time_in, COUNT(time_out) as total_time_out')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupByRaw('DATE(created_at)')
             ->orderByRaw('DATE(created_at)')
+            ->take(7)
             ->get();
 
         // Get the current month and previous month
         $currentMonth = date('Y-m');
         $previousMonth = date('Y-m', strtotime('-1 month'));
 
-        // Query the total time count of the current month
-        $totalTimeCurrentMonth = Time::whereYear('created_at', '=', date('Y'))
-            ->whereMonth('created_at', '=', date('m'))
+        // Get the current year and month
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+
+        // Query the time records for the current month and count Time_in and Time_out separately
+        $totalTimeInCurrentMonth = Time::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->whereNotNull('time_in')
             ->count();
 
-        // Query the total time count of the previous month
-        $totalTimePreviousMonth = Time::whereYear('created_at', '=', date('Y', strtotime('-1 month')))
-            ->whereMonth('created_at', '=', date('m', strtotime('-1 month')))
+        $totalTimeOutCurrentMonth = Time::whereYear('created_at', $currentYear)
+            ->whereMonth('created_at', $currentMonth)
+            ->whereNotNull('time_out')
             ->count();
+
+        // Calculate the total time for the current month
+        $totalTimeCurrentMonth = $totalTimeInCurrentMonth + $totalTimeOutCurrentMonth;
+
+        // Get the current year and month
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+
+        // Calculate the previous month
+        $previousYear = Carbon::now()->subMonth()->year;
+        $previousMonth = Carbon::now()->subMonth()->month;
+
+        // Query the time records for the previous month and count Time_in and Time_out separately
+        $totalTimeInPreviousMonth = Time::whereYear('created_at', $previousYear)
+            ->whereMonth('created_at', $previousMonth)
+            ->whereNotNull('time_in')
+            ->count();
+
+        $totalTimeOutPreviousMonth = Time::whereYear('created_at', $previousYear)
+            ->whereMonth('created_at', $previousMonth)
+            ->whereNotNull('time_out')
+            ->count();
+
+        // Calculate the total time for the previous month
+        $totalTimePreviousMonth = $totalTimeInPreviousMonth + $totalTimeOutPreviousMonth;
 
         // Get the counts of vehicles, owners, and drivers for the series
         $series = [
@@ -102,11 +175,12 @@ class HomeController extends Controller
         $livecurrentMonth = Carbon::now()->format('F');
 
         // Get the current month
-        $currentMonth = date('m');
+        $currentMonth = Carbon::now()->month;
 
-        // Get the plate number of the vehicle with the most records for the current month
+        // Get the vehicle ID with the most records for the current month
         $vehicleWithMostRecords = Time::select('vehicle_id', DB::raw('COUNT(*) as total'))
-            ->whereMonth('created_at', $currentMonth)
+            ->whereMonth('time_in', $currentMonth)
+            ->orWhereMonth('time_out', $currentMonth)
             ->groupBy('vehicle_id')
             ->orderByDesc('total')
             ->first();
@@ -123,9 +197,27 @@ class HomeController extends Controller
             $totalVisits = $vehicleWithMostRecords->total;
 
             // Calculate percentage
-            $totalRecords = Time::whereMonth('created_at', $currentMonth)->count();
-            $percentage = ($totalVisits / $totalRecords) * 100;
+            // Query the time records for the current month and count Time_in and Time_out separately
+            $totalvisittotalTimeInCurrentMonth = Time::whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->whereNotNull('time_in')
+                ->count() ?? null;
+
+            $totaltotalTimeOutCurrentMonth = Time::whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->whereNotNull('time_out')
+                ->count() ?? null;
+
+            $totalRecords = $totalvisittotalTimeInCurrentMonth + $totaltotalTimeOutCurrentMonth ?? null;
+            $percentage = $totalRecords ? ($totalVisits / $totalRecords) * 100 : null;
+        } else {
+            // Set variables to null when there's no data
+            $plateNumber = null;
+            $totalVisits = null;
+            $totalRecords = null;
+            $percentage = null;
         }
+
 
         // Query to find the vehicle with the most violation count
         $mostViolatedVehicle = Violation::select('vehicle_id', DB::raw('COUNT(*) as violation_count'))
@@ -161,28 +253,78 @@ class HomeController extends Controller
             $vehicleCount = $mostVehiclesApplicant->vehicle_count;
         }
 
-        // Query to find the vehicle with the longest stay
-        $longestStayVehicle = Time::select('vehicles.plate_number', DB::raw('TIMESTAMPDIFF(HOUR, time_in, time_out) as stay_duration'))
+        // Query to find the recent vehicle with the most timestamp difference between time_in and time_out
+        $recentLongestStayVehicle = Time::select('vehicles.plate_number', DB::raw('TIMESTAMPDIFF(MINUTE, time_in, time_out) as stay_duration'))
             ->join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
-            ->orderByDesc('stay_duration')
+            ->whereNotNull('time_out') // Ensure time_out is not null
+            ->orderByDesc('times.created_at') // Order by creation date to get the most recent record
             ->first();
 
         $lsplateNumber = null;
         $stayDuration = 0;
 
-        if ($longestStayVehicle) {
-            $lsplateNumber = $longestStayVehicle->plate_number;
-            $stayDuration = $longestStayVehicle->stay_duration;
+        if ($recentLongestStayVehicle) {
+            $lsplateNumber = $recentLongestStayVehicle->plate_number;
+            $totalMinutes = $recentLongestStayVehicle->stay_duration;
+
+            // Calculate hours and minutes
+            $stayDurationHours = floor($totalMinutes / 60);
+            $stayDurationMinutes = $totalMinutes % 60;
+
+            // Format the duration based on hours and minutes
+            if ($stayDurationHours > 0) {
+                if ($stayDurationHours === 1) {
+                    $stayDuration = $stayDurationHours . " hr";
+                } else {
+                    $stayDuration = $stayDurationHours . " hrs";
+                }
+            } else {
+                if ($stayDurationMinutes === 1) {
+                    $stayDuration = $stayDurationMinutes . " min"; // Display "min" if 1 minute
+                } else {
+                    $stayDuration = $stayDurationMinutes . " mins"; // Display "mins" if more than 1 minute
+                }
+            }
         }
 
         // Fetch the latest 10 records from the vehicle_record table
         $vehicleRecords = Vehicle_Record::latest()->take(10)->get();
         $latestVehicles = Vehicle::latest()->take(10)->get();
 
+        // Query to find the hour with the most counts of time_in and time_out for the current month
+        $hourWithMostCounts = Time::select(
+            DB::raw('HOUR(time_in) as hour'),
+            DB::raw('COUNT(time_in) as time_in_count')
+        )
+            ->whereMonth('time_in', $currentMonth)
+            ->groupBy('hour')
+            ->orderByDesc('time_in_count')
+            ->first();
+
+        if (!$hourWithMostCounts) {
+            // If there's no data for time_in in the current month, try time_out
+            $hourWithMostCounts = Time::select(
+                DB::raw('HOUR(time_out) as hour'),
+                DB::raw('COUNT(time_out) as time_out_count')
+            )
+                ->whereMonth('time_out', $currentMonth)
+                ->groupBy('hour')
+                ->orderByDesc('time_out_count')
+                ->first();
+        }
+
+        $hour = null;
+        $count = 0;
+
+        if ($hourWithMostCounts) {
+            $hour = Carbon::createFromFormat('H', $hourWithMostCounts->hour)->format('g A');
+            $count = isset($hourWithMostCounts->time_in_count) ? $hourWithMostCounts->time_in_count : $hourWithMostCounts->time_out_count;
+        }
+
         // Pass the user data to the view
-        return view('home', compact('latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalTimeOut', 'totalTimeIn', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
+        return view('home', compact('VehicleInPercentage', 'VehicleOutPercentage', 'recentVehicles', 'totalPendingVehicles', 'totalInactiveVehicles', 'totalActiveVehicles', 'stayDurationHours', 'recentLongestStayVehicle', 'hour', 'count', 'totalRecords', 'latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalVehicleIn', 'totalVehicleOut', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
     }
-    
+
     public function fetchHomeVehicleRecord()
     {
         $vehicleRecords = Vehicle_Record::latest()->take(10)->get();

@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Vehicle</title>
+    <title>VehiScan | Vehicle - Partner/Supplier </title>
+
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -48,7 +50,7 @@
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Vehicle</a></li>
-                                    <li class="breadcrumb-item active">Vehicle List</li>
+                                    <li class="breadcrumb-item active">Partner/Supplier Vehicles</li>
                                 </ol>
                             </div>
 

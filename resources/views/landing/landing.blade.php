@@ -5,7 +5,7 @@
 <!-- ***** Main Banner Area Start ***** -->
 <section class="section main-banner" id="top" data-section="section1">
     <video autoplay muted loop id="bg-video">
-        <source src="{{ asset('landing/assets/images/course-video.mp4') }}" type="video/mp4" />
+        <source src="{{ asset('landing/assets/images/course02.jpg') }}" />
     </video>
 
     <div class="video-overlay header-text">
@@ -15,7 +15,7 @@
                     <div class="caption">
                         <h6>Hello!</h6>
                         <h2>Welcome to VehiScan</h2>
-                        <p>This is an edu meeting HTML CSS template provided by <a rel="nofollow" href="https://templatemo.com/page/1" target="_blank">TemplateMo website</a>. This is a Bootstrap v5.1.3 layout. The video background is taken from Pexels website, a group of young people by <a rel="nofollow" href="https://www.pexels.com/@pressmaster" target="_blank">Pressmaster</a>.</p>
+                        <p>A vehicle inventory system designed for MSU-IIT. Our platform allows staff and security guards to efficiently record vehicle entries and exits using QR code scanning. Users can register to access applications where they can input personal, vehicle, and driver information.</p>
                         <div class="main-button-red">
                             @if (Route::has('login'))
                             <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
@@ -50,8 +50,8 @@
                             <img src="{{ asset('landing/assets/images/service-icon-01.png') }}" alt="">
                         </div>
                         <div class="down-content">
-                            <h4>Best Education</h4>
-                            <p>Suspendisse tempor mauris a sem elementum bibendum. Praesent facilisis massa non vestibulum.</p>
+                            <h4>Application</h4>
+                            <p>Apply and manage applications including personal information, vehicle information, and driver information.</p>
                         </div>
                     </div>
 
@@ -60,8 +60,8 @@
                             <img src="{{ asset('landing/assets/images/service-icon-02.png') }}" alt="">
                         </div>
                         <div class="down-content">
-                            <h4>Best Teachers</h4>
-                            <p>Suspendisse tempor mauris a sem elementum bibendum. Praesent facilisis massa non vestibulum.</p>
+                            <h4>Vehicles</h4>
+                            <p>Manage vehicle records, including registration status, approval status and vehicle owner information.</p>
                         </div>
                     </div>
 
@@ -70,8 +70,8 @@
                             <img src="{{ asset('landing/assets/images/service-icon-03.png') }}" alt="">
                         </div>
                         <div class="down-content">
-                            <h4>Best Students</h4>
-                            <p>Suspendisse tempor mauris a sem elementum bibendum. Praesent facilisis massa non vestibulum.</p>
+                            <h4>Record Time</h4>
+                            <p>Record time in and time out of vehicles using QR code scanning for inventory management.</p>
                         </div>
                     </div>
 
@@ -80,8 +80,8 @@
                             <img src="{{ asset('landing/assets/images/service-icon-02.png') }}" alt="">
                         </div>
                         <div class="down-content">
-                            <h4>Online Meeting</h4>
-                            <p>Suspendisse tempor mauris a sem elementum bibendum. Praesent facilisis massa non vestibulum.</p>
+                            <h4>Violation</h4>
+                            <p>Monitor and manage violations, ensuring staff and vehicle owners are in compliance with regulations and policies.</p>
                         </div>
                     </div>
 
@@ -90,8 +90,8 @@
                             <img src="{{ asset('landing/assets/images/service-icon-03.png') }}" alt="">
                         </div>
                         <div class="down-content">
-                            <h4>Best Networking</h4>
-                            <p>Suspendisse tempor mauris a sem elementum bibendum. Praesent facilisis massa non vestibulum.</p>
+                            <h4>Users</h4>
+                            <p>Manage user accounts, roles, and permissions for system access and security.</p>
                         </div>
                     </div>
 
@@ -296,7 +296,7 @@
     </div>
 </section>
 
-<section class="our-courses" id="courses">
+<!-- <section class="our-courses" id="courses">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -571,7 +571,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <section class="our-facts">
     <div class="container">
@@ -623,5 +623,4 @@
         </div>
     </div>
 </section>
-
 @endsection

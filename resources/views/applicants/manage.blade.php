@@ -7,6 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>VehiScan | Applicant</title>
 
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -52,6 +54,20 @@
                     </div>
                 </div>
                 <!-- end page title -->
+                <script>
+    $(document).ready(function () {
+        $(document).on('click', '.deletess', function () {
+            var tr = $(this).closest('tr');
+            var applicantId = tr.find('td:eq(0)').text();
+            var vehicleId = $(this).data('vehicle-id'); // Get the Vehicle ID from data attribute
+            var driverId = $(this).data('driver-id'); // Get the Driver ID from data attribute
+
+            // You can customize the alert message as per your requirement
+            alert('Applicant ID: ' + applicantId + '\nVehicle ID: ' + vehicleId + '\nDriver ID: ' + driverId);
+        });
+    });
+</script>
+
 
                 <div class="row">
                     <div class="col-lg-12">

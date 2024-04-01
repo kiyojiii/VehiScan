@@ -87,7 +87,6 @@ class ApplicantController extends Controller
 
     public function ManageApplicant()
     {
-        // $applicant = Applicant::where('approval_status', 'Approved')->get();
         $applicant = Applicant::all();
         $output = '';
         if ($applicant->count() > 0) {
@@ -106,22 +105,28 @@ class ApplicantController extends Controller
             foreach ($applicant as $rs) {
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($rs->vehicle_id);
+                $vehicleID = $vehicle ? $vehicle->id : 'N/A'; // Get the Vehicle ID or set it to 'N/A' if not found
+
+                // Find the driver associated with the vehicle
+                $driverID = $vehicle ? $vehicle->driver_id : 'N/A'; // Get the Vehicle ID or set it to 'N/A' if not found
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
 
                 $output .= '<tr>
-                <td>' . $rs->id . '</td>
-                <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
-                <td>' . $vehiclePlate . '</td>
-                <td>' . $rs->office_department_agency . '</td>
-                <td>' . $rs->approval_status . '</td>
-                <td>
-                    <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                    <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                </td>
-            </tr>';
+                    <td>' . $rs->id . '</td>
+                    <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
+                    <td>' . $vehiclePlate . '</td>
+                    <td>' . $rs->office_department_agency . '</td>
+                    <td>' . $rs->approval_status . '</td>
+                    <td>
+                        <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                        <a href="#" class="text-danger mx-1 deleteApplicant" data-applicant-id="' . $rs->id . '" data-vehicle-id="' . $vehicleID . '" data-driver-id="' . $driverID . '"><i class="bi-trash h4"></i></a>
+                    </td>
+                </tr>';
             }
+
+
             $output .= '</tbody></table>';
             echo $output;
         } else {
@@ -886,5 +891,170 @@ class ApplicantController extends Controller
             'status' => 'success',
             'message' => 'All Approved'
         ]);
+    }
+
+    public function delete(Request $request)
+    {
+        $id = $request->id;
+        $vehicleId = $request->vehicle_id;
+        $driverId = $request->driver_id;
+
+        // Delete Applicant
+        $applicant = Applicant::find($id);
+        if (!$applicant) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Applicant not found'
+            ], 404);
+        }
+        if (Storage::delete('public/images/' . $applicant->scan_or_photo_of_id)) {
+            $applicant->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Applicant deleted successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to delete applicant'
+            ], 500);
+        }
+
+        // Delete Vehicle
+        if ($vehicleId !== 'N/A') {
+            $vehicle = Vehicle::find($vehicleId);
+            if (!$vehicle) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Vehicle not found'
+                ], 404);
+            }
+
+            // Delete vehicle license image
+            if ($vehicle->official_receipt_image) {
+                Storage::delete('public/images/vehicles/documents/' . $vehicle->official_receipt_image);
+            }
+
+            // Delete vehicle license image
+            if ($vehicle->certificate_of_registration_image) {
+                Storage::delete('public/images/vehicles/documents/' . $vehicle->certificate_of_registration_image);
+            }
+
+            // Delete vehicle license image
+            if ($vehicle->deed_of_sale_image) {
+                Storage::delete('public/images/vehicles/documents/' . $vehicle->deed_of_sale_image);
+            }
+
+            // Delete vehicle license image
+            if ($vehicle->authorization_letter_image) {
+                Storage::delete('public/images/vehicles/documents/' . $vehicle->authorization_letter_image);
+            }
+
+            // Delete vehicle license image
+            if ($vehicle->front_photo) {
+                Storage::delete('public/images/vehicles/' . $vehicle->front_photo);
+            }
+
+            // Delete vehicle license image
+            if ($vehicle->side_photo) {
+                Storage::delete('public/images/vehicles/' . $vehicle->side_photo);
+            }
+
+
+            // Now delete the vehicle record
+            $vehicle->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Vehicle deleted successfully'
+            ]);
+        }
+
+        // Delete Driver
+        if ($driverId !== 'N/A') {
+            $driver = Driver::find($driverId);
+            if (!$driver) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Driver not found'
+                ], 404);
+            }
+
+            // Delete driver license image
+            if ($driver->driver_license_image) {
+                Storage::delete('public/images/drivers/' . $driver->driver_license_image);
+            }
+
+            // Delete authorized driver license image
+            if ($driver->authorized_driver_license_image) {
+                Storage::delete('public/images/drivers/' . $driver->authorized_driver_license_image);
+            }
+
+            // Now delete the driver record
+            $driver->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Driver deleted successfully'
+            ]);
+        }
+
+    }
+
+    public function pending()
+    {
+        $pendingcount = Applicant::where('approval_status', 'Pending')->count();
+        return view('applicants.pending.index', compact('pendingcount'));
+    }
+
+    public function PendingApplicant()
+    {
+        $applicant = Applicant::where('approval_status', 'Pending')->get();
+        $output = '';
+        if ($applicant->count() > 0) {
+            $output .= '<table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Vehicle</th>
+                <th>Appointment</th>
+                <th>Role Status</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>';
+            foreach ($applicant as $rs) {
+                $appointmentID = Appointment::find($rs->appointment_id);
+                $appointment = $appointmentID ? $appointmentID->appointment : 'N/A';
+
+                $roleID = Statuses::find($rs->status_id);
+                $rolestatus = $roleID ? $roleID->applicant_role_status : 'N/A';
+
+                // Find the vehicle associated with the owner
+                $vehicle = Vehicle::find($rs->vehicle_id);
+
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+
+                $output .= '<tr>
+                <td>' . $rs->id . '</td>
+                <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
+                <td>' . $vehiclePlate . '</td>
+                <td>' . $appointment. '</td>
+                <td>' . $rolestatus . '</td>
+                <td>' . $rs->approval_status . '</td>
+                <td>
+                    <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
+                    <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteApplicant"><i class="bi-trash h4"></i></a>
+                </td>
+            </tr>';
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h1 class="text-center text-success my-5"><i class="bx bx-check-circle"></i> No Pending Applicants</h1>';
+        }
     }
 }

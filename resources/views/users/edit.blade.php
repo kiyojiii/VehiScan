@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users | Edit</title>
+    <title> VehiScan | Users - Edit </title>
+
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
 </head>
 
@@ -32,6 +34,37 @@
                     </div>
                 </div>
                 <!-- end page title -->
+                
+                <script>
+                    // This code will execute when the page is loaded
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Check if the user creation success message exists in session
+                        @if (session('user_created_success'))
+                            // Show SweetAlert success message for user creation
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: '{{ session('user_created_success') }}',
+                                showConfirmButton: false,
+                                timer: 3000 // Close the alert after 3 seconds
+                            });
+                        @endif
+
+                        // Check if the user update success message exists in session
+                        @if (session('user_updated_success'))
+                            // Show SweetAlert success message for user update
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: '{{ session('user_updated_success') }}',
+                                showConfirmButton: false,
+                                timer: 3000 // Close the alert after 3 seconds
+                            });
+                        @endif
+                    });
+                </script>
+
+
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
