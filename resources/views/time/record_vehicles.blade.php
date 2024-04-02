@@ -67,20 +67,13 @@
                 </div>
                 <!-- end page title -->
 
-                @if(auth()->check())
-                <p>Authenticated User ID: {{ auth()->id() }}</p>
-                @else
-                <p>User not authenticated</p>
-                @endif
-
-
                 <div class="row">
                     <div class="col-xl-6">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex align-items-start">
                                     <div class="me-2">
-                                        <h5 class="card-title mb-4">>Type Vehicle Code</h5>
+                                        <h5 class="card-title mb-4">> Input Vehicle Code</h5>
                                     </div>
                                     <div class="dropdown ms-auto">
                                         <a class="text-muted font-size-16" role="button" data-bs-toggle="dropdown" aria-haspopup="true">

@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Simple Laravel 10 User Roles and Permissions - AllPHPTricks.com</title>
+    <title>VehiScan | Login or SignUp</title>
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -47,9 +47,7 @@
     </div>
     @endif
 
-
     @yield('content')
-
 
     <!-- JAVASCRIPT -->
     <script src="<?php echo url('theme') ?>/dist/assets/libs/jquery/jquery.min.js"></script>

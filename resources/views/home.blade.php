@@ -202,7 +202,7 @@
                                             <h5 class="font-size-14 mb-0">Active Vehicles</h5>
                                         </div>
                                         <div class="text-muted mt-4">
-                                            <h4>{{ $totalActiveVehicles }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
+                                            <h4>{{ $totalActiveApprovedVehicles }}<i class="mdi mdi-chevron-up ms-1 text-success"></i></h4>
                                             <div class="d-flex">
                                                 <span class="badge badge-soft-success font-size-12"> + {{ $recentVehicles }} </span> <span class="ms-2 text-truncate"> Recent Vehicles </span>
                                             </div>

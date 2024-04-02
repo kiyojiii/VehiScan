@@ -11,11 +11,14 @@
 
   <title>VehiScan</title>
 
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
   <!-- Bootstrap core CSS -->
   <link href="{{ asset('landing/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
+  <!-- BOXICONS -->
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 
   <!-- Additional CSS Files -->
   <link rel="stylesheet" href="{{ asset('landing/assets/css/fontawesome.css') }}">
@@ -56,7 +59,7 @@
         <div class="col-12">
           <nav class="main-nav">
             <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
+            <a href="{{ url('/') }}" class="logo">
               VehiScan
             </a>
             <!-- ***** Logo End ***** -->
@@ -65,7 +68,7 @@
               <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
               <li class="scroll-to-section"><a href="#apply">Apply Now</a></li>
               <!-- <li class="scroll-to-section"><a href="#courses">Courses</a></li> -->
-              <li class="scroll-to-section"><a href="https://www.msuiit.edu.ph/">Contact Us</a></li>
+              <li class="scroll-to-section"><a href="#contact">Contact Us</a></li>
             </ul>
             <a class='menu-trigger'>
               <span>Menu</span>

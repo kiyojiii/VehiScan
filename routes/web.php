@@ -22,8 +22,10 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\Auth\RegisterController;
-
-
+use App\Models\Applicant;
+use App\Models\Driver;
+use App\Models\User;
+use App\Models\Vehicle;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +39,11 @@ use App\Http\Controllers\Auth\RegisterController;
 */
 
 Route::get('/', function () {
-    return view('landing/landing');
+    $totalUsers = User::count();
+    $totalVehicles = Vehicle::count();
+    $totalOwners = Applicant::count();
+    $totalDrivers = Driver::count();
+    return view('landing/landing', compact('totalDrivers','totalOwners','totalVehicles','totalUsers'));
 });
 
 

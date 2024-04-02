@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-md">
                                 <label for="position">Vehicle</label>
-                                <input type="text" name="vehicle_name" id="vehicle_name" class="form-control" value="{{ $owner->vehicle->plate_number ?? 'N/A' }} - {{ $owner->vehicle->vehicle_make ?? 'N/A' }} - {{ $owner->vehicle->year ?? 'N/A' }}" placeholder="Vehicle Plate Number" readonly>
+                                <input type="text" name="vehicle_name" id="vehicle_name" class="form-control" value="{{ $owner->vehicle->plate_number ?? 'N/A' }} - {{ $owner->vehicle->vehicle_make ?? 'N/A' }} - {{ $owner->vehicle->year_model ?? 'N/A' }}" placeholder="Vehicle Plate Number" readonly>
                             </div>
                             <div class="col-md">
                                 <label for="serial_number">Serial Number</label>

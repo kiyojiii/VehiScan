@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title> VehiScan | Login </title>
+
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
+
 </head>
 
 <body>
@@ -29,33 +32,78 @@
                                         <div class="col-lg-7">
                                             <div class="text-center">
 
-                                                <h4 class="mb-3"><i class="bx bxs-quote-alt-left text-primary h1 align-middle me-3"></i><span class="text-primary">5k</span>+ Satisfied clients</h4>
+                                                <h4 class="mb-3"><span class="text-primary"></span></h4>
 
                                                 <div dir="ltr">
                                                     <div class="owl-carousel owl-theme auth-review-carousel" id="auth-review-carousel">
                                                         <div class="item">
                                                             <div class="py-3">
-                                                                <p class="font-size-16 mb-4">" Fantastic theme with a ton of options. If you just want the HTML to integrate with your project, then this is the package. You can find the files in the 'dist' folder...no need to install git and all the other stuff the documentation talks about. "</p>
+                                                                <p class="font-size-16 mb-4"></p>
 
                                                                 <div>
-                                                                    <h4 class="font-size-16 text-primary">Abs1981</h4>
-                                                                    <p class="font-size-14 mb-0">- Skote User</p>
+                                                                    <h4 class="font-size-16 text-primary"></h4>
+                                                                    <p class="font-size-14 mb-0"> </p>
                                                                 </div>
                                                             </div>
 
                                                         </div>
+
+                                                        <style>
+                                                            .quote-container {
+                                                                background-color: rgba(255, 255, 255, 0.6) !important;
+                                                                /* Adjust the alpha value to set the opacity */
+                                                                padding: 10px;
+                                                                /* Add padding for better appearance */
+                                                                border-radius: 5px;
+                                                                /* Add border-radius for rounded corners */
+                                                            }
+                                                        </style>
 
                                                         <div class="item">
                                                             <div class="py-3">
-                                                                <p class="font-size-16 mb-4">" If Every Vendor on Envato are as supportive as Themesbrand, Development with be a nice experience. You guys are Wonderful. Keep us the good work. "</p>
-
-                                                                <div>
-                                                                    <h4 class="font-size-16 text-primary">nezerious</h4>
-                                                                    <p class="font-size-14 mb-0">- Skote User</p>
+                                                                <div class="quote-container bg-light p-3 rounded">
+                                                                    <p id="quote" class="font-size-16 mb-2"></p>
+                                                                    <div>
+                                                                        <h4 id="author" class="font-size-16 text-danger mb-0"></h4>
+                                                                        <p class="font-size-14 mb-0"></p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-
                                                         </div>
+
+
+                                                        <script>
+                                                            document.addEventListener('DOMContentLoaded', function() {
+                                                                fetch('https://type.fit/api/quotes')
+                                                                    .then(response => response.json())
+                                                                    .then(data => {
+                                                                        // Get 5 random quotes
+                                                                        const randomQuotes = getRandomElements(data, 5);
+                                                                        // Display each quote
+                                                                        randomQuotes.forEach(quote => {
+                                                                            const {
+                                                                                text,
+                                                                                author
+                                                                            } = quote;
+                                                                            const quoteElement = document.getElementById('quote');
+                                                                            const authorElement = document.getElementById('author');
+                                                                            // Set quote text and author
+                                                                            quoteElement.textContent = `"${text}"`;
+                                                                            // Remove ', type.fit' from the author if present
+                                                                            const cleanAuthor = author.replace(', type.fit', '');
+                                                                            authorElement.textContent = `-${cleanAuthor}`;
+                                                                        });
+                                                                    })
+                                                                    .catch(error => console.error('Error fetching quotes:', error));
+                                                            });
+
+                                                            // Function to get n random elements from an array
+                                                            function getRandomElements(array, n) {
+                                                                const shuffled = array.sort(() => 0.5 - Math.random());
+                                                                return shuffled.slice(0, n);
+                                                            }
+                                                        </script>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -76,8 +124,8 @@
                                 <div class="my-auto">
 
                                     <div>
-                                        <h5 class="text-primary">Welcome Back !</h5>
-                                        <p class="text-muted">Sign in to continue to Skote.</p>
+                                        <h5 class="text-primary">Welcome To VehiScan !</h5>
+                                        <p class="text-muted">Sign in to continue.</p>
                                     </div>
 
                                     <div class="mt-4">

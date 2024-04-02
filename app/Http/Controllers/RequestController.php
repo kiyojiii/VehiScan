@@ -87,10 +87,10 @@ class RequestController extends Controller
     {
         try {
 
-            // Before validating the request, modify the reason field if approval is "Approved"
-            $request->merge([
-                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
-            ]);
+            // Before validating the request, modify the reason field if approval is "Approved" and reason is empty
+            if ($request->approval === 'Approved' && empty($request->reason)) {
+                $request->merge(['reason' => 'None / Approved']);
+            }
 
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
@@ -224,7 +224,7 @@ class RequestController extends Controller
     {
         $id = $request->id;
         $reason = $request->reason; // Get the reason from the request
-    
+
         // Find the vehicle
         $vehicle = Vehicle::find($id);
         if (!$vehicle) {
@@ -233,17 +233,16 @@ class RequestController extends Controller
                 'message' => 'Vehicle not found'
             ], 404);
         }
-    
+
         // Change registration_status to Inactive
         $vehicle->registration_status = 'Inactive';
         $vehicle->approval_status = 'Rejected';
         $vehicle->reason = $reason; // Assign the provided reason
         $vehicle->save();
-    
+
         return response()->json([
             'status' => 'success',
             'message' => 'Vehicle Has Been Rejected'
         ]);
     }
-    
 }

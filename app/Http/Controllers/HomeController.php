@@ -71,6 +71,9 @@ class HomeController extends Controller
         $totalActiveVehicles = Vehicle::where('registration_status', 'Active')->count();
         $totalInactiveVehicles = Vehicle::where('registration_status', 'Inactive')->count();
         $totalPendingVehicles = Vehicle::where('registration_status', 'Pending')->count();
+        $totalActiveApprovedVehicles = Vehicle::where('registration_status', 'Active')
+        ->where('approval_status', 'Approved')
+        ->count();
 
         // Get the date 7 days ago from the current date
         $sevenDaysAgo = Carbon::now()->subDays(7);
@@ -322,7 +325,7 @@ class HomeController extends Controller
         }
 
         // Pass the user data to the view
-        return view('home', compact('VehicleInPercentage', 'VehicleOutPercentage', 'recentVehicles', 'totalPendingVehicles', 'totalInactiveVehicles', 'totalActiveVehicles', 'stayDurationHours', 'recentLongestStayVehicle', 'hour', 'count', 'totalRecords', 'latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalVehicleIn', 'totalVehicleOut', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
+        return view('home', compact('totalActiveApprovedVehicles', 'VehicleInPercentage', 'VehicleOutPercentage', 'recentVehicles', 'totalPendingVehicles', 'totalInactiveVehicles', 'totalActiveVehicles', 'stayDurationHours', 'recentLongestStayVehicle', 'hour', 'count', 'totalRecords', 'latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalVehicleIn', 'totalVehicleOut', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
     }
 
     public function fetchHomeVehicleRecord()
@@ -683,11 +686,11 @@ class HomeController extends Controller
                 'applicant_approval' => 'nullable|string|max:255',
                 'applicant_reason' => 'nullable|string|max:255',
                 'scan_or_photo_of_id' => 'image|max:2048', // Assuming it's an image file
-                'serial_number' => 'required|string|max:255',
-                'id_number' => 'required|string|max:255',
+                'serial_number' => 'required|string|unique:applicants,serial_number,' . $request->owner_id,
+                'id_number' => 'required|string|unique:applicants,id_number,' . $request->owner_id,
                 // Vehicle Details
                 'owner_address' => 'required|string|max:2048',
-                'plate_number' => 'required|string|max:255',
+                'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'required|string|max:255',
                 'year_model' => 'required|string|max:255',
                 'color' => 'required|string|max:255',
@@ -868,8 +871,8 @@ class HomeController extends Controller
             $validator = Validator::make($request->all(), [
                 // Applicant
                 'vehicle_id' => 'string|max:255',
-                'serial_number' => 'string|max:255',
-                'id_number' => 'string|max:255',
+                'serial_number' => 'string|unique:applicants,serial_number,' . $request->applicant_id,
+                'id_number' => 'string|unique:applicants,id_number,' . $request->applicant_id,
                 'fname' => 'string|max:255',
                 'mi' => 'string|size:1',
                 'lname' => 'string|max:255',
@@ -965,7 +968,7 @@ class HomeController extends Controller
             $validator = Validator::make($request->all(), [
                 'driver_id' => 'string|max:255',
                 'owner_address' => 'string|max:2048',
-                'plate_number' => 'string|max:255',
+                'plate_number' => 'string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
@@ -2083,7 +2086,7 @@ class HomeController extends Controller
 
             // Set Approval and Reason Default Value
             $approvalStatus = $request->input('approval_status', 'Approved');
-            $reason = $request->input('reason', 'Vehicle Activation Request');
+            $reason = $request->input('reason', 'Vehicle Activation');
             $registration_status = $request->input('registration_status', 'Pending');
 
             // Update vehicle data

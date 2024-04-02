@@ -4,9 +4,9 @@
 @section("content")
 <!-- ***** Main Banner Area Start ***** -->
 <section class="section main-banner" id="top" data-section="section1">
-    <video autoplay muted loop id="bg-video">
-        <source src="{{ asset('landing/assets/images/course02.jpg') }}" />
-    </video>
+
+    <img src="{{ asset('landing/assets/images/banner_2.png') }}" alt="Fallback Image">
+
 
     <div class="video-overlay header-text">
         <div class="container">
@@ -47,7 +47,7 @@
 
                     <div class="item">
                         <div class="icon">
-                            <img src="{{ asset('landing/assets/images/service-icon-01.png') }}" alt="">
+                            <img src="{{ asset('landing/assets/images/application.png') }}" alt="">
                         </div>
                         <div class="down-content">
                             <h4>Application</h4>
@@ -57,7 +57,7 @@
 
                     <div class="item">
                         <div class="icon">
-                            <img src="{{ asset('landing/assets/images/service-icon-02.png') }}" alt="">
+                            <img src="{{ asset('landing/assets/images/car-solid.png') }}" alt="">
                         </div>
                         <div class="down-content">
                             <h4>Vehicles</h4>
@@ -67,7 +67,7 @@
 
                     <div class="item">
                         <div class="icon">
-                            <img src="{{ asset('landing/assets/images/service-icon-03.png') }}" alt="">
+                            <img src="{{ asset('landing/assets/images/clock.png') }}" alt="">
                         </div>
                         <div class="down-content">
                             <h4>Record Time</h4>
@@ -77,7 +77,7 @@
 
                     <div class="item">
                         <div class="icon">
-                            <img src="{{ asset('landing/assets/images/service-icon-02.png') }}" alt="">
+                            <img src="{{ asset('landing/assets/images/violation.png') }}" alt="">
                         </div>
                         <div class="down-content">
                             <h4>Violation</h4>
@@ -87,7 +87,7 @@
 
                     <div class="item">
                         <div class="icon">
-                            <img src="{{ asset('landing/assets/images/service-icon-03.png') }}" alt="">
+                            <img src="{{ asset('landing/assets/images/user.png') }}" alt="">
                         </div>
                         <div class="down-content">
                             <h4>Users</h4>
@@ -102,110 +102,6 @@
 </section>
 
 <section class="upcoming-meetings" id="meetings">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-heading">
-                    <h2>Upcoming Meetings</h2>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="categories">
-                    <h4>Meeting Catgories</h4>
-                    <ul>
-                        <li><a href="#">Sed tempus enim leo</a></li>
-                        <li><a href="#">Aenean molestie quis</a></li>
-                        <li><a href="#">Cras et metus vestibulum</a></li>
-                        <li><a href="#">Nam et condimentum</a></li>
-                        <li><a href="#">Phasellus nec sapien</a></li>
-                    </ul>
-                    <div class="main-button-red">
-                        <a href="meetings.html">All Upcoming Meetings</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="meeting-item">
-                            <div class="thumb">
-                                <div class="price">
-                                    <span>$22.00</span>
-                                </div>
-                                <a href="meeting-details.html"><img src="{{ asset('landing/assets/images/meeting-01.jpg') }}" alt="New Lecturer Meeting"></a>
-                            </div>
-                            <div class="down-content">
-                                <div class="date">
-                                    <h6>Nov <span>10</span></h6>
-                                </div>
-                                <a href="meeting-details.html">
-                                    <h4>New Lecturers Meeting</h4>
-                                </a>
-                                <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="meeting-item">
-                            <div class="thumb">
-                                <div class="price">
-                                    <span>$36.00</span>
-                                </div>
-                                <a href="meeting-details.html"><img src="{{ asset('landing/assets/images/meeting-02.jpg') }}" alt="Online Teaching"></a>
-                            </div>
-                            <div class="down-content">
-                                <div class="date">
-                                    <h6>Nov <span>24</span></h6>
-                                </div>
-                                <a href="meeting-details.html">
-                                    <h4>Online Teaching Techniques</h4>
-                                </a>
-                                <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="meeting-item">
-                            <div class="thumb">
-                                <div class="price">
-                                    <span>$14.00</span>
-                                </div>
-                                <a href="meeting-details.html"><img src="{{ asset('landing/assets/images/meeting-03.jpg') }}" alt="Higher Education"></a>
-                            </div>
-                            <div class="down-content">
-                                <div class="date">
-                                    <h6>Nov <span>26</span></h6>
-                                </div>
-                                <a href="meeting-details.html">
-                                    <h4>Higher Education Conference</h4>
-                                </a>
-                                <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="meeting-item">
-                            <div class="thumb">
-                                <div class="price">
-                                    <span>$48.00</span>
-                                </div>
-                                <a href="meeting-details.html"><img src="{{ asset('landing/assets/images/meeting-04.jpg') }}" alt="Student Training"></a>
-                            </div>
-                            <div class="down-content">
-                                <div class="date">
-                                    <h6>Nov <span>30</span></h6>
-                                </div>
-                                <a href="meeting-details.html">
-                                    <h4>Student Training Meetup</h4>
-                                </a>
-                                <p>Morbi in libero blandit lectus<br>cursus ullamcorper.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </section>
 
 <section class="apply-now" id="apply">
@@ -214,22 +110,27 @@
             <div class="col-lg-6 align-self-center">
                 <div class="row">
                     <div class="col-lg-12">
+                        @if (Route::has('login'))
+                        @auth
                         <div class="item">
-                            <h3>APPLY FOR BACHELOR DEGREE</h3>
-                            <p>You are allowed to use this edu meeting CSS template for your school or university or business. You can feel free to modify or edit this layout.</p>
+                            <h3>APPLY FOR AN APPLICATION</h3>
+                            <p>Greetings {{ auth()->user()->name }}, If you have not applied yet, You can click this Button.</p>
                             <div class="main-button-red">
-                                <div class="scroll-to-section"><a href="#contact">Join Us Now!</a></div>
+                                <a href="{{ route('applicant_users.applicant_apply') }}">Apply Now</a>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-12">
+                        @else
+                        @if (Route::has('register'))
                         <div class="item">
-                            <h3>APPLY FOR BACHELOR DEGREE</h3>
-                            <p>You are not allowed to redistribute the template ZIP file on any other template website. Please contact us for more information.</p>
-                            <div class="main-button-yellow">
-                                <div class="scroll-to-section"><a href="#contact">Join Us Now!</a></div>
+                            <h3>REGISTER AN ACCOUNT</h3>
+                            <p>You must register an account first to create an application and apply for a Vehicle QR Code.</p>
+                            <div class="main-button-red">
+                                <a href="{{ route('register') }}">Register Now</a>
                             </div>
                         </div>
+                        @endif
+                        @endauth
+                        @endif
                     </div>
                 </div>
             </div>
@@ -237,56 +138,59 @@
                 <div class="accordions is-first-expanded">
                     <article class="accordion">
                         <div class="accordion-head">
-                            <span>About Edu Meeting HTML Template</span>
+                            <span>About VehiScan</span>
                             <span class="icon">
                                 <i class="icon fa fa-chevron-right"></i>
                             </span>
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>If you want to get the latest collection of HTML CSS templates for your websites, you may visit <a rel="nofollow" href="https://www.toocss.com/" target="_blank">Too CSS website</a>. If you need a working contact form script, please visit <a href="https://templatemo.com/contact" target="_parent">our contact page</a> for more info.</p>
+                                <p>VehiScan is a comprehensive vehicle inventory system designed to streamline the process of recording vehicle movements using QR codes. With VehiScan, users can efficiently track vehicle time-ins and time-outs, manage driver and vehicle information, and monitor vehicle violations. The system offers a user-friendly interface and robust features to ensure accurate and efficient management of vehicle records.</p>
                             </div>
                         </div>
                     </article>
                     <article class="accordion">
                         <div class="accordion-head">
-                            <span>HTML CSS Bootstrap Layout</span>
+                            <span>Features</span>
                             <span class="icon">
                                 <i class="icon fa fa-chevron-right"></i>
                             </span>
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>Etiam posuere metus orci, vel consectetur elit imperdiet eu. Cras ipsum magna, maximus at semper sit amet, eleifend eget neque. Nunc facilisis quam purus, sed vulputate augue interdum vitae. Aliquam a elit massa.<br><br>
-                                    Nulla malesuada elit lacus, ac ultricies massa varius sed. Etiam eu metus eget nibh consequat aliquet. Proin fringilla, quam at euismod porttitor, odio odio tempus ligula, ut feugiat ex erat nec mauris. Donec viverra velit eget lectus sollicitudin tincidunt.</p>
+                                <p>VehiScan offers a range of features to meet the needs of vehicle management, including:</p>
+                                <p>> Efficient recording of vehicle time-ins and time-outs using QR codes</p>
+                                <p>> Comprehensive management of driver and vehicle information </p>
+                                <p>> Monitoring and tracking of vehicle violations </p>
+                                <p>> User-friendly interface for easy navigation and operation </p>
+                                <p>> Customizable settings and permissions to suit specific requirements </p>
+
                             </div>
                         </div>
                     </article>
                     <article class="accordion">
                         <div class="accordion-head">
-                            <span>Please tell your friends</span>
+                            <span>Integration with Existing Systems</span>
                             <span class="icon">
                                 <i class="icon fa fa-chevron-right"></i>
                             </span>
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>Ut vehicula mauris est, sed sodales justo rhoncus eu. Morbi porttitor quam velit, at ullamcorper justo suscipit sit amet. Quisque at suscipit mi, non efficitur velit.<br><br>
-                                    Cras et tortor semper, placerat eros sit amet, porta est. Mauris porttitor sapien et quam volutpat luctus. Nullam sodales ipsum ac neque ultricies varius.</p>
+                                <p>VehiScan can be seamlessly integrated with existing systems and databases, allowing for smooth data transfer and synchronization. Whether you're using an ERP system, a fleet management platform, or other software solutions, VehiScan can be customized to fit your needs and enhance your existing workflows.</p>
                             </div>
                         </div>
                     </article>
                     <article class="accordion last-accordion">
                         <div class="accordion-head">
-                            <span>Share this to your colleagues</span>
+                            <span>Enhanced Security Measures</span>
                             <span class="icon">
                                 <i class="icon fa fa-chevron-right"></i>
                             </span>
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>Maecenas suscipit enim libero, vel lobortis justo condimentum id. Interdum et malesuada fames ac ante ipsum primis in faucibus.<br><br>
-                                    Sed eleifend metus sit amet magna tristique, posuere laoreet arcu semper. Nulla pellentesque ut tortor sit amet maximus. In eu libero ullamcorper, semper nisi quis, convallis nisi.</p>
+                                <p>VehiScan prioritizes security and data protection, implementing advanced encryption protocols and access controls to safeguard sensitive information. With VehiScan, you can trust that your vehicle records are secure and protected from unauthorized access or tampering.</p>
                             </div>
                         </div>
                     </article>
@@ -579,20 +483,20 @@
             <div class="col-lg-6">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h2>A Few Facts About Our University</h2>
+                        <h2>A Few Details About Our System</h2>
                     </div>
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-12">
-                                <div class="count-area-content percentage">
-                                    <div class="count-digit">94</div>
-                                    <div class="count-title">Succesed Students</div>
+                                <div class="count-area-content">
+                                    <div class="count-digit">{{$totalUsers}}</div>
+                                    <div class="count-title">Users</div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="count-area-content">
-                                    <div class="count-digit">126</div>
-                                    <div class="count-title">Current Teachers</div>
+                                    <div class="count-digit">{{$totalVehicles}}</div>
+                                    <div class="count-title">Vehicles</div>
                                 </div>
                             </div>
                         </div>
@@ -601,14 +505,14 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="count-area-content new-students">
-                                    <div class="count-digit">2345</div>
-                                    <div class="count-title">New Students</div>
+                                    <div class="count-digit">{{$totalOwners}}</div>
+                                    <div class="count-title">Owners</div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="count-area-content">
-                                    <div class="count-digit">32</div>
-                                    <div class="count-title">Awards</div>
+                                    <div class="count-digit">{{$totalDrivers}}</div>
+                                    <div class="count-title">Drivers</div>
                                 </div>
                             </div>
                         </div>
