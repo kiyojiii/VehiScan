@@ -277,11 +277,4 @@
     });
 </script>
 
-<!-- Accept Only 1 Letter in MI -->
-<script>
-    document.getElementById('add_mi').addEventListener('input', function(event) {
-        if (this.value.length > 1) {
-            this.value = this.value.slice(0, 1);
-        }
-    });
-</script>
+

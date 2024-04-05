@@ -11,6 +11,18 @@ use Datatables;
 
 class StatusController extends Controller
 {
+        /**
+     * Instantiate a new UserController instance.
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-status', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-status', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-status', ['only' => ['destroy']]);
+    }
+
+
     public function index()
     {
         $rstotalcount = Statuses::count();
@@ -38,10 +50,19 @@ class StatusController extends Controller
                     <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
                     <td class="text-center">' . $rs->applicant_role_status . '</td>
                     <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
-                    <td class="text-center">
-                        <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
+                    <td class="text-center">';
+    
+                // Check if the user has permission to edit status
+                if (auth()->user()->can('edit-status')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                }
+    
+                // Check if the user has permission to delete status
+                if (auth()->user()->can('delete-status')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                }
+    
+                $output .= '</td>
                 </tr>';
             }
             $output .= '</tbody></table>';

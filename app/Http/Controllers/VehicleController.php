@@ -57,8 +57,9 @@ class VehicleController extends Controller
                     <th>No.</th>
                     <th class="text-center">Owner</th>
                     <th class="text-center">Plate Number</th>
-                    <th class="text-center">Vehicle Make</th>
-                    <th class="text-center">Vehicle Code</th>
+                    <th class="text-center">Make</th>
+                    <th class="text-center">Model</th>
+                    <th class="text-center">Code</th>
                     <th class="text-center">Front Photo</th>
                     <th class="text-center">Status</th>
                     <th class="text-center">Action</th>
@@ -94,20 +95,27 @@ class VehicleController extends Controller
                 <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
                 <td class="text-center">' . $vehicle->plate_number . '</td>
                 <td class="text-center">' . $vehicle->vehicle_make . '</td>
+                <td class="text-center">' . $vehicle->year_model . ' </td>
                 <td class="text-center">' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
                     <img src="' . asset('storage/images/vehicles/' . $vehicle->front_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                 </td>
                 <td class="text-center">' . $vehicle->registration_status . '</td>
-                <td class="text-center">
-                    <!-- Your other action buttons -->
-                    <!-- For example: -->
-                    <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                    <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                    <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>
-                    <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                </td>
-            </tr>';
+                <td class="text-center">';
+
+                if (auth()->user()->can('view-vehicle')) {
+                  $output .= '<a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+                }
+                if (auth()->user()->can('edit-vehicle')) {
+                  $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                  $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>';
+                }
+                if (auth()->user()->can('delete-vehicle')) {
+                  $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                }
+
+                $output .= '</td>
+              </tr>';
       }
       $output .= '</tbody></table>';
     } else {
@@ -293,6 +301,7 @@ class VehicleController extends Controller
       // Validate incoming request data
       $validator = Validator::make($request->all(), [
         'driver_name' => 'string|max:255',
+        'owner_name' => 'string|max:2048',
         'owner_address' => 'string|max:2048',
         'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
         'vehicle_make' => 'string|max:255',
@@ -363,6 +372,7 @@ class VehicleController extends Controller
       // Update vehicle data
       $vehicle->update([
         'driver_id' => $request->driver_name,
+        'owner_name' => $request->owner_name,
         'owner_address' => $request->owner_address,
         'plate_number' => $request->plate_number,
         'vehicle_make' => $request->vehicle_make,

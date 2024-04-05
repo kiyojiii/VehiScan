@@ -55,12 +55,20 @@ class DriverController extends Controller
                 <td class="text-center">' . $rs->driver_name . '</td>            
                 <td class="text-center">' . $rs->authorized_driver_name . '</td>
                 <td class="text-center">' . $rs->approval_status . '</td>
-                <td class="text-center">
-                <a href="' . route('drivers.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                </td>
-              </tr>';
+                <td class="text-center">';
+
+                if (auth()->user()->can('view-driver')) {
+                    $output .= '<a href="' . route('drivers.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+                }
+                if (auth()->user()->can('edit-driver')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                }
+                if (auth()->user()->can('delete-driver')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                }
+
+                $output .= '</td>
+            </tr>';
             }
             $output .= '</tbody></table>';
             echo $output;

@@ -11,6 +11,18 @@ use Datatables;
 
 class AppointmentController extends Controller
 {
+        /**
+     * Instantiate a new UserController instance.
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-appointment', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-appointment', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-appointment', ['only' => ['destroy']]);
+    }
+
+
     public function index()
     {
         $totalappointment = Appointment::count();
@@ -35,14 +47,20 @@ class AppointmentController extends Controller
             <tbody>';
             foreach ($role_status as $rs) {
                 $output .= '<tr>
-                    <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
-                    <td class="text-center">' . $rs->appointment . '</td>
-                    <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
-                    <td class="text-center">
-                        <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
-                </tr>';
+                <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
+                <td class="text-center">' . $rs->appointment . '</td>
+                <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
+                <td class="text-center">';
+
+                if (auth()->user()->can('edit-appointment')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                }
+                if (auth()->user()->can('delete-appointment')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                }
+
+                $output .= '</td>
+            </tr>';
             }
             $output .= '</tbody></table>';
             echo $output;
@@ -173,5 +191,4 @@ class AppointmentController extends Controller
             ], 500);
         }
     }
-
 }

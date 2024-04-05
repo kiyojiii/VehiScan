@@ -43,17 +43,26 @@ class ViolationController extends Controller
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+                $vehicle_id = $vehicle ? $vehicle->id : 'N/A';
 
                 $output .= '<tr>
                     <td class="text-center">' . $row++ . '</td>
                     <td class="text-center">' . $vehiclePlate . '</td>
                     <td class="text-center">' . $rs->violation . '</td>
                     <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
-                    <td class="text-center">
-                        <a href="' . route('vehicles.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
+                    <td class="text-center">'; 
+
+                    if (auth()->user()->can('view-violation')) {
+                        $output .= '<a href="' . route('vehicles.show', $vehicle_id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+                    }
+                    if (auth()->user()->can('edit-violation')) {
+                        $output .= '<a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                    }
+                    if (auth()->user()->can('delete-violation')) {
+                        $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                    }
+    
+                    $output .= '</td>
                 </tr>';
             }
             $output .= '</tbody></table>';

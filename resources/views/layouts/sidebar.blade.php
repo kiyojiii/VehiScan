@@ -24,35 +24,59 @@
                 </li>
 
                 <li>
-
+                    @canany(['create-analytics', 'edit-analytics', 'delete-analytics', 'view-analytics'])
                     <a href="{{ route('analytics') }}" class="waves-effect">
                         <i class="fas fa-chart-area"></i>
                         <span key="t-blog">Analytics</span>
                     </a>
-
+                    @endcanany
                 </li>
 
+                @php
+                $accessiblePermissions = [
+                'create-user-requests', 'edit-user-requests', 'delete-user-requests', 'view-user-requests',
+                'create-record-vehicles', 'edit-record-vehicles', 'delete-record-vehicles', 'view-record-vehicles',
+                'create-pending', 'edit-pending', 'delete-pending', 'view-pending',
+                'create-applicant', 'edit-applicant', 'delete-applicant', 'view-applicant',
+                'create-vehicle', 'edit-vehicle', 'delete-vehicle', 'view-vehicle',
+                'create-owner', 'edit-owner', 'delete-owner', 'view-owner',
+                'create-driver', 'edit-driver', 'delete-driver', 'view-driver',
+                'create-time', 'edit-time', 'delete-time', 'view-time',
+                'create-violation', 'edit-violation', 'delete-violation', 'view-violation',
+                'create-appointment', 'edit-appointment', 'delete-appointment', 'view-appointment',
+                'create-status', 'edit-status', 'delete-status', 'view-status'
+                ];
+                @endphp
+
+                @canany($accessiblePermissions)
                 <li class="menu-title" key="t-apps">Overview</li>
+                @endcanany
 
                 <li>
+                    @canany(['create-user-requests', 'edit-user-requests', 'delete-user-requests', 'view-user-requests'])
                     <a href="{{ route('user_requests')}}" class="waves-effect">
                         <i class="fas fa-clipboard-list"></i>
                         <span key="t-guests">User Requests</span>
                     </a>
+                    @endcanany
                 </li>
 
                 <li>
+                    @canany(['create-record-vehicles', 'edit-record-vehicles', 'delete-record-vehicles', 'view-record-vehicles'])
                     <a href="{{ route('time.record_vehicles') }}" class="waves-effect">
                         <i class="fas fa-tasks"></i>
                         <span key="t-guests">Record Vehicle Time</span>
                     </a>
+                    @endcanany
                 </li>
 
                 <li>
+                    @canany(['create-pending', 'edit-pending', 'delete-pending', 'view-pending'])
                     <a href="{{ route('applicants.applicants_pending') }}" class="waves-effect">
                         <i class="fas fa-user-clock"></i>
                         <span key="t-guests">Pending Applicants</span>
                     </a>
+                    @endcanany
                 </li>
 
                 <li>
@@ -67,6 +91,7 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('applicants.index-partner') }}" key="t-blog-list">Manage Partner/Supplier Applicants</a></li>
                     </ul>
+                    @endcanany
                 </li>
 
                 <li>
@@ -84,8 +109,9 @@
                     @endcanany
                 </li>
 
-                
+
                 <li>
+                    @canany(['create-owner', 'edit-owner', 'delete-owner', 'view-owner'])
                     <a href="{{ route('owners.index') }}" class="waves-effect">
                         <i class="fas fa-id-badge"></i>
                         <span key="t-blog">Owners</span>
@@ -119,7 +145,7 @@
                     </a>
                     @endcanany
                 </li>
-                
+
                 <li>
                     @canany(['create-appointment', 'edit-appointment', 'delete-appointment', 'view-appointment'])
                     <a href="{{ route('appointments.index') }}" class="waves-effect">
@@ -138,11 +164,10 @@
                     @endcanany
                 </li>
 
-
+                @canany(['create-user', 'edit-user', 'delete-user', 'view-user'])
                 <li class="menu-title" key="t-apps">Permissions</li>
 
                 <li>
-                    @canany(['create-user', 'edit-user', 'delete-user', 'view-user'])
                     <a href="{{ route('users.index') }}" class="waves-effect">
                         <i class="fas fa-user"></i>
                         <span key="t-user">Users</span>

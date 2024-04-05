@@ -63,7 +63,9 @@
                                 <div class="d-flex align-items-center">
                                     <h5 class="mb-0 card-title flex-grow-1">Owner Count: {{ $totalowner }}</h5>
                                     <div class="flex-shrink-0">
+                                    @canany('create-owner')
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Owner</a>
+                                    @endcanany
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 

@@ -19,7 +19,7 @@
                     <input type="hidden" name="side_photo_photo" id="side_photo_photo">
                     <div class="row mb-3">
                         <h4>Vehicle Information</h4>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="position">Driver</label>
                             <select name="driver_details" id="driver_details" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
                                 <option value="">Select Driver</option> <!-- Placeholder option -->
@@ -30,7 +30,11 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <label for="owner_name" class="form-label">Owner Name</label>
+                            <input type="text" class="form-control" id="owner_name" name="owner_name" placeholder="Owner Name">
+                        </div>
+                        <div class="col-md-4">
                             <label for="owner_address" class="form-label">Owner Address</label>
                             <input type="text" class="form-control" id="owner_address" name="owner_address" placeholder="Owner Address">
                         </div>

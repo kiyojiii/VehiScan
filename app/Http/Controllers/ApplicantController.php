@@ -119,14 +119,18 @@ class ApplicantController extends Controller
                     <td>' . $vehiclePlate . '</td>
                     <td>' . $rs->office_department_agency . '</td>
                     <td>' . $rs->approval_status . '</td>
-                    <td>
-                        <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" class="text-danger mx-1 deleteApplicant" data-applicant-id="' . $rs->id . '" data-vehicle-id="' . $vehicleID . '" data-driver-id="' . $driverID . '"><i class="bi-trash h4"></i></a>
-                    </td>
-                </tr>';
+                    <td>';
+
+                if (auth()->user()->can('view-applicant')) {
+                    $output .= '<a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+                }
+                if (auth()->user()->can('delete-applicant')) {
+                    $output .= '<a href="#" class="text-danger mx-1 deleteApplicant" data-applicant-id="' . $rs->id . '" data-vehicle-id="' . $vehicleID . '" data-driver-id="' . $driverID . '"><i class="bi-trash h4"></i></a>';
+                }
+
+                $output .= '</td>
+                    </tr>';
             }
-
-
             $output .= '</tbody></table>';
             echo $output;
         } else {
@@ -146,6 +150,8 @@ class ApplicantController extends Controller
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 // Applicant Details
+                'serial_number' => 'required|string|unique:applicants,serial_number,' . $request->owner_id,
+                'id_number' => 'required|string|unique:applicants,id_number,' . $request->owner_id,
                 'fname' => 'required|string|max:255',
                 'mi' => 'required|string|size:1',
                 'lname' => 'required|string|max:255',
@@ -159,11 +165,10 @@ class ApplicantController extends Controller
                 'applicant_approval' => 'nullable|string|max:255',
                 'applicant_reason' => 'nullable|string|max:255',
                 'scan_or_photo_of_id' => 'image|max:2048', // Assuming it's an image file
-                'serial_number' => 'required|string|max:255',
-                'id_number' => 'required|string|max:255',
                 // Vehicle Details
+                'owner_name' => 'required|string|unique:vehicles,owner_name,' . $request->vehicle_id,
                 'owner_address' => 'required|string|max:2048',
-                'plate_number' => 'required|string|max:255',
+                'plate_number' => 'required|string|unique:vehicles,plate_number,' . $request->vehicle_id,
                 'vehicle_make' => 'required|string|max:255',
                 'year_model' => 'required|string|max:255',
                 'color' => 'required|string|max:255',
@@ -180,9 +185,9 @@ class ApplicantController extends Controller
                 // Driver Details
                 'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'required|image|max:2048',
-                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
-                'adaddress' => 'string|max:255',
-                'authorized_driver_license_image' => 'image|max:2048',
+                'adname' => 'nullable|string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
+                'adaddress' => 'nullable|string|max:255',
+                'authorized_driver_license_image' => 'nullable|image|max:2048',
                 'driver_approval' => 'nullable|string|max:255',
                 'driver_reason' => 'nullable|string|max:255',
             ]);
@@ -225,13 +230,19 @@ class ApplicantController extends Controller
             $request->file('side_photo')->storeAs('public/images/vehicles', $spfileName);
 
             // Driver Image
-            // Generate unique file names using UUIDs
-            $dlfileName = Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension();
-            $adlfileName = Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension();
-            // Store driver license image
-            $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
-            // Store authorized driver license image
-            $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+            // Generate unique filenames using UUID
+            $dlfileName = $request->hasFile('driver_license_image') ? Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension() : null;
+            $adlfileName = $request->hasFile('authorized_driver_license_image') ? Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension() : null;
+
+            // Store driver license image if exists
+            if ($dlfileName) {
+                $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
+            }
+
+            // Store authorized driver license image if exists
+            if ($adlfileName) {
+                $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+            }
 
             // Set Approval and Reason Default Value
             $approval_status = $request->input('approval_status', 'Approved');
@@ -247,6 +258,8 @@ class ApplicantController extends Controller
             // Create new applicant data with user_id
             $ownerData = [
                 'user_id' => $user_id,
+                'serial_number' => $request->serial_number,
+                'id_number' => $request->id_number,
                 'first_name' => $request->fname,
                 'middle_initial' => $request->mi,
                 'last_name' => $request->lname,
@@ -259,14 +272,13 @@ class ApplicantController extends Controller
                 'position_designation' => $request->position,
                 'approval_status' => $approval_status, // Default
                 'reason' => $reason, // Default
-                'serial_number' => $request->serial_number,
-                'id_number' => $request->id_number,
                 'scan_or_photo_of_id' => $fileName,
             ];
 
             // Create new vehicle data with user_id and unique file names
             $vehicleData = [
                 'user_id' => $user_id,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
@@ -316,6 +328,24 @@ class ApplicantController extends Controller
             // Update the applicant record with the retrieved driver_id
             $applicant->update(['driver_id' => $driver->id]);
 
+            // After creating the vehicle record
+            $qrCodeFileName = 'qr_' . $vehicle->vehicle_code . '.png'; // Generate a unique filename for the QR code image
+            $qrCodeFilePath = 'public/images/qrcodes/' . $qrCodeFileName; // Define the file path where the QR code image will be saved
+
+            // Generate QR code based on the vehicle's code
+            $qrCode = QrCode::format('png')
+                ->size(300) // Adjust the size as needed
+                ->errorCorrection('H')
+                ->generate($vehicle->vehicle_code);
+
+            // Save the QR code image to the file path
+            Storage::put($qrCodeFilePath, $qrCode);
+
+            // Update the vehicle record with the QR code image path and name
+            $vehicle->update([
+                'qr_image' => $qrCodeFileName,
+            ]);
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Applicant created successfully.'
@@ -350,13 +380,11 @@ class ApplicantController extends Controller
     public function update(Request $request)
     {
         try {
-            // Before validating the request, modify the reason field if approval is "Approved"
-            $request->merge([
-                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
-            ]);
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 // Applicant
+                'serial_number' => 'string|unique:applicants,serial_number,' . $request->applicant_id,
+                'id_number' => 'string|unique:applicants,id_number,' . $request->applicant_id,
                 'fname' => 'string|max:255',
                 'mi' => 'string|size:1',
                 'lname' => 'string|max:255',
@@ -368,8 +396,6 @@ class ApplicantController extends Controller
                 'department' => 'string|max:255',
                 'position' => 'string|max:255',
                 'scan_or_photo_of_id' => 'nullable|image|max:2048', // Assuming it's an image file
-                'serial_number' => 'string|max:255',
-                'id_number' => 'string|max:255',
             ]);
 
             // If validation fails, return error response
@@ -401,15 +427,12 @@ class ApplicantController extends Controller
             }
 
             $approvalStatus = $request->approval;
-            $reason = $request->filled('reason') ? $request->reason : null;
-
-            // If approval status is 'Approved', set reason to 'None / Approved'
-            if ($approvalStatus == 'Approved') {
-                $reason = 'None / Approved';
-            }
+            $reason = $request->reason;
 
             // Update owner data
             $ownerData = [
+                'serial_number' => $request->serial_number,
+                'id_number' => $request->id_number,
                 'vehicle_id' => $request->vehicle_details,
                 'first_name' => $request->fname,
                 'middle_initial' => $request->mi,
@@ -423,8 +446,6 @@ class ApplicantController extends Controller
                 'position_designation' => $request->position,
                 'approval_status' => $approvalStatus, // Default
                 'reason' => $reason, // Default
-                'serial_number' => $request->serial_number,
-                'id_number' => $request->id_number,
                 'scan_or_photo_of_id' => $fileName,
             ];
 
@@ -433,7 +454,7 @@ class ApplicantController extends Controller
             // Return success response
             return response()->json([
                 'status' => 200,
-                'message' => 'Owner updated successfully.'
+                'message' => 'Owner Updated Successfully.'
             ]);
         } catch (\Exception $e) {
             // Return error response
@@ -457,17 +478,12 @@ class ApplicantController extends Controller
     public function update_vehicle(Request $request)
     {
         try {
-
-            // Before validating the request, modify the reason field if approval is "Approved"
-            $request->merge([
-                'reason' => $request->vehicle_approval_status === 'Approved' ? 'None / Approved' : $request->vehicle_reason,
-            ]);
-
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'driver_details' => 'string|max:255',
+                'owner_name' => 'string|max:255',
                 'owner_address' => 'string|max:2048',
-                'plate_number' => 'string|max:255',
+                'plate_number' => 'string|unique:vehicles,plate_number,' . $request->vehicle_id,
                 'vehicle_make' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
@@ -534,16 +550,12 @@ class ApplicantController extends Controller
             }
 
             $approvalStatus = $request->vehicle_approval_status;
-            $reason = $request->filled('vehicle_reason') ? $request->vehicle_reason : null;
-
-            // If approval status is 'Approved', set reason to 'None / Approved'
-            if ($approvalStatus == 'Approved') {
-                $reason = 'None / Approved';
-            }
+            $vehicle_reason = $request->vehicle_reason;
 
             // Update vehicle data
             $vehicle->update([
                 'driver_id' => $request->driver_details,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
@@ -551,14 +563,14 @@ class ApplicantController extends Controller
                 'color' => $request->color,
                 'body_type' => $request->body_type,
                 'approval_status' => $approvalStatus,
-                'reason' => $reason,
+                'reason' => $vehicle_reason,
                 'registration_status' => $request->registration_status,
             ]);
 
             // Return success response
             return response()->json([
                 'status' => 200,
-                'message' => 'Vehicle updated successfully.'
+                'message' => 'Vehicle Updated Successfully.'
             ]);
         } catch (\Exception $e) {
             // Return error response
@@ -579,19 +591,14 @@ class ApplicantController extends Controller
     public function update_driver(Request $request)
     {
         try {
-
-            // Before validating the request, modify the reason field if approval is "Approved"
-            $request->merge([
-                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
-            ]);
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
-                'dname' => 'required|string|max:255',
+                'dname' => 'string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'image|max:2048', // Assuming it's an image file
-                'adname' => 'string|max:255',
-                'adaddress' => 'string|max:255',
-                'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
-                'driver_approval_status' => 'required|string|max:255',
+                'adname' => 'nullable|string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
+                'adaddress' => 'nullable|string|max:255',
+                'authorized_driver_license_image' => 'nullable|image|max:2048', // Assuming it's an image file
+                'driver_approval_status' => '|string|max:255',
                 'driver_reason' => 'nullable|string|max:255',
             ]);
 
@@ -633,12 +640,7 @@ class ApplicantController extends Controller
             }
 
             $approvalStatus = $request->driver_approval_status;
-            $reason = $request->filled('driver_reason') ? $request->driver_reason : null;
-
-            // If approval status is 'Approved', set reason to 'None / Approved'
-            if ($approvalStatus == 'Approved') {
-                $reason = 'None / Approved';
-            }
+            $driver_reason = $request->driver_reason;
 
             // Update driver data
             $driverData = [
@@ -646,7 +648,7 @@ class ApplicantController extends Controller
                 'authorized_driver_name' => $request->adname,
                 'authorized_driver_address' => $request->adaddress,
                 'approval_status' => $approvalStatus,
-                'reason' => $reason,
+                'reason' => $driver_reason,
                 'driver_license_image' => $dlfileName,
                 'authorized_driver_license_image' => $adlfileName,
             ];
@@ -656,7 +658,7 @@ class ApplicantController extends Controller
             // Return success response
             return response()->json([
                 'status' => 200,
-                'message' => 'Driver updated successfully.'
+                'message' => 'Driver Updated Successfully.'
             ]);
         } catch (\Exception $e) {
             // Return error response
@@ -998,7 +1000,6 @@ class ApplicantController extends Controller
                 'message' => 'Driver deleted successfully'
             ]);
         }
-
     }
 
     public function pending()
@@ -1042,14 +1043,20 @@ class ApplicantController extends Controller
                 <td>' . $rs->id . '</td>
                 <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
                 <td>' . $vehiclePlate . '</td>
-                <td>' . $appointment. '</td>
+                <td>' . $appointment . '</td>
                 <td>' . $rolestatus . '</td>
                 <td>' . $rs->approval_status . '</td>
-                <td>
-                    <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                    <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteApplicant"><i class="bi-trash h4"></i></a>
-                </td>
-            </tr>';
+                <td>';
+
+                if (auth()->user()->can('view-pending')) {
+                    $output .= '<a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+                }
+                if (auth()->user()->can('delete-pending')) {
+                    $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteApplicant"><i class="bi-trash h4"></i></a>';
+                }
+
+                $output .= '</td>
+                </tr>';
             }
             $output .= '</tbody></table>';
             echo $output;

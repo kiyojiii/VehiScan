@@ -8,23 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Applicant extends Model
 {
     protected $fillable = [
+        'user_id',
+        'vehicle_id',
+        'appointment_id',
+        'status_id',
+        'serial_number',
+        'id_number',
         'last_name',
         'first_name',
         'middle_initial',
         'present_address',
         'email_address',
         'contact_number',
-        'appointment_id',
-        'status_id',
-        'vehicle_id',
-        'user_id',
         'office_department_agency',
         'position_designation',
         'reason',
         'scan_or_photo_of_id',
         'approval_status',
-        'serial_number',
-        'id_number',
     ];
 
     // Relationships

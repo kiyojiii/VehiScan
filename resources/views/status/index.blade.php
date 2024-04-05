@@ -51,7 +51,9 @@
                                 <div class="d-flex align-items-center">
                                     <h5 class="mb-0 card-title flex-grow-1">Role Status Count: {{ $rstotalcount }}</h5>
                                     <div class="flex-shrink-0">
+                                    @canany('create-status')
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Role Status</a>
+                                    @endcan   
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 

@@ -222,8 +222,6 @@ class ApplicantPartnerController extends Controller
                 </td>
                 <td class="text-center">' . $vehicle->registration_status . '</td>
                 <td class="text-center">
-                    <!-- Your other action buttons -->
-                    <!-- For example: -->
                     <a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                     <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
 

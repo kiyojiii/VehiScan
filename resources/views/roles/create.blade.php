@@ -56,21 +56,30 @@
 
                                     <div class="mb-3 row">
                                         <label for="permissions" class="col-md-4 col-form-label text-md-end text-start">Permissions</label>
-                                        <div class="col-md-6">
-                                            <select class="form-select @error('permissions') is-invalid @enderror" multiple aria-label="Permissions" id="permissions" name="permissions[]" style="height: 210px;">
+                                        <div class="col-md-8">
+                                            <div class="row">
                                                 @forelse ($permissions as $permission)
-                                                <option value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions') ?? []) ? 'selected' : '' }}>
-                                                    {{ $permission->name }}
-                                                </option>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" id="permission_{{ $permission->id }}" name="permissions[]" value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions') ?? []) ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="permission_{{ $permission->id }}">
+                                                            {{ $permission->name }}
+                                                        </label>
+                                                    </div>
+                                                </div>
                                                 @empty
-
+                                                <div class="col-md-12">
+                                                    <p>No permissions available.</p>
+                                                </div>
                                                 @endforelse
-                                            </select>
+                                            </div>
                                             @if ($errors->has('permissions'))
                                             <span class="text-danger">{{ $errors->first('permissions') }}</span>
                                             @endif
                                         </div>
                                     </div>
+
+
 
                                     <div class="mb-3 row">
                                         <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add Role">

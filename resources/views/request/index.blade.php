@@ -65,6 +65,9 @@
                                 <div class="d-flex align-items-center">
                                     <h5 class="mb-0 card-title flex-grow-1">User Request Count: {{ $totalrequests ?? 'None' }} </h5>
                                     <div class="flex-shrink-0">
+                                    @canany('create-user-requests')
+                                    
+                                    @endcanany
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 

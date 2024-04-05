@@ -31,13 +31,13 @@
                                 <label for="serial_number">Serial Number</label>
                                 <input type="text" name="serial_number" id="serial_number" class="form-control" placeholder="Serial Number" required>
                             </div>
-                            <script>
+                            <!-- <script>
                                 // JavaScript code to enforce numeric input for the serial number field
                                 document.getElementById('serial_number').addEventListener('input', function() {
                                     // Remove any non-numeric characters from the input value
                                     this.value = this.value.replace(/\D/g, '');
                                 });
-                            </script>
+                            </script> -->
                             <div class="col-md">
                                 <label for="id_number">ID Number</label>
                                 <input type="text" name="id_number" id="id_number" class="form-control" placeholder="ID Number" required>

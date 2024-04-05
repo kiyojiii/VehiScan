@@ -67,12 +67,22 @@ class OwnerController extends Controller
                     <td>' . $rs->office_department_agency . '</td>
                     <td>' . $rs->position_designation . '</td>
                     <td>' . $rs->approval_status . '</td>
-                    <td>
-                        <a href="' . route('owners.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
-                </tr>';
+                    <td>' ;         
+                        
+                        if (auth()->user()->can('view-owner')) {
+                            $output .= '<a href="' . route('owners.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+                        }
+
+                        if (auth()->user()->can('edit-owner')) {
+                            $output .= '<a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                        }
+
+                        if (auth()->user()->can('delete-owner')) {
+                            $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                        }
+        
+                        $output .= '</td>
+                    </tr>';
             }
             $output .= '</tbody></table>';
             echo $output;

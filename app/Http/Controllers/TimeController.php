@@ -68,10 +68,16 @@ class TimeController extends Controller
                     <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($time->time_in)) . '</td>
                     <td class="text-center">' . $current_time_out . '</td>
                     <td class="text-center">' . $days . ' days, ' . $hours . ' hours, ' . $minutes . ' minutes</td>
-                    <td class="text-center">
-                        <a href="#" id="' . $time->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $time->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>
-                    </td>
+                    <td class="text-center">';
+
+                    if (auth()->user()->can('edit-time')) {
+                        $output .= '<a href="#" id="' . $time->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                    }
+                    if (auth()->user()->can('delete-time')) {
+                        $output .= '<a href="#" id="' . $time->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                    }
+
+                $output .= '</td>
                 </tr>';
             }
             $output .= '</tbody></table>';

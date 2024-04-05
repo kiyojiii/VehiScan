@@ -17,6 +17,8 @@ class Vehicle extends Model
         'certificate_of_registration_image',
         'deed_of_sale_image',
         'authorization_letter_image',
+        'qr_image',
+        'owner_name',
         'owner_address',
         'plate_number',
         'vehicle_make',

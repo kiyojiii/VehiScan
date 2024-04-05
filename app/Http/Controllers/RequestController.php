@@ -58,15 +58,20 @@ class RequestController extends Controller
                     </td>
                     <td class="text-center">' . $vehicle->registration_status . '</td>
                     <td class="text-center">' . $vehicle->reason . ' </td>
-                    <td class="text-center">
-                        <!-- Your other action buttons -->
-                        <!-- For example: -->
-                        <a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="view()"><i class="bi bi-eye h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-warning mx-1 editVehicle" onClick="edit()"><i class="bi-pencil-square h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-success mx-1 approveVehicle"><i class="bx bx-check-circle h4"></i></a>
-                        <a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 rejectVehicle"><i class="bx bx-x-circle h4"></i></a>
-                    </td>
-                </tr>';
+                    <td class="text-center">';
+                        
+                        if (auth()->user()->can('view-user-requests')) {
+                            $output .= '<a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="view()"><i class="bi bi-eye h4"></i></a>';
+                        }
+                        
+                        if (auth()->user()->can('edit-user-requests')) {
+                            $output .= '<a href="#" id="' . $vehicle->id . '" class="text-warning mx-1 editVehicle" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                            $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 approveVehicle"><i class="bx bx-check-circle h4"></i></a>';
+                            $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 rejectVehicle"><i class="bx bx-x-circle h4"></i></a>';
+                        }
+        
+                        $output .= '</td>
+                    </tr>';
             }
             $output .= '</tbody></table>';
         } else {
