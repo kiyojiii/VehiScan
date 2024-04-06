@@ -34,8 +34,9 @@ class RequestController extends Controller
                         <th>No.</th>
                         <th class="text-center">Owner</th>
                         <th class="text-center">Plate Number</th>
-                        <th class="text-center">Vehicle Make</th>
-                        <th class="text-center">Side Photo</th>
+                        <th class="text-center">Make</th>
+                        <th class="text-center">Model</th>
+                        <th class="text-center">Front Photo</th>
                         <th class="text-center">Status</th>
                         <th class="text-center">Request</th>
                         <th class="text-center">Action</th>
@@ -53,8 +54,9 @@ class RequestController extends Controller
                     <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
                     <td class="text-center">' . $vehicle->plate_number . '</td>
                     <td class="text-center">' . $vehicle->vehicle_make . '</td>
+                    <td class="text-center">' . $vehicle->year_model . '</td>
                     <td class="text-center">
-                        <img src="' . asset('storage/images/vehicles/' . $vehicle->side_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
+                        <img src="' . asset('storage/images/vehicles/' . $vehicle->front_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">
                     </td>
                     <td class="text-center">' . $vehicle->registration_status . '</td>
                     <td class="text-center">' . $vehicle->reason . ' </td>
@@ -100,7 +102,9 @@ class RequestController extends Controller
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'driver_name' => 'string|max:255',
-                'owner_address' => 'string|max:2048',
+                'applicant_name' => 'string|max:255',
+                'owner_name' => 'string|max:255',
+                'owner_address' => 'string|max:255',
                 'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
                 'year_model' => 'string|max:255',
@@ -170,6 +174,8 @@ class RequestController extends Controller
             // Update vehicle data
             $vehicle->update([
                 'driver_id' => $request->driver_name,
+                'owner_id' => $request->applicant_name,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,

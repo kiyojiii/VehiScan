@@ -19,7 +19,18 @@
                     <input type="hidden" name="side_photo_photo" id="side_photo_photo">
                     <div class="row mb-3">
                         <h4>Vehicle Information</h4>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="position">Applicant Name</label>
+                            <select name="applicant_name" id="applicant_name" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
+                                <option value="">Select Applicant</option> <!-- Placeholder option -->
+                                @forelse($owners as $owner)
+                                <option value="{{ $owner->id }}">{{ $owner->first_name }} {{ $owner->last_name }}</option>
+                                @empty
+                                <option value="">No Owner Available</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label for="position">Driver Name</label>
                             <select name="driver_name" id="driver_name" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
                                 <option value="">Select Driver</option> <!-- Placeholder option -->
@@ -30,33 +41,37 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="owner_name" class="form-label">Owner Name</label>
+                            <input type="text" class="form-control" id="owner_name" name="owner_name">
+                        </div>
+                        <div class="col-md-3">
                             <label for="owner_address" class="form-label">Owner Address</label>
                             <input type="text" class="form-control" id="owner_address" name="owner_address">
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label for="plate_number" class="form-label">Plate Number</label>
+                            <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                             <input type="text" class="form-control" id="plate_number" name="plate_number">
                         </div>
                         <div class="col-md-4">
-                            <label for="vehicle_make" class="form-label">Vehicle Make</label>
+                            <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
                             <input type="text" class="form-control" id="vehicle_make" name="vehicle_make">
                         </div>
                         <div class="col-md-4">
-                            <label for="year_model" class="form-label">Year Model</label>
+                            <label for="year_model" class="form-label">Year Model (e.g Vios 2023)</label>
                             <input type="text" class="form-control" id="year_model" name="year_model">
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-2">
-                            <label for="color" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color" name="color">
+                            <label for="body_type" class="form-label">Body Type (e.g Sedan)</label>
+                            <input type="text" class="form-control" id="body_type" name="body_type">
                         </div>
                         <div class="col-md-2">
-                            <label for="body_type" class="form-label">Body Type</label>
-                            <input type="text" class="form-control" id="body_type" name="body_type">
+                            <label for="color" class="form-label">Color (e.g Black)</label>
+                            <input type="text" class="form-control" id="color" name="color">
                         </div>
                         <div class="col-md-2">
                             <label for="registration_status">Status</label>
@@ -167,7 +182,18 @@
                     <input type="hidden" name="view_side_photo_photo" id="view_side_photo_photo">
                     <div class="row mb-3">
                         <h4>Vehicle Information</h4>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="position">Applicant Name</label>
+                            <select name="view_applicant_name" id="view_applicant_name" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();' disabled>
+                                <option value="">Select Applicant</option> <!-- Placeholder option -->
+                                @forelse($owners as $owner)
+                                <option value="{{ $owner->id }}">{{ $owner->first_name }} {{ $owner->last_name }}</option>
+                                @empty
+                                <option value="">No Owner Available</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label for="position">Driver Name</label>
                             <select name="view_driver_name" id="view_driver_name" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();' disabled>
                                 <option value="">Loading Driver</option> <!-- Placeholder option -->
@@ -178,7 +204,11 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="owner_name" class="form-label">Owner Name</label>
+                            <input type="text" class="form-control" id="view_owner_name" name="view_owner_name" disabled>
+                        </div>
+                        <div class="col-md-3">
                             <label for="owner_address" class="form-label">Owner Address</label>
                             <input type="text" class="form-control" id="view_owner_address" name="view_owner_address" disabled>
                         </div>
@@ -199,12 +229,12 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-2">
-                            <label for="color" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="view_color" name="view_color" disabled>
-                        </div>
-                        <div class="col-md-2">
                             <label for="body_type" class="form-label">Body Type</label>
                             <input type="text" class="form-control" id="view_body_type" name="view_body_type" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="color" class="form-label">Color</label>
+                            <input type="text" class="form-control" id="view_color" name="view_color" disabled>
                         </div>
                         <div class="col-md-2">
                             <label for="registration_status">Status</label>

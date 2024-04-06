@@ -70,12 +70,12 @@ class TimeController extends Controller
                     <td class="text-center">' . $days . ' days, ' . $hours . ' hours, ' . $minutes . ' minutes</td>
                     <td class="text-center">';
 
-                    if (auth()->user()->can('edit-time')) {
-                        $output .= '<a href="#" id="' . $time->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
-                    }
-                    if (auth()->user()->can('delete-time')) {
-                        $output .= '<a href="#" id="' . $time->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
-                    }
+                if (auth()->user()->can('edit-time')) {
+                    $output .= '<a href="#" id="' . $time->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+                }
+                if (auth()->user()->can('delete-time')) {
+                    $output .= '<a href="#" id="' . $time->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+                }
 
                 $output .= '</td>
                 </tr>';
@@ -87,8 +87,6 @@ class TimeController extends Controller
 
         return $output;
     }
-
-
 
     public function record_vehicle()
     {
@@ -248,5 +246,50 @@ class TimeController extends Controller
         $vehicleRecords = Vehicle_Record::latest()->take(15)->get();
 
         return response()->json($vehicleRecords);
+    }
+
+    // ACTIVITY FEED INDEX
+    public function index_activity_feed()
+    {
+        $totalactivityfeed = Vehicle_Record::count();
+        return view('time.activity_feed.index', compact('totalactivityfeed'));
+    }
+
+    // Fetch Activity Feed
+    public function fetchActivityFeed()
+    {
+        $records = Vehicle_Record::all();
+        $output = '';
+        $row = 1; // Initialize the row counter
+        if ($records->count() > 0) {
+            $output .= '<table class="table table-striped align-middle">
+            <thead>
+              <tr>
+                <th class="text-center">No.</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Remark</th>
+              </tr>
+            </thead>
+            <tbody>';
+            foreach ($records as $record) {
+
+                // Find the vehicle associated with the owner
+                $vehicle = Vehicle::find($record->vehicle_id);
+
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+
+                $output .= '<tr>
+                    <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
+                    <td class="text-center">' . $vehiclePlate . '</td>
+                    <td class="text-center">' . $record->remarks . '</td>
+                </tr>';
+            }
+            $output .= '</tbody></table>';
+        } else {
+            $output .= '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        }
+
+        return $output;
     }
 }

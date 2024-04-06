@@ -11,7 +11,7 @@
             @else
             <p>No front photo available</p>
             @endif
-            <h5 class="fs-17 mb-2"><a href="job-details.html" class="text-dark">{{ $vehicle->plate_number ?? 'N/A' }}</a> <small class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
+            <h5 class="fs-17 mb-2"><a href="job-details.html" class="text-dark">{{ $vehicle->plate_number ?? 'N/A' }}</a> <small class="text-muted fw-normal">({{ $vehicle->vehicle_code }})</small></h5>
             <ul class="list-inline mb-0">
                 <li class="list-inline-item">
                     <p class="text-muted fs-14 mb-1"><i class="fas fa-car"></i> {{ $vehicle->vehicle_make ?? 'N/A' }}</p>
@@ -59,8 +59,12 @@
                 <span class="badge rounded-1 badge-soft-info">{{ $vehicle->body_type ?? 'N/A' }}</span>
             </div>
             <div class="mt-4 hstack gap-2">
-                <a href="{{ route('owners.vehicle_information', $vehicle->id) }}" class="btn btn-soft-success w-100">View Profile</a>
-                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle">Delete Vehicle</a>
+                <a href="{{ route('owners.vehicle_information', $vehicle->id) }}" class="btn btn-soft-primary w-100">View</a>
+                @if($vehicle->registration_status === 'Active')
+                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 deleteVehicle">Deactivate</a>
+                @else
+                <a href="#" id="{{ $vehicle->id }}" data-bs-toggle="modal" class="btn btn-soft-danger w-100 disabled-link">Inactive</a>
+                @endif
             </div>
         </div>
     </div>
@@ -70,3 +74,10 @@
     <p>No vehicles found.</p>
 </div>
 @endforelse
+<style>
+    .disabled-link {
+        color: #6c757d;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+</style>

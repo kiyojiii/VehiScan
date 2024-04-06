@@ -53,27 +53,38 @@ class HomeController extends Controller
         $totalOwners = Applicant::count();
         $totalUsers = User::count();
         $totalDrivers = Driver::count();
-        // Total vehicles with time_out as null and active registration status
+
+        // Total vehicles with time_in not null and active registration status
         $totalVehicleIn = Time::join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
             ->whereNull('time_out')
             ->where('vehicles.registration_status', 'active')
             ->distinct('times.vehicle_id')
             ->count('times.vehicle_id');
 
-        // Total vehicles with both time_in and time_out not null and active registration status
+        // Total vehicles with time_in not null (either time_out is null or not null) and active registration status
         $totalVehicleOut = Time::join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
             ->whereNotNull('time_in')
-            ->whereNotNull('time_out')
             ->where('vehicles.registration_status', 'active')
+            ->where(function ($query) {
+                // Subquery to check if vehicle has no new time record with time_in and null time_out
+                $query->whereNotExists(function ($subquery) {
+                    $subquery->select(DB::raw(1))
+                        ->from('times as t2')
+                        ->whereRaw('t2.vehicle_id = vehicles.id')
+                        ->whereNotNull('t2.time_in')
+                        ->whereNull('t2.time_out');
+                });
+            })
             ->distinct('times.vehicle_id')
             ->count('times.vehicle_id');
+
 
         $totalActiveVehicles = Vehicle::where('registration_status', 'Active')->count();
         $totalInactiveVehicles = Vehicle::where('registration_status', 'Inactive')->count();
         $totalPendingVehicles = Vehicle::where('registration_status', 'Pending')->count();
         $totalActiveApprovedVehicles = Vehicle::where('registration_status', 'Active')
-        ->where('approval_status', 'Approved')
-        ->count();
+            ->where('approval_status', 'Approved')
+            ->count();
 
         // Get the date 7 days ago from the current date
         $sevenDaysAgo = Carbon::now()->subDays(7);
@@ -222,6 +233,16 @@ class HomeController extends Controller
         }
 
 
+        // Get the total count of time_in for the current month
+        $mostTimeInCount = Time::whereMonth('time_in', $currentMonth)->where('vehicle_id', $vehicleWithMostRecords->vehicle_id)->count();
+
+        // Get the total count of time_out for the current month
+        $mostTimeOutCount = Time::whereMonth('time_out', $currentMonth)->where('vehicle_id', $vehicleWithMostRecords->vehicle_id)->count();
+
+        // Calculate the total visits by adding time_in and time_out counts
+        $mosttotalVisits = $mostTimeInCount + $mostTimeOutCount;
+
+
         // Query to find the vehicle with the most violation count
         $mostViolatedVehicle = Violation::select('vehicle_id', DB::raw('COUNT(*) as violation_count'))
             ->groupBy('vehicle_id')
@@ -325,7 +346,7 @@ class HomeController extends Controller
         }
 
         // Pass the user data to the view
-        return view('home', compact('totalActiveApprovedVehicles', 'VehicleInPercentage', 'VehicleOutPercentage', 'recentVehicles', 'totalPendingVehicles', 'totalInactiveVehicles', 'totalActiveVehicles', 'stayDurationHours', 'recentLongestStayVehicle', 'hour', 'count', 'totalRecords', 'latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalVehicleIn', 'totalVehicleOut', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
+        return view('home', compact('mostTimeInCount', 'mostTimeOutCount', 'mosttotalVisits', 'totalActiveApprovedVehicles', 'VehicleInPercentage', 'VehicleOutPercentage', 'recentVehicles', 'totalPendingVehicles', 'totalInactiveVehicles', 'totalActiveVehicles', 'stayDurationHours', 'recentLongestStayVehicle', 'hour', 'count', 'totalRecords', 'latestVehicles', 'vehicleRecords', 'lsplateNumber', 'stayDuration', 'vehicleCount', 'lastName', 'firstName', 'vehiclePlateNumber', 'violationCount', 'percentage', 'totalVisits', 'plateNumber', 'livecurrentMonth', 'pendingDrivers', 'pendingVehicles', 'pendingApplicants', 'series', 'totalTimeCurrentMonth', 'totalTimePreviousMonth', 'totalTimePerDay', 'applicants', 'appointments', 'totalVehicleIn', 'totalVehicleOut', 'user', 'totalUsers', 'totalOwners', 'totalVehicles', 'totalDrivers'));
     }
 
     public function fetchHomeVehicleRecord()

@@ -159,6 +159,8 @@
                     },
                     success: function(response) {
                         $("#driver_name").val(response.driver_id);
+                        $("#applicant_name").val(response.owner_id);
+                        $("#real_owner_name").val(response.owner_name);
                         $("#owner_address").val(response.owner_address);
                         $("#plate_number").val(response.plate_number);
                         $("#vehicle_make").val(response.vehicle_make);

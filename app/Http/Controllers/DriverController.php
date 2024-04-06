@@ -157,9 +157,9 @@ class DriverController extends Controller
             ]);
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
-                'dname' => 'required|string|max:255',
+                'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'image|max:2048', // Assuming it's an image file
-                'adname' => 'string|max:255',
+                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
                 'adaddress' => 'string|max:255',
                 'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
                 'approval' => 'required|string|max:255',

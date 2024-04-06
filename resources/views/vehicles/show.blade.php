@@ -227,6 +227,10 @@
                                         <span>{{ $vehicles->plate_number ?? 'N/A' }}</span>
                                     </li>
                                     <li>
+                                        <strong>Owner Name:</strong>
+                                        <span>{{ $vehicles->owner_name ?? 'N/A' }}</span>
+                                    </li>
+                                    <li>
                                         <strong>Owner Address:</strong>
                                         <span>{{ $vehicles->owner_address ?? 'N/A' }}</span>
                                     </li>

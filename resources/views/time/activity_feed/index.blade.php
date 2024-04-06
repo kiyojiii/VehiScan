@@ -47,11 +47,11 @@
                         <div class="card">
                             <div class="card-body border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <h5 class="mb-0 card-title flex-grow-1">Time Record Count: {{ $totaltime }}</h5>
+                                    <h5 class="mb-0 card-title flex-grow-1">Activity Feed Count: {{ $totalactivityfeed }}</h5>
                                     <div class="flex-shrink-0">
-                                    @canany('create-time')
+                                        @canany('create-time')
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add ??</a>
-                                    @endcanany
+                                        @endcanany
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 
@@ -66,8 +66,8 @@
                                 </div>
                             </div>
 
-
                             <div class="card-body border-bottom">
+                                <!-- Your filter form -->
                                 <form>
                                     <div class="row justify-content-center"> <!-- Center the filters -->
                                         <div class="col-xl col-sm-6">
@@ -116,8 +116,9 @@
                                     </div>
                                 </form>
 
-                                <div class="card-body" id="show_all_time">
-                                    <h1 class="text-center text-secondary my-5"> Loading... </h1>
+                                <!-- Table or content to be displayed when filter is applied -->
+                                <div class="card-body" id="show_activity_feed">
+                                    <h1 class="text-center text-secondary my-5">Loading...</h1>
                                 </div>
                             </div>
 
@@ -141,7 +142,7 @@
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    @include('time.time_js')
+    @include('time.activity_feed.activity_feed_js')
 
 </body>
 

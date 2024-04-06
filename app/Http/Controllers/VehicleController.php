@@ -55,7 +55,7 @@ class VehicleController extends Controller
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th class="text-center">Owner</th>
+                    <th class="text-center">Applicant</th>
                     <th class="text-center">Plate Number</th>
                     <th class="text-center">Make</th>
                     <th class="text-center">Model</th>
@@ -103,18 +103,29 @@ class VehicleController extends Controller
                 <td class="text-center">' . $vehicle->registration_status . '</td>
                 <td class="text-center">';
 
-                if (auth()->user()->can('view-vehicle')) {
-                  $output .= '<a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
-                }
-                if (auth()->user()->can('edit-vehicle')) {
-                  $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
-                  $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>';
-                }
-                if (auth()->user()->can('delete-vehicle')) {
-                  $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
-                }
+        if (auth()->user()->can('view-vehicle')) {
+          $output .= '<a href="' . route('vehicles.show', $vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+        }
+        if (auth()->user()->can('edit-vehicle')) {
+          $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
 
-                $output .= '</td>
+          $output .= '<style>.disabled-link { pointer-events: none; opacity: 0.5; }</style>';
+
+          // Check vehicle registration status
+          if ($vehicle->registration_status == 'Inactive') {
+              // If registration status is 'Inactive', disable the deactivate button
+              $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon disabled-link"><i class="bi-dash-circle h4"></i></a>';
+          } else {
+              // Otherwise, display the deactivate button as a link
+              $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>';
+          }
+        }
+        
+        if (auth()->user()->can('delete-vehicle')) {
+          $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+        }
+
+        $output .= '</td>
               </tr>';
       }
       $output .= '</tbody></table>';
@@ -172,8 +183,9 @@ class VehicleController extends Controller
     try {
       // Validate incoming request data
       $validator = Validator::make($request->all(), [
-        'owner_id' => '|string|max:255',
-        'driver_id' => '|string|max:255',
+        'owner_id' => 'required|string|max:255',
+        'driver_id' => 'nullable|string|max:255',
+        'owner_name' => 'required|string|max:2048',
         'owner_address' => 'required|string|max:2048',
         'plate_number' => 'required|string|max:255|unique:vehicles,plate_number',
         'vehicle_make' => 'required|string|max:255',
@@ -204,11 +216,23 @@ class VehicleController extends Controller
         ->where('registration_status', 'Active')
         ->exists();
 
+      $hasPendingVehicle = Vehicle::where('owner_id', $request->owner_id)
+        ->where('registration_status', 'Pending')
+        ->exists();
+
       // If an active vehicle exists, prevent the creation of a new vehicle
       if ($hasActiveVehicle) {
         return response()->json([
           'status' => 400,
           'message' => 'Cannot add a new vehicle because the owner already has an active vehicle.'
+        ], 400);
+      }
+
+      // If a pending vehicle exists, prevent the creation of a new vehicle
+      if ($hasPendingVehicle) {
+        return response()->json([
+          'status' => 400,
+          'message' => 'Cannot add a new vehicle because the owner has a pending vehicle.'
         ], 400);
       }
 
@@ -243,6 +267,7 @@ class VehicleController extends Controller
         'user_id' => $user_id,
         'owner_id' => $request->owner_id,
         'driver_id' => $request->driver_id,
+        'owner_name' => $request->owner_name,
         'owner_address' => $request->owner_address,
         'plate_number' => $request->plate_number,
         'vehicle_make' => $request->vehicle_make,
@@ -262,7 +287,25 @@ class VehicleController extends Controller
       ];
 
       // Create the vehicle record
-      Vehicle::create($vehicleData);
+      $vehicle = Vehicle::create($vehicleData);
+
+      // After creating the vehicle record
+      $qrCodeFileName = 'qr_' . $vehicle->vehicle_code . '.png'; // Generate a unique filename for the QR code image
+      $qrCodeFilePath = 'public/images/qrcodes/' . $qrCodeFileName; // Define the file path where the QR code image will be saved
+
+      // Generate QR code based on the vehicle's code
+      $qrCode = QrCode::format('png')
+        ->size(300) // Adjust the size as needed
+        ->errorCorrection('H')
+        ->generate($vehicle->vehicle_code);
+
+      // Save the QR code image to the file path
+      Storage::put($qrCodeFilePath, $qrCode);
+
+      // Update the vehicle record with the QR code image path and name
+      $vehicle->update([
+        'qr_image' => $qrCodeFileName,
+      ]);
 
       return response()->json([
         'status' => 200,
@@ -293,14 +336,10 @@ class VehicleController extends Controller
   {
     try {
 
-      // Before validating the request, modify the reason field if approval is "Approved"
-      $request->merge([
-        'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
-      ]);
-
       // Validate incoming request data
       $validator = Validator::make($request->all(), [
         'driver_name' => 'string|max:255',
+        'applicant_name' => 'string|max:255',
         'owner_name' => 'string|max:2048',
         'owner_address' => 'string|max:2048',
         'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
@@ -372,7 +411,8 @@ class VehicleController extends Controller
       // Update vehicle data
       $vehicle->update([
         'driver_id' => $request->driver_name,
-        'owner_name' => $request->owner_name,
+        'owner_id' => $request->applicant_name,
+        'owner_name' => $request->real_owner_name,
         'owner_address' => $request->owner_address,
         'plate_number' => $request->plate_number,
         'vehicle_make' => $request->vehicle_make,

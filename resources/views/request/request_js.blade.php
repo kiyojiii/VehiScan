@@ -14,6 +14,8 @@
                     },
                     success: function(response) {
                         $("#driver_name").val(response.driver_id);
+                        $("#applicant_name").val(response.owner_id);
+                        $("#owner_name").val(response.owner_name);
                         $("#owner_address").val(response.owner_address);
                         $("#plate_number").val(response.plate_number);
                         $("#vehicle_make").val(response.vehicle_make);
@@ -108,6 +110,8 @@
                     },
                     success: function(response) {
                         $("#view_driver_name").val(response.driver_id);
+                        $("#view_applicant_name").val(response.owner_id);
+                        $("#view_owner_name").val(response.owner_name);
                         $("#view_owner_address").val(response.owner_address);
                         $("#view_plate_number").val(response.plate_number);
                         $("#view_vehicle_make").val(response.vehicle_make);

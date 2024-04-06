@@ -11,7 +11,7 @@
             @else
             <p>No front photo available</p>
             @endif
-            <h5 class="fs-17 mb-2"><a href="job-details.html" class="text-dark">{{ $vehicle->plate_number ?? 'N/A' }}</a> <small class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
+            <h5 class="fs-17 mb-2"><a href="job-details.html" class="text-dark">{{ $vehicle->plate_number ?? 'N/A' }}</a> <small class="text-muted fw-normal">({{ $vehicle->vehicle_code }})</small></h5>
             <ul class="list-inline mb-0">
                 <li class="list-inline-item">
                     <p class="text-muted fs-14 mb-1"><i class="fas fa-car"></i> {{ $vehicle->vehicle_make ?? 'N/A' }}</p>

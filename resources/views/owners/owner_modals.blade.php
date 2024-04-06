@@ -30,7 +30,7 @@
                         <h5>Personal Info</h5>
                         <div class="row">
                             <div class="col-md">
-                                <label for="position">Vehicle</label>
+                                <label for="position">Main Vehicle (Optional)</label>
                                 <br>
                                 <select name="vehicle" id="vehicle" class="form-control vehicle-select">
                                     <option value="">Select Vehicle</option> <!-- Placeholder option -->
@@ -62,13 +62,13 @@
                                 <label for="serial_number">Serial Number</label>
                                 <input type="text" id="add_serial_number" name="serial_number" class="form-control" placeholder="Serial Number" required>
                             </div>
-                            <script>
+                            <!-- <script>
                                 // JavaScript code to enforce numeric input for the serial number field
                                 document.getElementById('add_serial_number').addEventListener('input', function() {
                                     // Remove any non-numeric characters from the input value
                                     this.value = this.value.replace(/\D/g, '');
                                 });
-                            </script>
+                            </script> -->
                             <div class="col-md">
                                 <label for="id_number">ID Number</label>
                                 <input type="text" id="add_id_number" name="id_number" class="form-control" placeholder="ID Number" required>
@@ -209,7 +209,7 @@
                         <h5>Personal Info</h5>
                         <div class="row">
                             <div class="col-md">
-                                <label for="position">Vehicle</label>
+                                <label for="position">Main Vehicle</label>
                                 <select name="vehicle_details" id="vehicle_details" class="form-control" onfocus='this.size=3;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
                                     <option value="">Select Vehicle</option> <!-- Placeholder option -->
                                     @forelse($vehicles as $vehicle)
@@ -223,13 +223,13 @@
                                 <label for="serial_number">Serial Number</label>
                                 <input type="text" name="serial_number" id="serial_number" class="form-control" placeholder="Serial Number" required>
                             </div>
-                            <script>
+                            <!-- <script>
                                 // JavaScript code to enforce numeric input for the serial number field
                                 document.getElementById('serial_number').addEventListener('input', function() {
                                     // Remove any non-numeric characters from the input value
                                     this.value = this.value.replace(/\D/g, '');
                                 });
-                            </script>
+                            </script> -->
                             <div class="col-md">
                                 <label for="id_number">ID Number</label>
                                 <input type="text" name="id_number" id="id_number" class="form-control" placeholder="ID Number" required>

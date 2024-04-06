@@ -55,13 +55,13 @@
             let id = $(this).attr('id');
             let csrf = '{{ csrf_token() }}';
             Swal.fire({
-                title: 'Are you sure?',
-                text: "This Vehicle Will Be Permanently Deleted",
+                title: 'Deactivate Vehicle?',
+                text: "This Vehicle Will Become Inactive",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, Proceed'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({

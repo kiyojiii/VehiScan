@@ -130,10 +130,16 @@
 
                 <li>
                     @canany(['create-time', 'edit-time', 'delete-time', 'view-time'])
-                    <a href="{{ route('time.index') }}" class="waves-effect">
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="fas fa-clock"></i>
                         <span key="t-blog">Time</span>
                     </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('time.index') }}" key="t-blog-list">Time Record</a></li>
+                    </ul>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('activity_feed') }}" key="t-blog-list">Activity Feed</a></li>
+                    </ul>
                     @endcanany
                 </li>
 

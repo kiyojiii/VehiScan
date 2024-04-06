@@ -46,8 +46,8 @@ class OwnerController extends Controller
                 <th>No.</th>
                 <th>Name</th>
                 <th>Vehicle</th>
-                <th>Department</th>
-                <th>Position</th>
+                <th>Appointment</th>
+                <th>Role Status</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -56,16 +56,20 @@ class OwnerController extends Controller
             foreach ($owner as $rs) {
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($rs->vehicle_id);
+                $appointmentID = Appointment::find($rs->appointment_id);
+                $rolestatusID = Statuses::find($rs->status_id);
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+                $appointment = $appointmentID ? $appointmentID->appointment : 'N/A';
+                $rolestatus = $rolestatusID ? $rolestatusID->applicant_role_status : 'N/A';
 
                 $output .= '<tr>
                     <td>' . $rs->id . '</td>
                     <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
                     <td>' . $vehiclePlate . '</td>
-                    <td>' . $rs->office_department_agency . '</td>
-                    <td>' . $rs->position_designation . '</td>
+                    <td>' . $appointment . '</td>
+                    <td>' . $rolestatus . '</td>
                     <td>' . $rs->approval_status . '</td>
                     <td>' ;         
                         
@@ -363,14 +367,10 @@ class OwnerController extends Controller
     {
         try {
 
-            // Before validating the request, modify the reason field if approval is "Approved"
-            $request->merge([
-                'reason' => $request->vehicle_approval_status === 'Approved' ? 'None / Approved' : $request->vehicle_reason,
-            ]);
-
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
-                'owner_address' => 'string|max:2048',
+                'owner_name' => 'string|max:255',
+                'owner_address' => 'string|max:255',
                 'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
                 'year_model' => 'string|max:255',
@@ -438,17 +438,13 @@ class OwnerController extends Controller
             }
 
             $approvalStatus = $request->vehicle_approval_status;
-            $reason = $request->filled('vehicle_reason') ? $request->vehicle_reason : null;
-
-            // If approval status is 'Approved', set reason to 'None / Approved'
-            if ($approvalStatus == 'Approved') {
-                $reason = 'None / Approved';
-            }
+            $reason = $request->vehicle_reason;
 
             // Update vehicle data
             $vehicle->update([
                 'owner_id' => $request->owner_id,
                 'driver_id' => $request->driver_id,
+                'owner_name' => $request->real_owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
@@ -485,15 +481,11 @@ class OwnerController extends Controller
     {
         try {
 
-            // Before validating the request, modify the reason field if approval is "Approved"
-            $request->merge([
-                'reason' => $request->approval === 'Approved' ? 'None / Approved' : $request->reason,
-            ]);
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
-                'dname' => 'required|string|max:255',
+                'dname' => 'required|string|max:255|unique:drivers,driver_name,' .  $request->driver_id, 
                 'driver_license_image' => 'image|max:2048', // Assuming it's an image file
-                'adname' => 'string|max:255',
+                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
                 'adaddress' => 'string|max:255',
                 'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
                 'driver_approval_status' => 'required|string|max:255',
@@ -538,12 +530,7 @@ class OwnerController extends Controller
             }
 
             $approvalStatus = $request->driver_approval_status;
-            $reason = $request->filled('driver_reason') ? $request->driver_reason : null;
-
-            // If approval status is 'Approved', set reason to 'None / Approved'
-            if ($approvalStatus == 'Approved') {
-                $reason = 'None / Approved';
-            }
+            $reason = $request->driver_reason;
 
             // Update driver data
             $driverData = [

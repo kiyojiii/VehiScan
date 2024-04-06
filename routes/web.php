@@ -216,6 +216,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('create-vehicle-record', [TimeController::class, 'createVehicleRecord'])->name('create.vehicle.record');
     Route::post('/check-time-in', [TimeController::class, 'checkTimeIn'])->name('check.time.in');
     Route::post('/record-time-out', [TimeController::class, 'recordTimeOut'])->name('record.time.out');
+    #TIME ACTIVITY FEED
+    Route::get('activity-feed', [TimeController::class, 'index_activity_feed'])->name('activity_feed');
+    Route::get('/fetchActivityFeed', [TimeController::class, 'fetchActivityFeed'])->name('fetchActivityFeed');
 
     #DOWNLOAD QR ROUTE
     Route::get('/downloadQRCode/{qrData}', [VehicleController::class, 'downloadQRCode'])->name('downloadQRCode');

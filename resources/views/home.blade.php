@@ -276,32 +276,38 @@
                                                 <p>This month</p>
                                                 <h4>{{$totalTimeCurrentMonth}}</h4>
                                                 @php
-                                                // Calculate the difference between the current month and previous month total time counts
-                                                $difference = $totalTimeCurrentMonth - $totalTimePreviousMonth;
-                                                // Calculate the percentage difference
-                                                $percentageDifference = ($difference / $totalTimePreviousMonth) * 100;
-                                                // Check if the difference is positive (increase) or negative (decrease)
-                                                if ($difference > 0) {
-                                                    $changeType = 'increase';
-                                                } elseif ($difference < 0) {
-                                                    $changeType = 'decrease';
-                                                } else {
-                                                    $changeType = 'no change';
-                                                }
-                                                // Format the percentage difference
-                                                $formattedPercentageDifference = number_format(abs($percentageDifference), 2) . '% ' . $changeType;
+                                                if ($totalTimePreviousMonth != 0) {
+                                                    // Calculate the difference between the current month and previous month total time counts
+                                                    $difference = $totalTimeCurrentMonth - $totalTimePreviousMonth;
+                                                    // Calculate the percentage difference
+                                                    $percentageDifference = ($difference / $totalTimePreviousMonth) * 100;
+                                                    // Check if the difference is positive (increase) or negative (decrease)
+                                                    if ($difference > 0) {
+                                                        $changeType = 'increase';
+                                                    } elseif ($difference < 0) {
+                                                        $changeType = 'decrease';
+                                                    } else {
+                                                        $changeType = 'no change';
+                                                    }
+                                                    // Format the percentage difference
+                                                    $formattedPercentageDifference = number_format(abs($percentageDifference), 2) . '% ' . $changeType;
 
-                                                $badgeClass = '';
-                                                switch($changeType) {
-                                                    case 'increase':
-                                                        $badgeClass = 'badge-soft-success';
-                                                        break;
-                                                    case 'decrease':
-                                                        $badgeClass = 'badge-soft-danger';
-                                                        break;
-                                                    case 'no change':
-                                                        $badgeClass = 'badge-soft-secondary';
-                                                        break;
+                                                    // Determine badge class based on change type
+                                                    switch($changeType) {
+                                                        case 'increase':
+                                                            $badgeClass = 'badge-soft-success';
+                                                            break;
+                                                        case 'decrease':
+                                                            $badgeClass = 'badge-soft-danger';
+                                                            break;
+                                                        case 'no change':
+                                                            $badgeClass = 'badge-soft-secondary';
+                                                            break;
+                                                    }
+                                                } else {
+                                                    // Handle the case where $totalTimePreviousMonth is zero
+                                                    $formattedPercentageDifference = 'N/A'; // Or any other appropriate value
+                                                    $badgeClass = 'badge-soft-secondary'; // Or any other appropriate class
                                                 }
                                                 @endphp
                                                 <div><span class="badge {{$badgeClass}} font-size-12 me-1">{{$formattedPercentageDifference}}</span> From previous Month</div>
@@ -387,10 +393,10 @@
 
                                 <div class="text-muted text-center">
                                     <p class="mb-2">{{ $plateNumber }}</p>
-                                    @if($totalRecords > 1) 
-                                        <h4>{{ $totalRecords ?? 'No Data' }} visits</h4>
+                                    @if($mosttotalVisits > 1) 
+                                        <h4>{{ $mosttotalVisits ?? 'No Data' }} visits</h4>
                                     @else
-                                        <h4>{{ $totalRecords ?? 'No Data' }} visit</h4>
+                                        <h4>{{ $mosttotalVisits ?? 'No Data' }} visit</h4>
                                     @endif
                                     <p class="mt-4 mb-0">
                                         <span class="badge badge-soft-success font-size-11 me-2">

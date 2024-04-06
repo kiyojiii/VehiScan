@@ -177,10 +177,11 @@ class ApplicantPartnerController extends Controller
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th class="text-center">Owner</th>
+                            <th class="text-center">Applicant</th>
                             <th class="text-center">Plate Number</th>
-                            <th class="text-center">Vehicle Make</th>
-                            <th class="text-center">Vehicle Code</th>
+                            <th class="text-center">Make</th>
+                            <th class="text-center">Model</th>
+                            <th class="text-center">Code</th>
                             <th class="text-center">Front Photo</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">Action</th>
@@ -216,6 +217,7 @@ class ApplicantPartnerController extends Controller
                 <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
                 <td class="text-center">' . $vehicle->plate_number . '</td>
                 <td class="text-center">' . $vehicle->vehicle_make . '</td>
+                <td class="text-center">' . $vehicle->year_model . ' </td>
                 <td class="text-center">' . $vehicle->vehicle_code . ' </td>
                 <td class="text-center">
                     <img src="' . asset('storage/images/vehicles/' . $vehicle->front_photo) . '" alt="Side Photo" style="max-width: 50px; max-height: 50px;">

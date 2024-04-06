@@ -1017,7 +1017,7 @@ class ApplicantController extends Controller
             <thead>
               <tr>
                 <th>No.</th>
-                <th>Name</th>
+                <th>Applicant</th>
                 <th>Vehicle</th>
                 <th>Appointment</th>
                 <th>Role Status</th>
