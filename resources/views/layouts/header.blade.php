@@ -17,10 +17,10 @@
 
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="<?php echo url('images') ?>/seal.png" alt="" height="30"> 
+                        <img src="<?php echo url('images') ?>/seal_alt.png" alt="" height="30"> 
                     </span>
                     <span class="logo-lg">
-                        <img src="<?php echo url('images') ?>/mvis_logo.png" alt="" height="70"> 
+                        <img src="<?php echo url('images') ?>/mvis_logo.png" alt="" height="50"> 
                     </span>
                 </a>
             </div>

@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-md">
                                     <label for="serial_number">Serial Number</label>
-                                    <input type="text" id="add_serial_number" name="serial_number" class="form-control" placeholder="Serial Number" required>
+                                    <input type="text" id="add_serial_number" name="serial_number" class="form-control" placeholder="Serial Number">
                                 </div>
                                 <!-- <script>
                                     // JavaScript code to enforce numeric input for the serial number field
@@ -29,15 +29,15 @@
                                 </script> -->
                                 <div class="col-md">
                                     <label for="id_number">ID Number</label>
-                                    <input type="text" id="add_id_number" name="id_number" class="form-control" placeholder="ID Number" required>
+                                    <input type="text" id="add_id_number" name="id_number" class="form-control" placeholder="ID Number">
                                 </div>
-                                <script>
+                                <!-- <script>
                                     // JavaScript code to enforce numeric input for the ID number field
                                     document.getElementById('add_id_number').addEventListener('input', function() {
                                         // Remove any characters except numbers and hyphens from the input value
                                         this.value = this.value.replace(/[^\d-]/g, '');
                                     });
-                                </script>
+                                </script> -->
                             </div> <br>
                             <div class="row">
                                 <div class="col-md">
@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="col-md">
                                     <label for="mi">Middle Initial (Letter Only)</label>
-                                    <input type="text" name="mi" id="add_mi" class="form-control" placeholder="Middle Initial" maxlength="1" required>
+                                    <input type="text" name="mi" id="add_mi" class="form-control" placeholder="Middle Initial" maxlength="1">
                                 </div>
 
                                 <div class="col-md">
@@ -256,3 +256,56 @@
     </div>
 </div>
 <!-- End Modal -->
+
+<!-- Edit Modal -->
+<div class="modal fade" id="userTransferModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Transfer Applicant Ownership</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="javascript:void(0)" id="transfer_form" name="transfer_form" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <input type="hidden" class="form-control" id="current_user" name="current_user">
+                    <input type="hidden" class="form-control" id="applicant_id" name="applicant_id">
+                    <input type="hidden" class="form-control" id="vehicle_id" name="vehicle_id">
+                    <input type="hidden" class="form-control" id="driver_id" name="driver_id">
+
+                    <div class="col-md-3">
+                        <label for="current_user_name" class="form-label">Current User</label>
+                        <input type="text" class="form-control" id="current_user_name" name="current_user_name" readonly>
+                    </div>
+
+                    <br>
+
+                    <!-- User Dropdown -->
+                    <div class="mb-3">
+                        <div class="col-md-3">
+                            <label for="user_id" class="form-label">New User</label>
+                            <br>
+                            <select name="user_id" id="user_id" class="form-select edit-vehicle-select">
+                                <option value="">Select User</option> <!-- Placeholder option -->
+                                @forelse($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }} - {{ $user->email }}</option>
+                                @empty
+                                <option value="">No Users Available</option>
+                                @endforelse
+                            </select>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" id="edit_violation_btn" class="btn btn-primary" id="btn-save">Transfer Ownership</button>
+                        </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- End Edit Modal -->

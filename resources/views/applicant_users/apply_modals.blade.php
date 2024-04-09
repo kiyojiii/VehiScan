@@ -20,24 +20,24 @@
                                     <label for="serial_number">Serial Number</label>
                                     <input type="text" id="serial_number" name="serial_number" class="form-control" placeholder="Serial Number" required>
                                 </div>
-                                <script>
+                                <!-- <script>
                                     // JavaScript code to enforce numeric input for the serial number field
                                     document.getElementById('serial_number').addEventListener('input', function() {
                                         // Remove any non-numeric characters from the input value
                                         this.value = this.value.replace(/\D/g, '');
                                     });
-                                </script>
+                                </script> -->
                                 <div class="col-md">
                                     <label for="id_number">ID Number</label>
                                     <input type="text" id="id_number" name="id_number" class="form-control" placeholder="ID Number" required>
                                 </div>
-                                <script>
+                                <!-- <script>
                                     // JavaScript code to enforce numeric input for the ID number field
                                     document.getElementById('id_number').addEventListener('input', function() {
                                         // Remove any characters except numbers and hyphens from the input value
                                         this.value = this.value.replace(/[^\d-]/g, '');
                                     });
-                                </script>
+                                </script> -->
                             </div> <br>
                             <div class="row">
                                 <div class="col-md">
@@ -132,6 +132,10 @@
                             <h5>Vehicle Info</h5>
                             <div class="row mb-3">
                                 <div class="col-md-4">
+                                    <label for="owner_name" class="form-label">Owner Name</label>
+                                    <input type="text" class="form-control" name="owner_name">
+                                </div>
+                                <div class="col-md-4">
                                     <label for="owner_address" class="form-label">Owner Address</label>
                                     <input type="text" class="form-control" name="owner_address">
                                 </div>
@@ -139,23 +143,23 @@
                                     <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                                     <input type="text" class="form-control" name="plate_number">
                                 </div>
-                                <div class="col-md-3">
-                                    <label for="vehicle_make" class="form-label">Vehicle Make (e.g Ford Everest)</label>
-                                    <input type="text" class="form-control" name="vehicle_make">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="year_model" class="form-label">Year Model (e.g 2022)</label>
-                                    <input type="text" class="form-control" name="year_model">
-                                </div>
                             </div>
                             <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
+                                    <input type="text" class="form-control" name="vehicle_make">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="year_model" class="form-label">Year Model (e.g Vios E 2020)</label>
+                                    <input type="text" class="form-control" name="year_model">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="body_type" class="form-label">Body Type (e.g Sedan)</label>
+                                    <input type="text" class="form-control" name="body_type">
+                                </div>
                                 <div class="col-md-2">
                                     <label for="color" class="form-label">Color (e.g Black)</label>
                                     <input type="text" class="form-control" name="color">
-                                </div>
-                                <div class="col-md-2">
-                                    <label for="body_type" class="form-label">Body Type (e.g SUV)</label>
-                                    <input type="text" class="form-control" name="body_type">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="registration_status">Status</label>

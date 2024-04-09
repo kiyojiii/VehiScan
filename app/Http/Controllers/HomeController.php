@@ -183,7 +183,7 @@ class HomeController extends Controller
         ];
 
         $pendingApplicants = Applicant::where('approval_status', 'Pending')->count();
-        $pendingVehicles = Vehicle::where('registration_status', 'Pending')->count();
+        $pendingVehicles = Vehicle::where('registration_status', 'Pending')->orWhere('approval_status', 'Pending')->count();
         $pendingDrivers = Driver::where('approval_status', 'Pending')->count();
 
         $livecurrentMonth = Carbon::now()->format('F');
@@ -277,11 +277,12 @@ class HomeController extends Controller
             $vehicleCount = $mostVehiclesApplicant->vehicle_count;
         }
 
-        // Query to find the recent vehicle with the most timestamp difference between time_in and time_out
-        $recentLongestStayVehicle = Time::select('vehicles.plate_number', DB::raw('TIMESTAMPDIFF(MINUTE, time_in, time_out) as stay_duration'))
+        // Query to find the vehicle with the longest total stay duration
+        $recentLongestStayVehicle = Time::select('vehicles.plate_number', DB::raw('SUM(TIMESTAMPDIFF(MINUTE, time_in, time_out)) as total_stay_duration'))
             ->join('vehicles', 'times.vehicle_id', '=', 'vehicles.id')
             ->whereNotNull('time_out') // Ensure time_out is not null
-            ->orderByDesc('times.created_at') // Order by creation date to get the most recent record
+            ->groupBy('vehicles.plate_number') // Group by plate number to aggregate stay durations for each vehicle
+            ->orderByDesc('total_stay_duration') // Order by total stay duration in descending order
             ->first();
 
         $lsplateNumber = null;
@@ -289,7 +290,7 @@ class HomeController extends Controller
 
         if ($recentLongestStayVehicle) {
             $lsplateNumber = $recentLongestStayVehicle->plate_number;
-            $totalMinutes = $recentLongestStayVehicle->stay_duration;
+            $totalMinutes = $recentLongestStayVehicle->total_stay_duration;
 
             // Calculate hours and minutes
             $stayDurationHours = floor($totalMinutes / 60);
@@ -694,6 +695,8 @@ class HomeController extends Controller
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 // Applicant Details
+                'serial_number' => 'required|string|unique:applicants,serial_number,' . $request->owner_id,
+                'id_number' => 'required|string|unique:applicants,id_number,' . $request->owner_id,
                 'fname' => 'required|string|max:255',
                 'mi' => 'required|string|size:1',
                 'lname' => 'required|string|max:255',
@@ -707,9 +710,8 @@ class HomeController extends Controller
                 'applicant_approval' => 'nullable|string|max:255',
                 'applicant_reason' => 'nullable|string|max:255',
                 'scan_or_photo_of_id' => 'image|max:2048', // Assuming it's an image file
-                'serial_number' => 'required|string|unique:applicants,serial_number,' . $request->owner_id,
-                'id_number' => 'required|string|unique:applicants,id_number,' . $request->owner_id,
                 // Vehicle Details
+                'owner_name' => 'required|string|unique:vehicles,owner_name,' . $request->vehicle_id,
                 'owner_address' => 'required|string|max:2048',
                 'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'required|string|max:255',
@@ -728,9 +730,9 @@ class HomeController extends Controller
                 // Driver Details
                 'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'required|image|max:2048',
-                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
-                'adaddress' => 'string|max:255',
-                'authorized_driver_license_image' => 'image|max:2048',
+                'adname' => 'nullable|string|max:255',
+                'adaddress' => 'nullable|string|max:255',
+                'authorized_driver_license_image' => 'nullable|image|max:2048',
                 'driver_approval' => 'nullable|string|max:255',
                 'driver_reason' => 'nullable|string|max:255',
             ]);
@@ -773,13 +775,19 @@ class HomeController extends Controller
             $request->file('side_photo')->storeAs('public/images/vehicles', $spfileName);
 
             // Driver Image
-            // Generate unique file names using UUIDs
-            $dlfileName = Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension();
-            $adlfileName = Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension();
-            // Store driver license image
-            $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
-            // Store authorized driver license image
-            $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+            // Generate unique filenames using UUID
+            $dlfileName = $request->hasFile('driver_license_image') ? Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension() : null;
+            $adlfileName = $request->hasFile('authorized_driver_license_image') ? Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension() : null;
+
+            // Store driver license image if exists
+            if ($dlfileName) {
+                $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
+            }
+
+            // Store authorized driver license image if exists
+            if ($adlfileName) {
+                $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+            }
 
             // Set Approval and Reason Default Value
             $approval_status = $request->input('approval_status', 'Pending');
@@ -815,6 +823,7 @@ class HomeController extends Controller
             // Create new vehicle data with user_id and unique file names
             $vehicleData = [
                 'user_id' => $user_id,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
@@ -838,9 +847,9 @@ class HomeController extends Controller
                 'user_id' => $user_id,
                 'driver_name' => $request->dname,
                 'driver_license_image' => $dlfileName,
-                'authorized_driver_license_image' => $adlfileName,
-                'authorized_driver_name' => $request->adname,
-                'authorized_driver_address' => $request->adaddress,
+                'authorized_driver_license_image' => $adlfileName ?: 'N/A',
+                'authorized_driver_name' => $request->adname ?: 'N/A',
+                'authorized_driver_address' => $request->adaddress ?: 'N/A',
                 'approval_status' => $approval_status, // Default
                 'reason' => $reason, // Default
             ];
@@ -863,6 +872,24 @@ class HomeController extends Controller
             $ownerData['driver_id'] = $driver->id;
             // Update the applicant record with the retrieved driver_id
             $applicant->update(['driver_id' => $driver->id]);
+
+            // After creating the vehicle record
+            $qrCodeFileName = 'qr_' . $vehicle->vehicle_code . '.png'; // Generate a unique filename for the QR code image
+            $qrCodeFilePath = 'public/images/qrcodes/' . $qrCodeFileName; // Define the file path where the QR code image will be saved
+
+            // Generate QR code based on the vehicle's code
+            $qrCode = QrCode::format('png')
+                ->size(300) // Adjust the size as needed
+                ->errorCorrection('H')
+                ->generate($vehicle->vehicle_code);
+
+            // Save the QR code image to the file path
+            Storage::put($qrCodeFilePath, $qrCode);
+
+            // Update the vehicle record with the QR code image path and name
+            $vehicle->update([
+                'qr_image' => $qrCodeFileName,
+            ]);
 
             return response()->json([
                 'status' => 200,
@@ -988,6 +1015,7 @@ class HomeController extends Controller
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'driver_id' => 'string|max:255',
+                'owner_name' => 'string|max:2048',
                 'owner_address' => 'string|max:2048',
                 'plate_number' => 'string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
@@ -1060,6 +1088,7 @@ class HomeController extends Controller
             // Update vehicle data
             $vehicle->update([
                 'driver_id' => $request->driver_id,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,

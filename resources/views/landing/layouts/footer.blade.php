@@ -77,6 +77,6 @@
         </div>
     </div>
     <div class="footer">
-        <p>Copyright © 2024 VehiScan, Ltd. All Rights Reserved.</p>
+        <p>Copyright © 2024 MVIS, Ltd. All Rights Reserved.</p>
     </div>
 </section>

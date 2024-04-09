@@ -85,9 +85,9 @@ class DriverController extends Controller
             $validator = Validator::make($request->all(), [
                 'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'required|image|max:2048',
-                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
-                'adaddress' => 'string|max:255',
-                'authorized_driver_license_image' => 'image|max:2048',
+                'adname' => 'nullable|string|max:255',
+                'adaddress' => 'nullable|string|max:255',
+                'authorized_driver_license_image' => 'nullable|image|max:2048',
                 'approval' => 'required|string|max:255',
                 'reason' => 'nullable|string|max:255',
             ]);
@@ -103,24 +103,28 @@ class DriverController extends Controller
             // Get the currently authenticated user's ID
             $user_id = auth()->id();
 
-            // Generate unique file names using UUIDs
-            $dlfileName = Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension();
-            $adlfileName = Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension();
+            // Generate unique filenames using UUID
+            $dlfileName = $request->hasFile('driver_license_image') ? Str::uuid() . '.' . $request->file('driver_license_image')->getClientOriginalExtension() : null;
+            $adlfileName = $request->hasFile('authorized_driver_license_image') ? Str::uuid() . '.' . $request->file('authorized_driver_license_image')->getClientOriginalExtension() : null;
 
-            // Store driver license image
-            $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
+            // Store driver license image if exists
+            if ($dlfileName) {
+                $request->file('driver_license_image')->storeAs('public/images/drivers', $dlfileName);
+            }
 
-            // Store authorized driver license image
-            $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+            // Store authorized driver license image if exists
+            if ($adlfileName) {
+                $request->file('authorized_driver_license_image')->storeAs('public/images/drivers', $adlfileName);
+            }
 
             // Create new applicant data with user_id and unique file names
             $driverData = [
                 'user_id' => $user_id,
                 'driver_name' => $request->dname,
                 'driver_license_image' => $dlfileName,
-                'authorized_driver_license_image' => $adlfileName,
-                'authorized_driver_name' => $request->adname,
-                'authorized_driver_address' => $request->adaddress,
+                'authorized_driver_license_image' => $adlfileName ?: 'N/A',
+                'authorized_driver_name' => $request->adname ?: 'N/A',
+                'authorized_driver_address' => $request->adaddress ?: 'N/A',
                 'approval_status' => $request->approval,
                 'reason' => $request->filled('reason') ? $request->reason : 'None / Approved', // Check if reason is empty
             ];
@@ -159,9 +163,9 @@ class DriverController extends Controller
             $validator = Validator::make($request->all(), [
                 'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'image|max:2048', // Assuming it's an image file
-                'adname' => 'string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
-                'adaddress' => 'string|max:255',
-                'authorized_driver_license_image' => 'image|max:2048', // Assuming it's an image file
+                'adname' => 'nullable|string|max:255',
+                'adaddress' => 'nullable|string|max:255',
+                'authorized_driver_license_image' => 'nullable|image|max:2048', // Assuming it's an image file
                 'approval' => 'required|string|max:255',
                 'reason' => 'nullable|string|max:255',
             ]);

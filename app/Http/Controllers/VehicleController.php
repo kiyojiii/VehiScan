@@ -49,6 +49,7 @@ class VehicleController extends Controller
   public function fetchAllVehicle()
   {
     $vehicles = Vehicle::all();
+    $row = 1; // Initialize the row counter
     $output = '';
     if ($vehicles->count() > 0) {
       $output .= '<table class="table table-striped align-middle">
@@ -89,9 +90,8 @@ class VehicleController extends Controller
 
         // // Convert the binary data to base64
         // $qrCodeBase64 = base64_encode($qrCode);
-
         $output .= '<tr>
-                <td>' . $vehicle->id . '</td>
+                <td>' . $row++ . '</td> <!-- Increment row counter -->
                 <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
                 <td class="text-center">' . $vehicle->plate_number . '</td>
                 <td class="text-center">' . $vehicle->vehicle_make . '</td>
@@ -113,14 +113,14 @@ class VehicleController extends Controller
 
           // Check vehicle registration status
           if ($vehicle->registration_status == 'Inactive') {
-              // If registration status is 'Inactive', disable the deactivate button
-              $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon disabled-link"><i class="bi-dash-circle h4"></i></a>';
+            // If registration status is 'Inactive', disable the deactivate button
+            $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon disabled-link"><i class="bi-dash-circle h4"></i></a>';
           } else {
-              // Otherwise, display the deactivate button as a link
-              $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>';
+            // Otherwise, display the deactivate button as a link
+            $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deactivateIcon"><i class="bi-dash-circle h4"></i></a>';
           }
         }
-        
+
         if (auth()->user()->can('delete-vehicle')) {
           $output .= '<a href="#" id="' . $vehicle->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
         }

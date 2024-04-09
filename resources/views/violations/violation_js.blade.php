@@ -193,23 +193,63 @@ $(function() {
         });
     });
 
-
-        // fetch all violation ajax request
-        fetchAllViolations();
-
-        function fetchAllViolations() {
-            $.ajax({
-                url: '{{ route('fetchAllViolation') }}',
-                method: 'get',
-                success: function(response) {
-                    $("#show_all_violations").html(response);
-                    $("table").DataTable({
-                        order:[0, 'desc']
-                    });
-                }
-            });
-        }
+     // Initialize the datepicker for start_date
+     $('#start_date').datepicker({
+        format: "yyyy-mm-dd",
+        autoclose: true,
+        todayHighlight: true // Highlight today's date
     });
+
+    // Initialize the datepicker for end_date
+    $('#end_date').datepicker({
+        format: "yyyy-mm-dd",
+        autoclose: true,
+        todayHighlight: true // Highlight today's date
+    });
+
+    // Fetch all violation ajax request
+    fetchAllViolations();
+
+    // Filter button click event
+    $('#filter_violation').click(function() {
+        fetchAllViolations();
+    });
+
+    // Clear button click event
+    $('#clear_filter').click(function() {
+        // Clear input data in filters
+        $('#start_date').val('');
+        $('#end_date').val('');
+        $('#plate-number-select').val('');
+        // Reload violations
+        fetchAllViolations();
+    });
+
+    function fetchAllViolations() {
+        var startDate = $('#start_date').val();
+        var endDate = $('#end_date').val();
+        var plateNumber = $('#plate-number-select').val();
+
+        $.ajax({
+            url: '{{ route('fetchAllViolation') }}',
+            method: 'get',
+            data: {
+                start_date: startDate,
+                end_date: endDate,
+                plate_number: plateNumber
+            },
+            success: function(response) {
+                $("#show_all_violations").html(response);
+                $("table").DataTable({
+                    order: [0, 'desc']
+                });
+            }
+        });
+    }
+    
+
+    });
+
 </script>
 
 <!-- Include Select2 initialization script -->

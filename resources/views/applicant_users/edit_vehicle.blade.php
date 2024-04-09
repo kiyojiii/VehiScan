@@ -27,37 +27,39 @@
                             <label for="position">Driver ID</label>
                             <input type="text" name="driver_id" id="driver_id" class="form-control" value="{{ $owner->vehicle->driver->id ?? 'N/A' }}" placeholder="Driver ID" readonly>
                         </div>
-                        <div class="col-md">
+                        <div class="col-md-3">
                             <label for="position">Driver Name</label>
                             <input type="text" name="driver_name" id="driver_name" class="form-control" value="{{ $owner->vehicle->driver->driver_name ?? 'N/A' }}" placeholder="Driver Name" readonly>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="owner_name" class="form-label">Owner Name</label>
+                            <input type="text" class="form-control" id="owner_name" name="owner_name" placeholder="Owner Name">
+                        </div>
+                        <div class="col-md-3">
                             <label for="owner_address" class="form-label">Owner Address</label>
                             <input type="text" class="form-control" id="owner_address" name="owner_address" placeholder="Owner Address">
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                             <input type="text" class="form-control" id="plate_number" name="plate_number" placeholder="Plate Number">
                         </div>
-                        <div class="col-md-4">
-                            <label for="vehicle_make" class="form-label">Vehicle Make (e.g Ford Everest)</label>
-                            <input type="text" class="form-control" id="vehicle_make" name="vehicle_make" placeholder="Vehicle Make">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="year_model" class="form-label">Year Model (e.g 2022)</label>
-                            <input type="text" class="form-control" id="year_model" name="year_model" placeholder="Year Model">
-                        </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
+                            <input type="text" class="form-control" id="vehicle_make" name="vehicle_make" placeholder="Vehicle Make">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="year_model" class="form-label">Year Model (e.g Vios E 2020)</label>
+                            <input type="text" class="form-control" id="year_model" name="year_model" placeholder="Year Model">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="body_type" class="form-label">Body Type (e.g Sedan)</label>
+                            <input type="text" class="form-control" id="body_type" name="body_type" placeholder="Body Type">
+                        </div>
                         <div class="col-md-2">
                             <label for="color" class="form-label">Color (e.g Black)</label>
                             <input type="text" class="form-control" id="color" name="color" placeholder="Color">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="body_type" class="form-label">Body Type (e.g SUV)</label>
-                            <input type="text" class="form-control" id="body_type" name="body_type" placeholder="Body Type">
                         </div>
                         <div class="col-md-2">
                             <label for="registration_status">Status</label>

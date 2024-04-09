@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> VehiScan | Roles </title>
+    <title> MVIS | Roles </title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 

@@ -7,9 +7,23 @@
     });
 
         $(function() {
-            // add new applicant ajax request
-            $("#add_applicant_form").submit(function(e) {
-                e.preventDefault();
+        // Add new applicant ajax request
+        $("#add_applicant_form").submit(function(e) {
+            e.preventDefault();
+
+            // Check if any of the required fields are empty
+            var mi = $("#add_mi").val();
+            var serialNumber = $("#add_serial_number").val();
+            var idNumber = $("#add_id_number").val();
+
+            if (!mi || !serialNumber || !idNumber) {
+                // Display Swal error message for empty required fields
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill out all the required fields!',
+                });
+            } else {
                 const fd = new FormData(this);
                 $("#add_applicant_btn").text('Adding...');
                 $.ajax({
@@ -53,7 +67,8 @@
                         $("#add_applicant_btn").text('Add Applicant');
                     }
                 });
-            });
+            }
+        });
 
             // edit applicant ajax request
             $(document).on('click', '.editIcon', function(e) {
@@ -152,6 +167,84 @@
         });
     });
 });
+
+// DISPLAY OWNER INFORMATION
+$(document).on('click', '.transferApplicant', function() {
+    // Get the data attributes from the clicked button
+    var currentUser = $(this).data('current-user');
+    var applicantID = $(this).data('applicant-id');
+    var vehicleID = $(this).data('vehicle-id');
+    var driverID = $(this).data('driver-id');
+
+    // Set the input field values with the extracted user ID and name
+    $('#current_user').val(currentUser);
+
+    // Extract the user's name from the data attribute and populate the corresponding input field
+    var currentUserName = $(this).data('current-user-name');
+    $('#current_user_name').val(currentUserName);
+
+    // Set the input field values with the extracted user ID and name
+    $('#applicant_id').val(applicantID);
+    $('#vehicle_id').val(vehicleID);
+    $('#driver_id').val(driverID);
+
+    // Show the modal
+    $('#userTransferModal').modal('show');
+});
+
+// Display confirmation prompt when form is submitted
+$('#transfer_form').submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Get the data attributes from the form inputs
+    var currentUser = $('#current_user').val();
+    var applicantId = $('#applicant_id').val();
+    var vehicleId = $('#vehicle_id').val();
+    var driverId = $('#driver_id').val();
+
+    // Display confirmation prompt using SweetAlert
+    swal.fire({
+        title: 'Are you sure?',
+        text: 'Once transferred, ownership cannot be reverted!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, transfer it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Proceed with the transfer process
+
+            // Get the form data
+            var formData = $(this).serialize();
+
+            // Perform AJAX request to update ownership
+            $.ajax({
+                url: '{{ route('applicant.transfer') }}', // Use the route helper function to get the route URL
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    swal.fire('Applicant Transferred Successfully', '', 'success');
+                    // Reset the chosen user
+                    $('#user_id').val('');
+                    // Close the modal
+                    $('#userTransferModal').modal('hide');
+                    // Call ManageApplicants to refresh the table
+                    ManageApplicants();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response (if needed)
+                    console.error(xhr.responseText); // Log the error response to the console
+                }
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            // User clicked cancel, do nothing
+            return false;
+        }
+    });
+});
+
 
 
 
@@ -262,6 +355,13 @@
         $('#ApplicantModal').html("Edit Applicant");
         $('#editApplicantModal').modal('show');
         $('#id').val('');
+    }
+
+   //TRANSFER
+    function transfer() {
+        $('#transfer_form').trigger("reset");
+        $('#TransferModal').html("Transfer Applicant");
+        $('#userTransferModal').modal('show');
     }
 </script>
 <!-- Accept Only 11 Numbers in Contact -->

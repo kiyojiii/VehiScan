@@ -60,7 +60,7 @@
 
                             <div class="col-md">
                                 <label for="serial_number">Serial Number</label>
-                                <input type="text" id="add_serial_number" name="serial_number" class="form-control" placeholder="Serial Number" required>
+                                <input type="text" id="add_serial_number" name="serial_number" class="form-control" placeholder="Serial Number">
                             </div>
                             <!-- <script>
                                 // JavaScript code to enforce numeric input for the serial number field
@@ -71,7 +71,7 @@
                             </script> -->
                             <div class="col-md">
                                 <label for="id_number">ID Number</label>
-                                <input type="text" id="add_id_number" name="id_number" class="form-control" placeholder="ID Number" required>
+                                <input type="text" id="add_id_number" name="id_number" class="form-control" placeholder="ID Number">
                             </div>
                             <script>
                                 // JavaScript code to enforce numeric input for the ID number field
@@ -88,7 +88,7 @@
                             </div>
                             <div class="col-md">
                                 <label for="mi">Middle Initial (Letter Only)</label>
-                                <input type="text" name="mi" id="add_mi" class="form-control" placeholder="Middle Initial" maxlength="1" required>
+                                <input type="text" name="mi" id="add_mi" class="form-control" placeholder="Middle Initial" maxlength="1">
                             </div>
 
                             <div class="col-md">

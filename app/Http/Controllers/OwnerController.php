@@ -43,7 +43,8 @@ class OwnerController extends Controller
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>No.</th>
+                <th>Serial No.</th>
+                <th>ID No.</th>
                 <th>Name</th>
                 <th>Vehicle</th>
                 <th>Appointment</th>
@@ -65,7 +66,8 @@ class OwnerController extends Controller
                 $rolestatus = $rolestatusID ? $rolestatusID->applicant_role_status : 'N/A';
 
                 $output .= '<tr>
-                    <td>' . $rs->id . '</td>
+                    <td>' . $rs->serial_number . '</td>
+                    <td>' . $rs->id_number . '</td>
                     <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
                     <td>' . $vehiclePlate . '</td>
                     <td>' . $appointment . '</td>

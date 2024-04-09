@@ -6,7 +6,7 @@
             </div>
             <div class="col-sm-6">
                 <div class="text-sm-end d-none d-sm-block">
-                    Designed & Developed by CJV
+                    Designed & Developed by Team Unity
                 </div>
             </div>
         </div>

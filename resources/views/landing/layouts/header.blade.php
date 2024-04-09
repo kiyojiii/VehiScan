@@ -9,7 +9,7 @@
   <meta name="author" content="TemplateMo">
   <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 
-  <title>VehiScan</title>
+  <title>MVIS</title>
 
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
@@ -60,7 +60,7 @@
           <nav class="main-nav">
             <!-- ***** Logo Start ***** -->
             <a href="{{ url('/') }}" class="logo">
-              VehiScan
+              MVIS
             </a>
             <!-- ***** Logo End ***** -->
             <!-- ***** Menu Start ***** -->

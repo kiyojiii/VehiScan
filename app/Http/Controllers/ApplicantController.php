@@ -12,6 +12,7 @@ use App\Models\Appointment;
 use App\Models\Statuses;
 use App\Models\Vehicle;
 use App\Models\Driver;
+use App\Models\User;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ApplicantController extends Controller
@@ -51,15 +52,21 @@ class ApplicantController extends Controller
             foreach ($applicant as $rs) {
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($rs->vehicle_id);
+                $appointmentID = Appointment::find($rs->appointment_id);
+                $rolestatusID = Statuses::find($rs->status_id);
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+                $appointment = $appointmentID ? $appointmentID->appointment : 'N/A';
+                $rolestatus = $rolestatusID ? $rolestatusID->applicant_role_status : 'N/A';
+
 
                 $output .= '<tr>
                     <td>' . $rs->id . '</td>
                     <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
                     <td>' . $vehiclePlate . '</td>
-                    <td>' . $rs->position_designation . '</td>
+                    <td>' . $appointment . '</td>
+                    <td>' . $rolestatus . '</td>
                     <td>' . $rs->approval_status . '</td>
                     <td>
                         <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
@@ -82,7 +89,8 @@ class ApplicantController extends Controller
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
         $drivers = Driver::all();
-        return view('applicants.manage', compact('applicantcount', 'drivers', 'vehicles', 'role_status', 'appointments'));
+        $users = User::all();
+        return view('applicants.manage', compact('users', 'applicantcount', 'drivers', 'vehicles', 'role_status', 'appointments'));
     }
 
     public function ManageApplicant()
@@ -93,18 +101,23 @@ class ApplicantController extends Controller
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>No.</th>
+                <th>Serial No.</th>
+                <th>ID No.</th>
                 <th>Name</th>
-                <th>Vehicle</th>
-                <th>Office</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Appointment</th>
+                <th class="text-center">Role Status</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>';
             foreach ($applicant as $rs) {
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($rs->vehicle_id);
+                $appointmentID = Appointment::find($rs->appointment_id);
+                $rolestatusID = Statuses::find($rs->status_id);
+
                 $vehicleID = $vehicle ? $vehicle->id : 'N/A'; // Get the Vehicle ID or set it to 'N/A' if not found
 
                 // Find the driver associated with the vehicle
@@ -112,13 +125,20 @@ class ApplicantController extends Controller
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+                $appointment = $appointmentID ? $appointmentID->appointment : 'N/A';
+                $rolestatus = $rolestatusID ? $rolestatusID->applicant_role_status : 'N/A';
+
+                $user = User::find($rs->user_id); // Assuming User is your User model
+                $userName = $user ? $user->name : 'N/A'; // Get the user's name or set it to 'N/A' if user not found
 
                 $output .= '<tr>
-                    <td>' . $rs->id . '</td>
+                    <td>' . $rs->serial_number . '</td>
+                    <td>' . $rs->id_number . '</td>
                     <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
-                    <td>' . $vehiclePlate . '</td>
-                    <td>' . $rs->office_department_agency . '</td>
-                    <td>' . $rs->approval_status . '</td>
+                    <td class="text-center">' . $vehiclePlate . '</td>
+                    <td class="text-center">' . $appointment . '</td>
+                    <td class="text-center">' . $rolestatus . '</td>
+                    <td class="text-center">' . $rs->approval_status . '</td>
                     <td>';
 
                 if (auth()->user()->can('view-applicant')) {
@@ -126,6 +146,9 @@ class ApplicantController extends Controller
                 }
                 if (auth()->user()->can('delete-applicant')) {
                     $output .= '<a href="#" class="text-danger mx-1 deleteApplicant" data-applicant-id="' . $rs->id . '" data-vehicle-id="' . $vehicleID . '" data-driver-id="' . $driverID . '"><i class="bi-trash h4"></i></a>';
+                }
+                if (auth()->user()->can('edit-applicant')) {
+                    $output .= '<a href="#" class="text-primary mx-1 transferApplicant" data-current-user="' . $rs->user_id . '" data-current-user-name="' . $userName . '" data-applicant-id="' . $rs->id . '" data-vehicle-id="' . $vehicleID . '" data-driver-id="' . $driverID . '"><i class="bx bx-transfer h4"></i></a>';
                 }
 
                 $output .= '</td>
@@ -185,7 +208,7 @@ class ApplicantController extends Controller
                 // Driver Details
                 'dname' => 'required|string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'required|image|max:2048',
-                'adname' => 'nullable|string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
+                'adname' => 'nullable|string|max:255',
                 'adaddress' => 'nullable|string|max:255',
                 'authorized_driver_license_image' => 'nullable|image|max:2048',
                 'driver_approval' => 'nullable|string|max:255',
@@ -302,9 +325,9 @@ class ApplicantController extends Controller
                 'user_id' => $user_id,
                 'driver_name' => $request->dname,
                 'driver_license_image' => $dlfileName,
-                'authorized_driver_license_image' => $adlfileName,
-                'authorized_driver_name' => $request->adname,
-                'authorized_driver_address' => $request->adaddress,
+                'authorized_driver_license_image' => $adlfileName ?: 'N/A',
+                'authorized_driver_name' => $request->adname ?: 'N/A',
+                'authorized_driver_address' => $request->adaddress ?: 'N/A',
                 'approval_status' => $approval_status, // Default
                 'reason' => $reason, // Default
             ];
@@ -595,7 +618,7 @@ class ApplicantController extends Controller
             $validator = Validator::make($request->all(), [
                 'dname' => 'string|max:255|unique:drivers,driver_name,' . $request->driver_id,
                 'driver_license_image' => 'image|max:2048', // Assuming it's an image file
-                'adname' => 'nullable|string|max:255|unique:drivers,authorized_driver_name,' . $request->driver_id,
+                'adname' => 'nullable|string|max:255',
                 'adaddress' => 'nullable|string|max:255',
                 'authorized_driver_license_image' => 'nullable|image|max:2048', // Assuming it's an image file
                 'driver_approval_status' => '|string|max:255',
@@ -1016,7 +1039,8 @@ class ApplicantController extends Controller
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>No.</th>
+                <th>Serial No.</th>
+                <th>ID No.</th>
                 <th>Applicant</th>
                 <th>Vehicle</th>
                 <th>Appointment</th>
@@ -1040,7 +1064,8 @@ class ApplicantController extends Controller
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
 
                 $output .= '<tr>
-                <td>' . $rs->id . '</td>
+                <td>' . $rs->serial_number . '</td>
+                <td>' . $rs->id_number . '</td>
                 <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
                 <td>' . $vehiclePlate . '</td>
                 <td>' . $appointment . '</td>
@@ -1063,5 +1088,26 @@ class ApplicantController extends Controller
         } else {
             echo '<h1 class="text-center text-success my-5"><i class="bx bx-check-circle"></i> No Pending Applicants</h1>';
         }
+    }
+
+    public function transfer(Request $request)
+    {
+        // Get the data from the request
+        $applicantId = $request->input('applicant_id');
+        $vehicleId = $request->input('vehicle_id');
+        $driverId = $request->input('driver_id');
+        $newUserId = $request->input('user_id');
+
+        // Update the applicant's user_id
+        Applicant::where('id', $applicantId)->update(['user_id' => $newUserId]);
+
+        // Update the vehicle's user_id
+        Vehicle::where('id', $vehicleId)->update(['user_id' => $newUserId]);
+
+        // Update the driver's user_id
+        Driver::where('id', $driverId)->update(['user_id' => $newUserId]);
+
+        // Return a response (if needed)
+        return response()->json(['message' => 'Ownership transferred successfully']);
     }
 }

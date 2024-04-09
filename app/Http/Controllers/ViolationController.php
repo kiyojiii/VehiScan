@@ -19,57 +19,66 @@ class ViolationController extends Controller
         return view('violations.index', compact('totalviolations', 'vehicles'));
     }
 
-    public function fetchAllViolation()
+    public function fetchAllViolation(Request $request)
     {
-        $violation = Violation::all();
-        $output = '';
-        $row = 1; // Initialize the row counter
-        if ($violation->count() > 0) {
-            $output .= '<table class="table table-striped align-middle">
-            <thead>
-              <tr>
-                <th class="text-center">No.</th>
-                <th class="text-center">Vehicle</th>
-                <th class="text-center">Violation</th>
-                <th class="text-center">Date</th>
-                <th class="text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>';
-            
-            foreach ($violation as $rs) {
-                // Find the vehicle associated with the violation
-                $vehicle = Vehicle::find($rs->vehicle_id);
+        $query = Violation::query();
 
-                // Get the plate number or set it to 'N/A' if not found
-                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
-                $vehicle_id = $vehicle ? $vehicle->id : 'N/A';
-
-                $output .= '<tr>
-                    <td class="text-center">' . $row++ . '</td>
-                    <td class="text-center">' . $vehiclePlate . '</td>
-                    <td class="text-center">' . $rs->violation . '</td>
-                    <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($rs->created_at)) . '</td>
-                    <td class="text-center">'; 
-
-                    if (auth()->user()->can('view-violation')) {
-                        $output .= '<a href="' . route('vehicles.show', $vehicle_id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
-                    }
-                    if (auth()->user()->can('edit-violation')) {
-                        $output .= '<a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
-                    }
-                    if (auth()->user()->can('delete-violation')) {
-                        $output .= '<a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
-                    }
-    
-                    $output .= '</td>
-                </tr>';
-            }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h1 class="text-center text-secondary my-5">No record in the database!</h1>';
+        // Apply date filter if provided
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
         }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        // Apply plate number filter if provided
+        if ($request->filled('plate_number')) {
+            $query->whereHas('vehicle', function ($q) use ($request) {
+                $q->where('plate_number', $request->plate_number);
+            });
+        }
+
+        $violations = $query->get();
+
+        if ($violations->isEmpty()) {
+            return '<h1 class="text-center text-secondary my-5">No records found!</h1>';
+        }
+
+        $output = '<table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No.</th>
+                                <th class="text-center">Vehicle</th>
+                                <th class="text-center">Violation</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>';
+
+        foreach ($violations as $index => $violation) {
+            $output .= '<tr>
+                            <td class="text-center">' . ($index + 1) . '</td>
+                            <td class="text-center">' . $violation->vehicle->plate_number . '</td>
+                            <td class="text-center">' . $violation->violation . '</td>
+                            <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($violation->created_at)) . '</td>
+                            <td class="text-center">';
+            if (auth()->user()->can('view-violation')) {
+                $output .= '<a href="' . route('vehicles.show', $violation->vehicle->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>';
+            }
+            if (auth()->user()->can('edit-violation')) {
+                $output .= '<a href="#" id="' . $violation->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
+            }
+            if (auth()->user()->can('delete-violation')) {
+                $output .= '<a href="#" id="' . $violation->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
+            }
+
+            $output .= '</td></tr>';
+        }
+
+        $output .= '</tbody></table>';
+
+        return $output;
     }
 
     // insert a new violation ajax request
@@ -125,7 +134,7 @@ class ViolationController extends Controller
             $validator = Validator::make($request->all(), [
                 'edit-vehicle_id' => 'string|max:255',
                 'edit-violation' => 'string|max:255',
-            ]);            
+            ]);
 
             // If validation fails, return error response
             if ($validator->fails()) {
@@ -165,14 +174,14 @@ class ViolationController extends Controller
     {
         $id = $request->id;
         $violation = Violation::find($id);
-        
+
         if (!$violation) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Violation not found'
             ], 404);
         }
-        
+
         // Attempt to delete the violation
         try {
             $violation->delete();
@@ -187,5 +196,4 @@ class ViolationController extends Controller
             ], 500);
         }
     }
-    
 }

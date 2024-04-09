@@ -13874,8 +13874,8 @@ fieldset:disabled .btn {
     }
 }
 :root {
-    --bs-header-bg: #fff;
-    --bs-header-item-color: #555b6d;
+    --bs-header-bg: #a41d21;
+    --bs-header-item-color: #fff;
     --bs-header-dark-bg: #2a3042;
     --bs-header-dark-item-color: #e9ecef;
     --bs-topbar-search-bg: #f3f3f9;
@@ -13890,7 +13890,7 @@ fieldset:disabled .btn {
 }
 [data-bs-theme="dark"] {
     --bs-header-bg: #262b3c;
-    --bs-header-item-color: #a6b0cf;
+    --bs-header-item-color: #fff;
     --bs-header-dark-bg: #556ee6;
     --bs-header-dark-item-color: #e9ecef;
     --bs-topbar-search-bg: #2a3042;

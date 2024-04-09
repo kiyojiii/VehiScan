@@ -36,7 +36,6 @@ class TimeController extends Controller
                 <th class="text-center">Time In</th>
                 <th class="text-center">Time Out</th>
                 <th class="text-center">Time Difference</th>
-                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>';
@@ -68,16 +67,6 @@ class TimeController extends Controller
                     <td class="text-center">' . date('F d, Y \a\t h:i A', strtotime($time->time_in)) . '</td>
                     <td class="text-center">' . $current_time_out . '</td>
                     <td class="text-center">' . $days . ' days, ' . $hours . ' hours, ' . $minutes . ' minutes</td>
-                    <td class="text-center">';
-
-                if (auth()->user()->can('edit-time')) {
-                    $output .= '<a href="#" id="' . $time->id . '" class="text-success mx-1 editIcon" onClick="edit()"><i class="bi-pencil-square h4"></i></a>';
-                }
-                if (auth()->user()->can('delete-time')) {
-                    $output .= '<a href="#" id="' . $time->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i></a>';
-                }
-
-                $output .= '</td>
                 </tr>';
             }
             $output .= '</tbody></table>';
@@ -267,23 +256,24 @@ class TimeController extends Controller
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center">Vehicle</th>
-                <th class="text-center">Remark</th>
+                <th class="text-center">Activity</th>
               </tr>
             </thead>
             <tbody>';
             foreach ($records as $record) {
-
+    
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($record->vehicle_id);
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
-
+       
                 $output .= '<tr>
                     <td class="text-center">' . $row++ . '</td> <!-- Increment row counter -->
                     <td class="text-center">' . $vehiclePlate . '</td>
                     <td class="text-center">' . $record->remarks . '</td>
                 </tr>';
+
             }
             $output .= '</tbody></table>';
         } else {

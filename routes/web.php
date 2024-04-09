@@ -185,6 +185,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('applicants-pending', [ApplicantController::class, 'pending'])->name('applicants.applicants_pending');
     Route::get('/PendingApplicant', [ApplicantController::class, 'PendingApplicant'])->name('PendingApplicant');
 
+    #APPLICANT TRANSFER
+    Route::post('applicants/transfer', [ApplicantController::class, 'transfer'])->name('applicant.transfer');
+
     Route::post('user-request/approve-all', [ApplicantController::class, 'approve_all'])->name('applicant.approve_all');
     Route::post('user-request/approve-applicant', [ApplicantController::class, 'approve_applicant'])->name('applicant.approve_applicant');
     Route::post('user-request/approve-vehicle', [ApplicantController::class, 'approve_vehicle'])->name('applicant.approve_vehicle');

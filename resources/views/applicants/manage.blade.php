@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Applicant</title>
+    <title>MVIS | Applicant</title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
     
@@ -92,53 +92,32 @@
                             </div>
 
                             <div class="card-body border-bottom">
-                                <form>
-                                    <div class="row justify-content-center"> <!-- Center the filters -->
+                                <!-- <form>
+                                    <div class="row justify-content-center"> 
                                         <div class="col-xl col-sm-6">
                                             <div class="mb-3">
-                                                <label class="form-label">Date :</label>
+                                                <label class="form-label">Date:</label>
                                                 <input type="text" class="form-control" id="orderid-input" placeholder="Select date" data-date-format="dd M, yyyy" data-date-orientation="bottom auto" data-provide="datepicker" data-date-autoclose="true">
                                             </div>
                                         </div>
 
                                         <div class="col-xl col-sm-6">
                                             <div class="mb-3">
-                                                <label class="form-label">Coin :</label>
+                                                <label class="form-label">Type:</label>
                                                 <select class="form-control select2-search-disable">
-                                                    <option value="BTC" selected>Bitcoin</option>
-                                                    <option value="ETH">Ethereum</option>
-                                                    <option value="LTC">litecoin</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xl col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Type :</label>
-                                                <select class="form-control select2-search-disable">
-                                                    <option value="BU" selected>Buy</option>
+                                                    <option value="BU">Buy</option>
                                                     <option value="SE">Sell</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-xl col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Status :</label>
-                                                <select class="form-control select2-search-disable">
-                                                    <option value="CO" selected>Completed</option>
-                                                    <option value="PE">Pending</option>
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div class="col-xl col-sm-6 align-self-end">
                                             <div class="mb-3">
-                                                <button type="button" class="btn btn-primary w-md">Add Order</button>
+                                                <button type="button" class="btn btn-primary w-md">Filter</button>
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </form> -->
 
 
                                 <div class="card-body" id="manage_all_applicants">

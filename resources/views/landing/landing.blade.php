@@ -14,7 +14,7 @@
                 <div class="col-lg-12">
                     <div class="caption">
                         <h6>Hello!</h6>
-                        <h2>Welcome to VehiScan</h2>
+                        <h2>Welcome to MVIS</h2>
                         <p>A vehicle inventory system designed for MSU-IIT. Our platform allows staff and security guards to efficiently record vehicle entries and exits using QR code scanning. Users can register to access applications where they can input personal, vehicle, and driver information.</p>
                         <div class="main-button-red">
                             @if (Route::has('login'))
@@ -138,14 +138,14 @@
                 <div class="accordions is-first-expanded">
                     <article class="accordion">
                         <div class="accordion-head">
-                            <span>About VehiScan</span>
+                            <span>About MVIS</span>
                             <span class="icon">
                                 <i class="icon fa fa-chevron-right"></i>
                             </span>
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>VehiScan is a comprehensive vehicle inventory system designed to streamline the process of recording vehicle movements using QR codes. With VehiScan, users can efficiently track vehicle time-ins and time-outs, manage driver and vehicle information, and monitor vehicle violations. The system offers a user-friendly interface and robust features to ensure accurate and efficient management of vehicle records.</p>
+                                <p>MVIS is a comprehensive vehicle inventory system designed to streamline the process of recording vehicle movements using QR codes. With MVIS, users can efficiently track vehicle time-ins and time-outs, manage driver and vehicle information, and monitor vehicle violations. The system offers a user-friendly interface and robust features to ensure accurate and efficient management of vehicle records.</p>
                             </div>
                         </div>
                     </article>
@@ -158,7 +158,7 @@
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>VehiScan offers a range of features to meet the needs of vehicle management, including:</p>
+                                <p>MVIS offers a range of features to meet the needs of vehicle management, including:</p>
                                 <p>> Efficient recording of vehicle time-ins and time-outs using QR codes</p>
                                 <p>> Comprehensive management of driver and vehicle information </p>
                                 <p>> Monitoring and tracking of vehicle violations </p>
@@ -177,7 +177,7 @@
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>VehiScan can be seamlessly integrated with existing systems and databases, allowing for smooth data transfer and synchronization. Whether you're using an ERP system, a fleet management platform, or other software solutions, VehiScan can be customized to fit your needs and enhance your existing workflows.</p>
+                                <p>MVIS can be seamlessly integrated with existing systems and databases, allowing for smooth data transfer and synchronization. Whether you're using an ERP system, a fleet management platform, or other software solutions, MVIS can be customized to fit your needs and enhance your existing workflows.</p>
                             </div>
                         </div>
                     </article>
@@ -190,7 +190,7 @@
                         </div>
                         <div class="accordion-body">
                             <div class="content">
-                                <p>VehiScan prioritizes security and data protection, implementing advanced encryption protocols and access controls to safeguard sensitive information. With VehiScan, you can trust that your vehicle records are secure and protected from unauthorized access or tampering.</p>
+                                <p>MVIS prioritizes security and data protection, implementing advanced encryption protocols and access controls to safeguard sensitive information. With MVIS, you can trust that your vehicle records are secure and protected from unauthorized access or tampering.</p>
                             </div>
                         </div>
                     </article>

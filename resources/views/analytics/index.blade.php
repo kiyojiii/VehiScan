@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Analytics</title>
+    <title>MVIS | Analytics</title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
@@ -301,7 +301,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title mb-4">User Ratio</h4>
-                                        <div id="user_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-dark"]' class="apex-charts" dir="ltr"></div>
+                                        <div id="user_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-purple", "--bs-dark", "--bs-pink", "--bs-cyan", "--bs-teal", "--bs-orange"]' class="apex-charts" dir="ltr"></div>
                                     </div>
                                 </div>
                             </div>
@@ -310,7 +310,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title mb-4">Vehicle Registration Ratio</h4>
-                                        <div id="vehicle_status_chart" data-colors='["--bs-success", "--bs-secondary", "--bs-primary", "--bs-warning", "--bs-warning", "--bs-info", "--bs-light", "--bs-dark"]' class="apex-charts" dir="ltr"></div>
+                                        <div id="vehicle_status_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-purple", "--bs-dark", "--bs-pink", "--bs-cyan", "--bs-teal", "--bs-orange"]' class="apex-charts" dir="ltr"></div>
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +321,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title mb-4">Role Status Ratio</h4>
-                                        <div id="status_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-light", "--bs-dark"]' class="apex-charts" dir="ltr"></div>
+                                        <div id="status_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-purple", "--bs-dark", "--bs-pink", "--bs-cyan", "--bs-teal", "--bs-orange"]' class="apex-charts" dir="ltr"></div>
                                     </div>
                                 </div>
                             </div>
@@ -330,7 +330,9 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title mb-4">Appointment Ratio</h4>
-                                        <div id="appointment_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-light", "--bs-dark"]' class="apex-charts" dir="ltr"></div>
+                                
+                                        <div id="appointment_chart" data-colors='["--bs-primary", "--bs-secondary", "--bs-success", "--bs-danger", "--bs-warning", "--bs-info", "--bs-purple", "--bs-dark", "--bs-pink", "--bs-cyan", "--bs-teal", "--bs-orange"]' class="apex-charts" dir="ltr"></div>
+
                                     </div>
                                 </div>
                             </div>

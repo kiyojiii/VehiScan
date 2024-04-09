@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VehiScan | Dashboard</title>
+    <title>MVIS | Dashboard</title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
@@ -75,7 +75,7 @@
                                             </div>
                                             <div class="flex-grow-1 align-self-center">
                                                 <div class="text-muted">
-                                                    <p class="mb-2">Welcome to VehiScan</p>
+                                                    <p class="mb-2">Welcome to MVIS</p>
                                                     <h5 class="mb-1">{{ $user->name }}</h5>
                                                     <p class="mb-0">
                                                         @forelse ($user->getRoleNames() as $role)

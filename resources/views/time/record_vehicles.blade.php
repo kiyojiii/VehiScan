@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Record Vehicle </title>
+    <title>MVIS | Record Vehicle </title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
     
@@ -129,7 +129,7 @@
 
 
 
-                                <div class="text-center mt-4"><a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light btn-sm">View More <i class="mdi mdi-arrow-right ms-1"></i></a></div>
+                                <div class="text-center mt-4"><a href="{{ route('activity_feed') }}" class="btn btn-primary waves-effect waves-light btn-sm">View More <i class="mdi mdi-arrow-right ms-1"></i></a></div>
                             </div>
                         </div>
                         <!-- end card -->

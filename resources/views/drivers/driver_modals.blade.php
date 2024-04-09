@@ -28,18 +28,18 @@
                     <div class="row">
                         <div class="col-md">
                             <label for="adname">Authorized Driver Name</label>
-                            <input type="text" name="adname" class="form-control" placeholder="Authorized Driver Name" required>
+                            <input type="text" name="adname" class="form-control" placeholder="Authorized Driver Name">
                         </div>
                         <div class="col-md">
                             <label for="adaddress">Authorized Driver Address</label>
-                            <input type="text" name="adaddress" class="form-control" placeholder="Authorized Driver Address" required>
+                            <input type="text" name="adaddress" class="form-control" placeholder="Authorized Driver Address">
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-md">
                             <label for="authorized_driver_license_image">Authorized Driver's License</label>
-                            <input type="file" name="authorized_driver_license_image" class="form-control" required>
+                            <input type="file" name="authorized_driver_license_image" class="form-control">
                         </div>
                         <div class="col-md-2">
                             <label for="approval">Approval Status</label>
@@ -103,6 +103,17 @@
                     <h5 class="mt-4">Driver's Documents</h5>
                     <p class="text-danger">If the image doesn't change, please reload the page.</p>
                     <div class="row">
+                        
+                        <!-- Driver's License Input Box -->
+                        <div class="col-md">
+                            <label for="driver_license_image">Driver's License</label>
+                            <input type="file" name="driver_license_image" class="form-control">
+                        </div>
+                        <!-- Driver's License Image Display -->
+                        <div class="my-2 col-md">
+                            <div id="driver_license_image"></div>
+                        </div>
+
                         <!-- Authorized Driver's License Input Box -->
                         <div class="col-md">
                             <label for="authorized_driver_license_image">Authorized Driver's License</label>
@@ -113,15 +124,6 @@
                             <div id="authorized_driver_license_image"></div>
                         </div>
 
-                        <!-- Driver's License Input Box -->
-                        <div class="col-md">
-                            <label for="driver_license_image">Driver's License</label>
-                            <input type="file" name="driver_license_image" class="form-control">
-                        </div>
-                        <!-- Driver's License Image Display -->
-                        <div class="my-2 col-md">
-                            <div id="driver_license_image"></div>
-                        </div>
                     </div>
                     <br>
                     <div class="row">

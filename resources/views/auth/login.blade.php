@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> VehiScan | Login </title>
+    <title> MVIS | Login </title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
@@ -124,7 +124,7 @@
                                 <div class="my-auto">
 
                                     <div>
-                                        <h5 class="text-primary">Welcome To VehiScan !</h5>
+                                        <h5 class="text-primary">Welcome To MVIS!</h5>
                                         <p class="text-muted">Sign in to continue.</p>
                                     </div>
 

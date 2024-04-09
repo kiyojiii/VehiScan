@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>VehiScan | Time Record </title>
+    <title>MVIS | Time Record </title>
 
     <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
@@ -50,7 +50,7 @@
                                     <h5 class="mb-0 card-title flex-grow-1">Time Record Count: {{ $totaltime }}</h5>
                                     <div class="flex-shrink-0">
                                     @canany('create-time')
-                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add ??</a>
+                                        <!-- <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add ??</a> -->
                                     @endcanany
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
@@ -68,8 +68,8 @@
 
 
                             <div class="card-body border-bottom">
-                                <form>
-                                    <div class="row justify-content-center"> <!-- Center the filters -->
+                                <!-- <form>
+                                    <div class="row justify-content-center">
                                         <div class="col-xl col-sm-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Date :</label>
@@ -114,7 +114,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </form> -->
 
                                 <div class="card-body" id="show_all_time">
                                     <h1 class="text-center text-secondary my-5"> Loading... </h1>

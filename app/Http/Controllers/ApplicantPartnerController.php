@@ -29,9 +29,10 @@ class ApplicantPartnerController extends Controller
 
     public function fetchAllPartnerApplicant()
     {
-        // Query applicants with associated appointments where the appointment is 'Partner/Supplier'
+        // Query applicants with associated appointments where the appointment is 'Partner/Supplier' or 'Other/Partner'
         $applicants = Applicant::whereHas('appointment', function ($query) {
-            $query->where('appointment', 'Partner/Supplier');
+            $query->where('appointment', 'Partner/Supplier')
+                ->orWhere('appointment', 'Other/Partner');
         })->get();
 
         $output = '';
@@ -40,12 +41,14 @@ class ApplicantPartnerController extends Controller
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>No.</th>
+                <th>Serial No.</th>
+                <th>ID No.</th>
                 <th>Name</th>
-                <th>Vehicle</th>
-                <th>Position</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th class="text-center">Vehicle</th>
+                <th class="text-center">Appointment</th>
+                <th class="text-center">Role Status</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Action</th>
               </tr>
             </thead>
             <tbody>';
@@ -53,16 +56,25 @@ class ApplicantPartnerController extends Controller
             foreach ($applicants as $rs) {
                 // Find the vehicle associated with the owner
                 $vehicle = Vehicle::find($rs->vehicle_id);
+                $appointmentID = Appointment::find($rs->appointment_id);
+                $rolestatusID = Statuses::find($rs->status_id);
+
 
                 // Get the plate number or set it to 'N/A' if not found
                 $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+                // Get the plate number or set it to 'N/A' if not found
+                $vehiclePlate = $vehicle ? $vehicle->plate_number : 'N/A';
+                $appointment = $appointmentID ? $appointmentID->appointment : 'N/A';
+                $rolestatus = $rolestatusID ? $rolestatusID->applicant_role_status : 'N/A';
 
                 $output .= '<tr>
-                    <td>' . $rs->id . '</td>
+                    <td>' . $rs->serial_number . '</td>
+                    <td>' . $rs->id_number . '</td>
                     <td>' . $rs->first_name . ' ' . $rs->middle_initial . '. ' . $rs->last_name . '</td>
-                    <td>' . $vehiclePlate . '</td>
-                    <td>' . $rs->position_designation . '</td>
-                    <td>' . $rs->approval_status . '</td>
+                    <td class="text-center">' . $vehiclePlate . '</td>
+                    <td class="text-center">' . $appointment . '</td>
+                    <td class="text-center">' . $rolestatus . '</td>
+                    <td class="text-center">' . $rs->approval_status . '</td>
                     <td>
                         <a href="' . route('applicants.show', $rs->id) . '" class="text-primary mx-1"><i class="bi bi-eye h4"></i></a>
                         <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteApplicant"><i class="bi-trash h4"></i></a>
@@ -139,14 +151,16 @@ class ApplicantPartnerController extends Controller
         $drivers = Driver::all();
 
         $owners = Applicant::whereHas('appointment', function ($query) {
-            $query->where('appointment', 'Partner/Supplier');
+            $query->where('appointment', 'Partner/Supplier')
+                ->orWhere('appointment', 'Other/Partner');
         })->get();
 
         $vehicles = Vehicle::all();
 
         // Query applicants with associated appointments where the appointment is 'Partner/Supplier'
         $applicants = Applicant::whereHas('appointment', function ($query) {
-            $query->where('appointment', 'Partner/Supplier');
+            $query->where('appointment', 'Partner/Supplier')
+                ->orWhere('appointment', 'Other/Partner');
         })->get();
 
         // Extract the IDs of the applicants
@@ -162,7 +176,8 @@ class ApplicantPartnerController extends Controller
     {
         // Query applicants with associated appointments where the appointment is 'Partner/Supplier'
         $applicants = Applicant::whereHas('appointment', function ($query) {
-            $query->where('appointment', 'Partner/Supplier');
+            $query->where('appointment', 'Partner/Supplier')
+                ->orWhere('appointment', 'Other/Partner');
         })->get();
 
         // Extract the IDs of the applicants
@@ -170,7 +185,7 @@ class ApplicantPartnerController extends Controller
 
         // Query vehicles of the selected applicants
         $vehicles = Vehicle::whereIn('owner_id', $applicantIds)->get();
-
+        $row = 1; // Initialize the row counter
         $output = '';
         if ($vehicles->count() > 0) {
             $output .= '<table class="table table-striped align-middle">
@@ -213,7 +228,7 @@ class ApplicantPartnerController extends Controller
                 // $qrCodeBase64 = base64_encode($qrCode);
 
                 $output .= '<tr>
-                <td>' . $vehicle->id . '</td>
+                <td>' . $row++ . '</td> <!-- Increment row counter -->
                 <td class="text-center">' . $first_letter . '. ' . $owner_last . '</td>
                 <td class="text-center">' . $vehicle->plate_number . '</td>
                 <td class="text-center">' . $vehicle->vehicle_make . '</td>
