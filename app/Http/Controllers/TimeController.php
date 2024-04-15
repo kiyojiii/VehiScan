@@ -282,4 +282,26 @@ class TimeController extends Controller
 
         return $output;
     }
+
+    public function whosevehicle()
+    {
+        return view('findwhosevehicle');
+    }
+    public function getVehicleData(Request $request)
+    {
+        $vehicleCode = $request->input('vehicle_code');
+    
+        // Query the vehicle based on the provided code
+        $vehicle = Vehicle::where('vehicle_code', $vehicleCode)->first();
+        $applicantID = $vehicle->owner_id;
+        $applicant = Applicant::find($applicantID);
+    
+        if ($vehicle && $applicant) {
+            // Vehicle and applicant found, return their data
+            return response()->json(['success' => true, 'vehicle' => $vehicle, 'applicant' => $applicant]);
+        } else {
+            // Vehicle or applicant not found
+            return response()->json(['success' => false, 'message' => 'Vehicle or applicant not found'], 404);
+        }
+    }
 }

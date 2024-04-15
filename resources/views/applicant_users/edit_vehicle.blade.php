@@ -45,24 +45,28 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
+                        <div class="col-md-2">
+                            <label for="vehicle_make" class="form-label">Vehicle Make <br> (e.g Toyota)</label>
                             <input type="text" class="form-control" id="vehicle_make" name="vehicle_make" placeholder="Vehicle Make">
                         </div>
-                        <div class="col-md-3">
-                            <label for="year_model" class="form-label">Year Model (e.g Vios E 2020)</label>
+                        <div class="col-md-2">
+                            <label for="vehicle_category" class="form-label">Vehicle Category <br> (e.g Car)</label>
+                            <input type="text" class="form-control" id="vehicle_category" name="vehicle_category" placeholder="Vehicle Category">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="year_model" class="form-label">Year Model <br> (e.g Vios E 2020)</label>
                             <input type="text" class="form-control" id="year_model" name="year_model" placeholder="Year Model">
                         </div>
                         <div class="col-md-2">
-                            <label for="body_type" class="form-label">Body Type (e.g Sedan)</label>
+                            <label for="body_type" class="form-label">Body Type <br> (e.g Sedan)</label>
                             <input type="text" class="form-control" id="body_type" name="body_type" placeholder="Body Type">
                         </div>
                         <div class="col-md-2">
-                            <label for="color" class="form-label">Color (e.g Black)</label>
+                            <label for="color" class="form-label">Color <br> (e.g Black)</label>
                             <input type="text" class="form-control" id="color" name="color" placeholder="Color">
                         </div>
                         <div class="col-md-2">
-                            <label for="registration_status">Status</label>
+                            <label for="registration_status">Status <br> (Vehicle Status)</label>
                             <input type="text" class="form-control" name="registration_status" id="registration_status" placeholder="Registration Status" value="Active" readonly>
                         </div>
                     </div>

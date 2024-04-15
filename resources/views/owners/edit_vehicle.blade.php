@@ -45,27 +45,31 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number</label>
                             <input type="text" class="form-control" id="plate_number" name="plate_number">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="vehicle_make" class="form-label">Vehicle Make</label>
                             <input type="text" class="form-control" id="vehicle_make" name="vehicle_make">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="vehicle_category" class="form-label">Vehicle Category</label>
+                            <input type="text" class="form-control" id="vehicle_category" name="vehicle_category">
+                        </div>
+                        <div class="col-md-3">
                             <label for="year_model" class="form-label">Year Model</label>
                             <input type="text" class="form-control" id="year_model" name="year_model">
                         </div>
                     </div>
                     <div class="row mb-3">
+                    <div class="col-md-2">
+                            <label for="body_type" class="form-label">Body Type</label>
+                            <input type="text" class="form-control" id="body_type" name="body_type">
+                        </div>
                         <div class="col-md-2">
                             <label for="color" class="form-label">Color</label>
                             <input type="text" class="form-control" id="color" name="color">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="body_type" class="form-label">Body Type</label>
-                            <input type="text" class="form-control" id="body_type" name="body_type">
                         </div>
                         <div class="col-md-2">
                             <label for="registration_status">Status</label>

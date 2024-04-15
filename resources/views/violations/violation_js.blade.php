@@ -281,3 +281,36 @@ $(function() {
         });
     });
 </script>
+
+
+// Get the current date
+    var currentDate = new Date();
+
+    // Set the current month and year
+    var currentMonth = currentDate.getMonth() + 1; // Note: JavaScript months are 0-indexed
+    var currentYear = currentDate.getFullYear();
+
+    // Set the value of the datepicker to the current month
+    $('#monthly_date').datepicker('update', currentMonth + '/' + currentYear);
+
+    // Initialize date picker for the month input field
+    $('#monthly_date').datepicker({
+        format: 'mm/yyyy', // Show only month and year
+        startView: 'months', // Start view at months
+        minViewMode: 'months', // Set minimum view mode to months
+        autoclose: true,
+        orientation: 'bottom',
+        todayHighlight: true // Highlight today's date
+    });
+
+    // Apply filter when 'Filter' button is clicked
+    $('#monthly_filter').click(function() {
+        var selectedMonth = $('#monthly_date').val();
+
+        // Fetch monthly vehicles with selected month
+        fetchMonthlyVehicles(selectedMonth);
+    });
+
+    // Fetch vehicles for the current month on page load
+    var currentMonthDate = currentMonth + '/' + currentYear;
+    fetchMonthlyVehicles(currentMonthDate);

@@ -21,6 +21,7 @@ class Vehicle extends Model
         'owner_name',
         'owner_address',
         'plate_number',
+        'vehicle_category',
         'vehicle_make',
         'front_photo',
         'side_photo',

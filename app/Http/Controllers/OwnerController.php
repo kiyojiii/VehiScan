@@ -371,10 +371,11 @@ class OwnerController extends Controller
 
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
-                'owner_name' => 'string|max:255',
+                'real_owner_name' => 'string|max:255',
                 'owner_address' => 'string|max:255',
                 'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
+                'vehicle_category' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
                 'body_type' => 'string|max:255',
@@ -450,6 +451,7 @@ class OwnerController extends Controller
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
+                'vehicle_category' => $request->vehicle_category,
                 'year_model' => $request->year_model,
                 'color' => $request->color,
                 'body_type' => $request->body_type,

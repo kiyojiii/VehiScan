@@ -40,15 +40,19 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number</label>
                             <input type="text" class="form-control" id="plate_number" name="plate_number" placeholder="Plate Number">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="vehicle_make" class="form-label">Vehicle Make</label>
                             <input type="text" class="form-control" id="vehicle_make" name="vehicle_make" placeholder="Vehicle Make">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="vehicle_category" class="form-label">Vehicle Category</label>
+                            <input type="text" class="form-control" id="vehicle_category" name="vehicle_category" placeholder="Vehicle Category">
+                        </div>
+                        <div class="col-md-3">
                             <label for="year_model" class="form-label">Year Model</label>
                             <input type="text" class="form-control" id="year_model" name="year_model" placeholder="Year Model">
                         </div>

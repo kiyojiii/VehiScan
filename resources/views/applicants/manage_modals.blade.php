@@ -131,11 +131,11 @@
                         <section id="vehicleDetailsSection" style="display: none;">
                             <h5>Vehicle Info</h5>
                             <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="owner_name" class="form-label">Owner Name</label>
                                     <input type="text" class="form-control" name="owner_name">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="owner_address" class="form-label">Owner Address</label>
                                     <input type="text" class="form-control" name="owner_address">
                                 </div>
@@ -143,11 +143,15 @@
                                     <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                                     <input type="text" class="form-control" name="plate_number">
                                 </div>
-                            </div>
-                            <div class="row mb-3">
                                 <div class="col-md-3">
                                     <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
                                     <input type="text" class="form-control" name="vehicle_make">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="vehicle_category" class="form-label">Vehicle Category (e.g Car )</label>
+                                    <input type="text" class="form-control" name="vehicle_category">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="year_model" class="form-label">Year Model (e.g Vios 2023)</label>

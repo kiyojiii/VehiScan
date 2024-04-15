@@ -77,7 +77,7 @@ class RequestController extends Controller
             }
             $output .= '</tbody></table>';
         } else {
-            $output = '<h1 class="text-center text-success my-5"><i class="bx bx-check-circle"></i>No More User Requests</h1>';
+            $output = '<h1 class="text-center text-success my-5"><i class="bx bx-check-circle"></i>All Cleared, No User Requests</h1>';
         }
         return $output;
     }

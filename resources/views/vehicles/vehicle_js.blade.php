@@ -164,6 +164,7 @@
                         $("#owner_address").val(response.owner_address);
                         $("#plate_number").val(response.plate_number);
                         $("#vehicle_make").val(response.vehicle_make);
+                        $("#vehicle_category").val(response.vehicle_category);
                         $("#year_model").val(response.year_model);
                         $("#color").val(response.color);
                         $("#body_type").val(response.body_type);

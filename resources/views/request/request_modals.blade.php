@@ -51,15 +51,19 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                             <input type="text" class="form-control" id="plate_number" name="plate_number">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
                             <input type="text" class="form-control" id="vehicle_make" name="vehicle_make">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="vehicle_category" class="form-label">Vehicle Category (e.g Car)</label>
+                            <input type="text" class="form-control" id="vehicle_category" name="vehicle_category">
+                        </div>
+                        <div class="col-md-3">
                             <label for="year_model" class="form-label">Year Model (e.g Vios 2023)</label>
                             <input type="text" class="form-control" id="year_model" name="year_model">
                         </div>

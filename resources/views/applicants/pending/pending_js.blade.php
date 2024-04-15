@@ -55,8 +55,8 @@
             }
         });
     });
-});
 
+    
     // fetch all pending ajax request
     PendingApplicants();
 
@@ -74,4 +74,5 @@
             }
         });
     }
+});
 </script>

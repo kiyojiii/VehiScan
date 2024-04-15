@@ -131,11 +131,11 @@
                         <section id="vehicleDetailsSection" style="display: none;">
                             <h5>Vehicle Info</h5>
                             <div class="row mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="owner_name" class="form-label">Owner Name</label>
                                     <input type="text" class="form-control" name="owner_name">
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="owner_address" class="form-label">Owner Address</label>
                                     <input type="text" class="form-control" name="owner_address">
                                 </div>
@@ -143,26 +143,30 @@
                                     <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                                     <input type="text" class="form-control" name="plate_number">
                                 </div>
-                            </div>
-                            <div class="row mb-3">
                                 <div class="col-md-3">
                                     <label for="vehicle_make" class="form-label">Vehicle Make (e.g Toyota)</label>
                                     <input type="text" class="form-control" name="vehicle_make">
                                 </div>
-                                <div class="col-md-3">
-                                    <label for="year_model" class="form-label">Year Model (e.g Vios E 2020)</label>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label for="vehicle_category" class="form-label">Vehicle Category <br>(e.g Car)</label>
+                                    <input type="text" class="form-control" name="vehicle_category">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="year_model" class="form-label">Year Model <br>(e.g Vios E 2020)</label>
                                     <input type="text" class="form-control" name="year_model">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="body_type" class="form-label">Body Type (e.g Sedan)</label>
+                                    <label for="body_type" class="form-label">Body Type <br>(e.g Sedan)</label>
                                     <input type="text" class="form-control" name="body_type">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="color" class="form-label">Color (e.g Black)</label>
+                                    <label for="color" class="form-label">Color <br>(e.g Black)</label>
                                     <input type="text" class="form-control" name="color">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="registration_status">Status</label>
+                                    <label for="registration_status">Status <br>(Vehicle Status)</label>
                                     <input type="text" name="registration_status" class="form-control" value="Active" readonly>
                                 </div>
                             </div>

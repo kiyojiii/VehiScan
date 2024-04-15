@@ -257,6 +257,10 @@
                                         <span>{{ $owners->vehicle->vehicle_make ?? 'N/A' }}</span>
                                     </li>
                                     <li>
+                                        <strong>Vehicle Category:</strong>
+                                        <span>{{ $owners->vehicle->vehicle_category ?? 'N/A' }}</span>
+                                    </li>
+                                    <li>
                                         <strong>Vehicle Year Model:</strong>
                                         <span>{{ $owners->vehicle->year_model ?? 'N/A' }}</span>
                                     </li>

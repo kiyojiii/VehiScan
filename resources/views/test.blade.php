@@ -1,138 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Scratch Blade</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title> MVIS | Scratch </title>
 
-    <!-- Fonts -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="<?php echo url('theme') ?>/dist/assets/images/favicon.ico">
-
-    <!-- Bootstrap Css -->
-    <link href="<?php echo url('theme') ?>/dist/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="<?php echo url('theme') ?>/dist/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="<?php echo url('theme') ?>/dist/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
-    <!-- App js -->
-    <script src="<?php echo url('theme') ?>/dist/assets/js/plugin.js"></script>
-    <!-- apexcharts -->
-    <script src="<?php echo url('theme') ?>/dist/assets/libs/apexcharts/apexcharts.min.js"></script>
+    <link rel="icon" href="{{ asset('images/seal.png') }}" type="image/x-icon">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- Include DataTables JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
-    <!-- Include DataTables library -->
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <!-- Include DataTables Bootstrap 4 integration -->
-    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 
-    <!-- Include Bootstrap Datepicker CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Select2 JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
-    <!-- Include Bootstrap Datepicker JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- SWAL -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert library -->
-
-    <!-- Include moment.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
+    <!-- Additional Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js" integrity="sha512-FZkQmTcqSzV2aNpWszYA/pPUISx6QjI60lKGwnIsfNFCGqUB7gcobQ9StH3hQCKFN92md3fCaXLzzSpoFat57A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js" integrity="sha512-0iiTIkY3h448LMfv6vcOAgwsnSIQ4QYgSyAbyWDtqrig7Xc8PAukJjyXCeYxVGncMyIbd6feVBRwoRayeEvmJQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 </head>
 
 <body>
-<div class="col-xl-6">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title mb-4" id="chartTitle">Line with Data Labels {{ $third_date }}</h4>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" id="datePicker" placeholder="Select Date">
-                <button class="btn btn-outline-secondary" type="button" id="applyDateFilter">Filter</button>
-            </div>
-            <div id="third_line_chart_datalabel" data-colors='["--bs-success", "--bs-danger"]' class="apex-charts" dir="ltr"></div>
-        </div>
-    </div><!--end card-->
-</div>
 
+    <!-- Add this style to adjust z-index -->
+    <style>
+        .select2-container--open {
+            z-index: 1600 !important;
+            /* Adjust the z-index as needed */
+        }
+    </style>
 
-    <script>
-        $(document).ready(function() {
-    // Initialize datepicker
-    $('#datePicker').datepicker({
-        format: 'yyyy-mm-dd', // Date format
-        autoclose: true, // Close the datepicker when date is selected
-        todayHighlight: true // Highlight today's date
-    });
+    @extends('layouts.app4')
 
-    // Apply date filter on button click
-    $('#applyDateFilter').click(function() {
-        var selectedDate = $('#datePicker').val();
+    @section('content')
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
 
-        // Perform action with selectedDate, e.g., update chart data
-        // You may use AJAX to fetch new data based on the selected date and update the chart accordingly
-        // For simplicity, I'll just redirect to the same page with the selected date as query parameter
-        window.location.href = '{{ route("test") }}?date=' + selectedDate;
-    });
-});
-    </script>
-<div class="col-xl-6">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title mb-4">Dashed Line {{ $third_startDate }} - {{ $third_endDate}} </h4>
+        <div class="page-content">
+            <div class="container-fluid">
 
-            <!-- Weekly date picker -->
-            <div class="input-group mb-2">
-                <input type="text" id="weekStartDatePicker" class="form-control" placeholder="Select Week Start Date">
-                <button class="btn btn-primary" id="applyWeekStartDateFilter">Apply</button> 
-            </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <video id="qr_scanner" width="100%"></video>
+                        </div>
+                        <div class="col-md-6">
+                            DATA SCANNED
+                            <input name="record" id="record" class="form-control" placeholder="Enter Vehicle Code" onfocus="this.value=''"></input>
+                        </div>
+                    </div>
+                </div>
 
-            <div id="third_line_chart_dashed" data-colors='["--bs-primary", "--bs-danger", "--bs-success"]' class="apex-charts" dir="ltr"></div>
-        </div>
-    </div><!--end card-->
-</div>
+                <!-- Include the Bootstrap modal in your HTML -->
+                <div class="modal fade" id="vehicleModal" tabindex="-1" role="dialog" aria-labelledby="vehicleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="vehicleModalLabel">Vehicle Information</h5>
+                                <button type="button" class="close" aria-label="Close" onclick="closeVehicleModal()">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <span>
+                                    <h4> Applicant Information </h4>
+                                </span>
+                                <p><strong>Serial Number:</strong> <span id="serial_number"></span></p>
+                                <p><strong>ID Number:</strong> <span id="id_number"></span></p>
+                                <p><strong>Name:</strong> <span id="full_name"></span></p>
+                                <br>
+                                <span>
+                                    <h4> Vehicle Information </h4>
+                                </span>
+                                <p><strong>Plate Number:</strong> <span id="plate_number"></span></p>
+                                <p><strong>Owner Name:</strong> <span id="owner_name"></span></p>
+                                <p><strong>Vehicle Make:</strong> <span id="vehicle_make"></span></p>
+                                <p><strong>Year Model:</strong> <span id="year_model"></span></p>
+                                <p><strong>Body Type:</strong> <span id="body_type"></span></p>
+                                <p><strong>Color:</strong> <span id="color"></span></p>
+                                <p><strong>Registration Status:</strong> <span id="registration_status"></span></p>
+                                <p><strong>Approval Status:</strong> <span id="approval_status"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeVehicleModal()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<script>
-    $(document).ready(function() {
-        // Initialize date picker for selecting the week start date
-        $('#weekStartDatePicker').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            orientation: 'bottom'
-        });
+                <script>
+                    // Function to close the modal manually
+                    function closeVehicleModal() {
+                        $('#vehicleModal').modal('hide');
+                    }
+                </script>
 
-        // Apply filter when 'Apply' button for week start date is clicked
-        $('#applyWeekStartDateFilter').click(function() {
-            var selectedStartDate = $('#weekStartDatePicker').datepicker('getDate');
+            </div> <!-- container-fluid -->
+        </div><!-- End Page-content -->
 
-            // Check if a date is selected
-            if (selectedStartDate === null) {
-                // If no date is chosen, show SweetAlert message
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No Date Chosen',
-                    text: 'Please choose a date before filtering.',
-                });
-                return;
-            }
+    </div>
+    <!-- end main content-->
 
-            // Calculate the previous Monday
-            var previousMonday = new Date(selectedStartDate);
-            previousMonday.setDate(previousMonday.getDate() - (previousMonday.getDay() + 6) % 7 + 1);
-            // Calculate the following Sunday
-            var followingSunday = new Date(previousMonday);
-            followingSunday.setDate(followingSunday.getDate() + 6);
+    </div>
+    <!-- END layout-wrapper -->
 
-            // Redirect to the index route with the adjusted start and end dates as query parameters
-            window.location.href = "{{ route('test') }}?start_date=" + previousMonday.toISOString().slice(0, 10) + "&end_date=" + followingSunday.toISOString().slice(0, 10);
-        });
-    });
-</script>
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
 
     @include('test_js')
 
+</body>
+
 </html>
+@endsection

@@ -32,6 +32,16 @@
                     @endcanany
                 </li>
 
+                <li>
+                    @canany(['create-reports', 'edit-reports', 'delete-reports', 'view-reports'])
+                    <a href="{{ route('reports') }}" class="waves-effect">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span key="t-blog">Reports</span>
+                    </a>
+                    @endcanany
+                </li>
+
+
                 @php
                 $accessiblePermissions = [
                 'create-user-requests', 'edit-user-requests', 'delete-user-requests', 'view-user-requests',

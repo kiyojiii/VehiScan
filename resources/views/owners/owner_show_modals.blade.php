@@ -50,15 +50,19 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number</label>
                             <input type="text" class="form-control" name="plate_number">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="vehicle_make" class="form-label">Vehicle Make</label>
                             <input type="text" class="form-control" name="vehicle_make">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label for="vehicle_category" class="form-label">Vehicle Category</label>
+                            <input type="text" class="form-control" name="vehicle_category">
+                        </div>
+                        <div class="col-md-3">
                             <label for="year_model" class="form-label">Year Model</label>
                             <input type="text" class="form-control" name="year_model">
                         </div>

@@ -445,9 +445,25 @@ class HomeController extends Controller
             ->get(['remarks', 'created_at']);
 
 
-        // Fetch all vehicles associated with the owner
-        $chart_vehicles = Vehicle::whereIn('id', $vehicle_ids)->get();
+        $active_vehicle = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Active')
+            ->get();
 
+        $current_active_vehicle = null; // Initialize the variable outside the if statement
+
+        $active_vehicle = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Active')
+            ->first(); // Use first() to retrieve only the first matching record
+
+        if ($active_vehicle) {
+            $current_active_vehicle = $active_vehicle->id;
+            // Now $current_active_vehicle contains the ID of the active vehicle
+        } else {
+            // Handle the case where no active vehicle is found
+        }
+
+        // Fetch all vehicles associated with the owner
+        $chart_vehicles = Vehicle::where('id', $current_active_vehicle)->get();
 
         // Define arrays to store the time data
         $dates = [];
@@ -715,6 +731,7 @@ class HomeController extends Controller
                 'owner_address' => 'required|string|max:2048',
                 'plate_number' => 'required|string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'required|string|max:255',
+                'vehicle_category' => 'required|string|max:255',
                 'year_model' => 'required|string|max:255',
                 'color' => 'required|string|max:255',
                 'body_type' => 'required|string|max:255',
@@ -827,6 +844,7 @@ class HomeController extends Controller
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
+                'vehicle_category' => $request->vehicle_category,
                 'year_model' => $request->year_model,
                 'color' => $request->color,
                 'body_type' => $request->body_type,
@@ -1019,6 +1037,7 @@ class HomeController extends Controller
                 'owner_address' => 'string|max:2048',
                 'plate_number' => 'string|max:255|unique:vehicles,plate_number,' .  $request->vehicle_id, // Use ignore rule to exclude the current record
                 'vehicle_make' => 'string|max:255',
+                'vehicle_category' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
                 'body_type' => 'string|max:255',
@@ -1092,6 +1111,7 @@ class HomeController extends Controller
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
+                'vehicle_category' => $request->vehicle_category,
                 'year_model' => $request->year_model,
                 'color' => $request->color,
                 'body_type' => $request->body_type,
@@ -1226,9 +1246,11 @@ class HomeController extends Controller
             $validator = Validator::make($request->all(), [
                 'owner_id' => '|string|max:255',
                 'driver_id' => '|string|max:255',
+                'real_owner_name' => '|string|max:255',
                 'owner_address' => 'required|string|max:2048',
                 'plate_number' => 'required|string|max:255|unique:vehicles,plate_number',
                 'vehicle_make' => 'required|string|max:255',
+                'vehicle_category' => 'required|string|max:255',
                 'year_model' => 'required|string|max:255',
                 'color' => 'required|string|max:255',
                 'body_type' => 'required|string|max:255',
@@ -1296,9 +1318,11 @@ class HomeController extends Controller
                 'user_id' => $user_id,
                 'owner_id' => $request->owner_id,
                 'driver_id' => $request->driver_id,
+                'owner_name' => $request->real_owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
+                'vehicle_category' => $request->vehicle_category,
                 'year_model' => $request->year_model,
                 'color' => $request->color,
                 'body_type' => $request->body_type,
@@ -1316,6 +1340,24 @@ class HomeController extends Controller
 
             // Create the vehicle record
             Vehicle::create($vehicleData);
+
+            // After creating the vehicle record
+            $qrCodeFileName = 'qr_' . $vehicle->vehicle_code . '.png'; // Generate a unique filename for the QR code image
+            $qrCodeFilePath = 'public/images/qrcodes/' . $qrCodeFileName; // Define the file path where the QR code image will be saved
+
+            // Generate QR code based on the vehicle's code
+            $qrCode = QrCode::format('png')
+                ->size(300) // Adjust the size as needed
+                ->errorCorrection('H')
+                ->generate($vehicle->vehicle_code);
+
+            // Save the QR code image to the file path
+            Storage::put($qrCodeFilePath, $qrCode);
+
+            // Update the vehicle record with the QR code image path and name
+            $vehicle->update([
+                'qr_image' => $qrCodeFileName,
+            ]);
 
             return response()->json([
                 'status' => 200,
@@ -1414,10 +1456,7 @@ class HomeController extends Controller
                         <!-- View button -->
                         <a href="#" id="' . $vehicle->id . '" class="text-primary mx-1 viewVehicle" onClick="viewVehicle()"><i class="bi bi-eye h4"></i></a>';
 
-                // Check registration status to determine if edit button should be displayed
-                if ($vehicle->registration_status == 'Active') {
-                    $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>';
-                }
+                $output .= '<a href="#" id="' . $vehicle->id . '" class="text-success mx-1 editVehicle" onClick="editVehicle()"><i class="bi-pencil-square h4"></i></a>';
 
                 // Check registration status to determine if delete button should be displayed
                 if ($vehicle->registration_status == 'Active') {
@@ -1455,9 +1494,11 @@ class HomeController extends Controller
         try {
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
-                'owner_address' => 'string|max:2048',
+                'owner_name' => 'string|max:255',
+                'owner_address' => 'string|max:255',
                 'plate_number' => 'string|max:255',
                 'vehicle_make' => 'string|max:255',
+                'vehicle_category' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
                 'body_type' => 'string|max:255',
@@ -1519,23 +1560,20 @@ class HomeController extends Controller
                 }
             }
 
-            // Set Approval and Reason Default Value
-            $approval_status = $request->input('approval_status', 'Approved');
-            $reason = $request->input('reason', 'None / Approved');
-            $registration_status = $request->input('registration_status', 'Active');
-
             // Update vehicle data
             $vehicle->update([
                 'driver_id' => $request->driver_id,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
+                'vehicle_category' => $request->vehicle_category,
                 'year_model' => $request->year_model,
                 'color' => $request->color,
                 'body_type' => $request->body_type,
-                'approval_status' => $approval_status,
-                'reason' => $reason,
-                'registration_status' => $registration_status,
+                'approval' => $request->approval_status,
+                'reason' => $request->reason,
+                'registration_status' => $request->registration_status,
             ]);
 
             // Return success response
@@ -1597,125 +1635,87 @@ class HomeController extends Controller
         // Query the Vehicles
         $owner_first = $owners->first();
         $owner_id = $owner_first->id ?? 'N/A';
-        $vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+        $all_vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
 
-        // Initialize arrays to store the counts
-        $timeCounts = [];
-        $combinedCounts = [];
+        // Query vehicles belonging to the owner and having an active registration
+        $vehicles = Vehicle::where('owner_id', $owner_id)
+            ->where('registration_status', 'Active')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        // Loop through each vehicle
+        // DAY CHART
+        // Array to store time data for each vehicle
+        $timeData = [];
+
+        // Iterate through each vehicle
         foreach ($vehicles as $vehicle) {
-            // Query the time_in and time_out counts per month for the current vehicle
-            $timeCounts[$vehicle->id] = Time::selectRaw('MONTH(created_at) as month, COUNT(time_in) as time_in_count, COUNT(time_out) as time_out_count')
-                ->where('vehicle_id', $vehicle->id)
-                ->groupByRaw('MONTH(created_at)')
-                ->get();
+            // Retrieve the vehicle ID
+            $vehicleId = $vehicle->id;
 
-            // Combine the counts for each month
-            foreach ($timeCounts[$vehicle->id] as $time) {
-                $month = \Carbon\Carbon::createFromDate(null, $time->month, 1)->format('F');
-                if (!isset($combinedCounts[$month])) {
-                    $combinedCounts[$month] = (object)['time_in_count' => 0, 'time_out_count' => 0];
-                }
-                $combinedCounts[$month]->time_in_count += $time->time_in_count;
-                $combinedCounts[$month]->time_out_count += $time->time_out_count;
-            }
-        }
+            // Query time data for the current vehicle
+            $timeEntries = Time::where('vehicle_id', $vehicleId)
+                ->orderBy('time_in', 'asc') // Assuming you want to order by time_in
+                ->get(['time_in', 'time_out']); // Retrieve only time_in and time_out fields
 
-        // Prepare data for JavaScript chart
-        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        $timeInCounts = array_fill(0, 12, 0);
-        $timeOutCounts = array_fill(0, 12, 0);
+            // Format dates and extract hours
+            $formattedTimeEntries = [];
+            foreach ($timeEntries as $entry) {
+                // Format date in "April 15, 2024" format
+                $formattedDate = date('F d, Y', strtotime($entry->time_in));
 
-        foreach ($combinedCounts as $month => $count) {
-            $index = array_search($month, $months);
-            if ($index !== false) {
-                $timeInCounts[$index] += $count->time_in_count;
-                $timeOutCounts[$index] += $count->time_out_count;
-            }
-        }
+                // Extract hour from time_in data and convert to 24-hour format
+                $hour = date('H', strtotime($entry->time_in));
 
-        $timeInData = implode(', ', $timeInCounts);
-        $timeOutData = implode(', ', $timeOutCounts);
-
-        // Initialize array to store time differences
-        $timeDifferences = [];
-
-        // Loop through each vehicle
-        foreach ($vehicles as $vehicle) {
-            // Query the time_in and time_out for the current vehicle
-            $times = Time::where('vehicle_id', $vehicle->id)
-                ->orderBy('created_at')
-                ->get();
-
-            // Initialize variables to track time for each day
-            $currentDate = null;
-            $totalDifference = 0;
-
-            foreach ($times as $time) {
-                // Calculate time difference in hours if both time_in and time_out are available
-                if ($time->time_in && $time->time_out) {
-                    $timeIn = Carbon::parse($time->time_in);
-                    $timeOut = Carbon::parse($time->time_out);
-                    $difference = $timeOut->diffInHours($timeIn);
-
-                    // If it's a new day, store the total difference for the previous day (if any)
-                    if ($time->created_at->format('Y-m-d') !== $currentDate) {
-                        if ($currentDate) {
-                            $timeDifferences[] = [
-                                'date' => Carbon::parse($currentDate)->format('F d, Y'),
-                                'difference' => $totalDifference,
-                            ];
-                        }
-                        // Reset for the new day
-                        $currentDate = $time->created_at->format('Y-m-d');
-                        $totalDifference = 0;
-                    }
-
-                    // Add the difference to the total for the current day
-                    $totalDifference += $difference;
-                }
+                // Add formatted date and hour to the array
+                $formattedTimeEntries[] = ['date' => $formattedDate, 'hour' => $hour];
             }
 
-            // Store the total difference for the last day (if any)
-            if ($currentDate) {
-                $timeDifferences[] = [
-                    'date' => Carbon::parse($currentDate)->format('F d, Y'),
-                    'difference' => $totalDifference,
-                ];
+            // Add time data to the array
+            $timeData[$vehicleId] = $formattedTimeEntries;
+        }
+
+
+        // MONTHLY CHART
+        // Retrieve all vehicles associated with the owner_id
+        $all_vehicles = Vehicle::where('owner_id', $owner_id)->orderBy('created_at', 'desc')->get();
+
+        // Initialize arrays to store monthly data
+        $time_in_data = [];
+        $time_out_data = [];
+        $categories = [];
+
+        // Iterate over each month
+        for ($month = 1; $month <= 12; $month++) {
+            // Get the month name
+            $month_name = date('M', mktime(0, 0, 0, $month, 1));
+
+            // Push the month name to the categories array
+            $categories[] = $month_name;
+
+            // Initialize variables to store counts for the current month
+            $monthly_time_in_count = 0;
+            $monthly_time_out_count = 0;
+
+            // Iterate over each vehicle
+            foreach ($all_vehicles as $vehicle) {
+                // Retrieve the vehicle ID
+                $vehicle_id = $vehicle->id;
+
+                // Query the time_in and time_out counts for the current month and current vehicle
+                $monthly_time_in_count += Time::where('vehicle_id', $vehicle_id)
+                    ->whereMonth('time_in', $month)
+                    ->count();
+                $monthly_time_out_count += Time::where('vehicle_id', $vehicle_id)
+                    ->whereMonth('time_out', $month)
+                    ->count();
             }
+
+            // Push the monthly counts to the respective arrays
+            $time_in_data[] = $monthly_time_in_count;
+            $time_out_data[] = $monthly_time_out_count;
         }
 
-        // Sort the time differences by date
-        usort($timeDifferences, function ($a, $b) {
-            return strtotime($a['date']) - strtotime($b['date']);
-        });
-
-        // Limit the time differences to the most recent 7 dates
-        $timeDifferences = array_slice($timeDifferences, -7);
-
-        // Extract dates and differences for the chart
-        $dates = [];
-        $differences = [];
-        foreach ($timeDifferences as $entry) {
-            $dates[] = $entry['date'];
-            $differences[] = $entry['difference'];
-        }
-
-        // Initialize an array to store formatted dates
-        $formattedDates = [];
-
-        // Loop through each date and format it
-        foreach ($dates as $date) {
-            // Use Carbon to parse the date and format it as desired
-            $formattedDate = \Carbon\Carbon::parse($date)->isoFormat('MMM D');
-
-            // Add the formatted date to the array
-            $formattedDates[] = $formattedDate;
-        }
-
-
-        return view('applicant_users.analytics.index', compact('owners', 'formattedDates', 'dates', 'differences', 'vehicles', 'timeInData', 'timeOutData'));
+        return view('applicant_users.analytics.index', compact('categories', 'time_in_data', 'time_out_data', 'timeData', 'owners', 'vehicles'));
     }
 
     public function fetchAllApplicantTime()
@@ -2070,9 +2070,11 @@ class HomeController extends Controller
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'driver_id' => 'string|max:255',
-                'owner_address' => 'string|max:2048',
+                'owner_name' => 'string|max:255',
+                'owner_address' => 'string|max:255',
                 'plate_number' => 'string|max:255',
                 'vehicle_make' => 'string|max:255',
+                'vehicle_category' => 'string|max:255',
                 'year_model' => 'string|max:255',
                 'color' => 'string|max:255',
                 'body_type' => 'string|max:255',
@@ -2142,9 +2144,11 @@ class HomeController extends Controller
             // Update vehicle data
             $vehicle->update([
                 'driver_id' => $request->driver_id,
+                'owner_name' => $request->owner_name,
                 'owner_address' => $request->owner_address,
                 'plate_number' => $request->plate_number,
                 'vehicle_make' => $request->vehicle_make,
+                'vehicle_category' => $request->vehicle_category,
                 'year_model' => $request->year_model,
                 'color' => $request->color,
                 'body_type' => $request->body_type,

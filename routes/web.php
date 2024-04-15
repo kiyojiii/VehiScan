@@ -21,6 +21,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnalysisController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Models\Applicant;
 use App\Models\Driver;
@@ -43,7 +44,7 @@ Route::get('/', function () {
     $totalVehicles = Vehicle::count();
     $totalOwners = Applicant::count();
     $totalDrivers = Driver::count();
-    return view('landing/landing', compact('totalDrivers','totalOwners','totalVehicles','totalUsers'));
+    return view('landing/landing', compact('totalDrivers', 'totalOwners', 'totalVehicles', 'totalUsers'));
 });
 
 
@@ -180,7 +181,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('applicants/update_driver', [ApplicantController::class, 'update_driver'])->name('applicants.update_driver');
 
     Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
-    
+
     #APPLICANT PENDING
     Route::get('applicants-pending', [ApplicantController::class, 'pending'])->name('applicants.applicants_pending');
     Route::get('/PendingApplicant', [ApplicantController::class, 'PendingApplicant'])->name('PendingApplicant');
@@ -238,12 +239,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('permissions/update', [PermissionController::class, 'update'])->name('permissions.update');
     Route::delete('permissions/delete', [PermissionController::class, 'delete'])->name('permissions.delete');
 
-    #TEST
-    Route::get('scratch', [TestController::class, 'index'])->name('test');
-    Route::get('/fetchTest', [TestController::class, 'fetchTest'])->name('fetchTest');
-    Route::get('/fetchRecordDetails', [TestController::class, 'fetchRecordDetails'])->name('fetchRecordDetails');
-
-
     // Route::get('applicants/edit/{id}', [ApplicantController::class, 'edit'])->name('applicants.edit');
     // Route::post('applicants/update/{id}', [ApplicantController::class, 'update'])->name('applicants.update');
     // Route::get('applicants/show/{id}', [ApplicantController::class, 'show'])->name('applicants.show');
@@ -284,7 +279,20 @@ Route::middleware(['auth'])->group(function () {
     #ANALYTICS
     Route::get('analytics', [AnalysisController::class, 'index'])->name('analytics');
 
+    #REPORTS
+    Route::get('reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/fetchMonthlyVehicle', [ReportController::class, 'fetchMonthlyVehicle'])->name('fetchMonthlyVehicle');
+    Route::get('/fetchTodayVehicle', [ReportController::class, 'fetchTodayVehicle'])->name('fetchTodayVehicle');
 });
+
+#TEST
+Route::get('scratch', [TestController::class, 'index'])->name('test');
+Route::get('/fetchTest', [TestController::class, 'fetchTest'])->name('fetchTest');
+Route::get('/fetchRecordDetails', [TestController::class, 'fetchRecordDetails'])->name('fetchRecordDetails');
+
+#FINDVEHICLE
+Route::get('find/vehicle', [TimeController::class, 'whosevehicle'])->name('whosevehicle');
+Route::get('/get-vehicle-data', [TimeController::class, 'getVehicleData'])->name('getVehicleData');
 
 #USER / ROLE / PERMISSION ROUTES
 Route::get('/delete-user', [UserController::class, 'destroy'])->name('user.delete');
@@ -305,5 +313,3 @@ Route::resources([
     'users' => UserController::class,
     'products' => ProductController::class,
 ]);
-
-

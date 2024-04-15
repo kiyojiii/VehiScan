@@ -18,6 +18,8 @@
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                             <h4 class="mb-sm-0 font-size-18">Edit Permission</h4>
+                            <h4 id="digitalClock" class="clock"></h4>
+                            @include('clock_js')
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="{{ route('permissions.index') }}">Permission</a></li>

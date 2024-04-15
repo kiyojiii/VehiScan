@@ -239,6 +239,10 @@
                                         <span>{{ $vehicles->vehicle_make ?? 'N/A' }}</span>
                                     </li>
                                     <li>
+                                        <strong>Vehicle Category:</strong>
+                                        <span>{{ $vehicles->vehicle_category ?? 'N/A' }}</span>
+                                    </li>
+                                    <li>
                                         <strong>Vehicle Year Model:</strong>
                                         <span>{{ $vehicles->year_model ?? 'N/A' }}</span>
                                     </li>

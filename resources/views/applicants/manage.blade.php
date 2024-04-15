@@ -42,7 +42,8 @@
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                             <h4 class="mb-sm-0 font-size-18">Manage Applicant List</h4>
-
+                            <h4 id="digitalClock" class="clock"></h4>
+                            @include('clock_js')
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Applicant</a></li>
@@ -55,20 +56,18 @@
                 </div>
                 <!-- end page title -->
                 <script>
-    $(document).ready(function () {
-        $(document).on('click', '.deletess', function () {
-            var tr = $(this).closest('tr');
-            var applicantId = tr.find('td:eq(0)').text();
-            var vehicleId = $(this).data('vehicle-id'); // Get the Vehicle ID from data attribute
-            var driverId = $(this).data('driver-id'); // Get the Driver ID from data attribute
+                    $(document).ready(function () {
+                        $(document).on('click', '.deletess', function () {
+                            var tr = $(this).closest('tr');
+                            var applicantId = tr.find('td:eq(0)').text();
+                            var vehicleId = $(this).data('vehicle-id'); // Get the Vehicle ID from data attribute
+                            var driverId = $(this).data('driver-id'); // Get the Driver ID from data attribute
 
-            // You can customize the alert message as per your requirement
-            alert('Applicant ID: ' + applicantId + '\nVehicle ID: ' + vehicleId + '\nDriver ID: ' + driverId);
-        });
-    });
-</script>
-
-
+                            // You can customize the alert message as per your requirement
+                            alert('Applicant ID: ' + applicantId + '\nVehicle ID: ' + vehicleId + '\nDriver ID: ' + driverId);
+                        });
+                    });
+                </script>
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">

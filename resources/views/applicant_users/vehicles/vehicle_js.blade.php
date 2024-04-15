@@ -13,12 +13,17 @@
                     },
                     success: function(response) {
                         $("#driver_id").val(response.driver_id);
+                        $("#owner_name").val(response.owner_name);
                         $("#owner_address").val(response.owner_address);
                         $("#plate_number").val(response.plate_number);
                         $("#vehicle_make").val(response.vehicle_make);
+                        $("#vehicle_category").val(response.vehicle_category);
                         $("#year_model").val(response.year_model);
                         $("#color").val(response.color);
                         $("#body_type").val(response.body_type);
+                        $("#registration_status").val(response.registration_status);
+                        $("#approval_status").val(response.approval_status);
+                        $("#reason").val(response.reason);
                         $("#official_receipt_image").html(
                             `<img src="storage/images/vehicles/documents/${response.official_receipt_image}" width="150" height="100" class="img-fluid img-thumbnail">`);
                         $("#certificate_of_registration_image").html(
@@ -171,9 +176,11 @@ $("#edit_vehicle_form").submit(function(e) {
                     },
                     success: function(response) {
                         $("#view_driver_id").val(response.driver_id);
+                        $("#view_owner_name").val(response.owner_name);
                         $("#view_owner_address").val(response.owner_address);
                         $("#view_plate_number").val(response.plate_number);
                         $("#view_vehicle_make").val(response.vehicle_make);
+                        $("#view_vehicle_category").val(response.vehicle_category);
                         $("#view_year_model").val(response.year_model);
                         $("#view_color").val(response.color);
                         $("#view_body_type").val(response.body_type);

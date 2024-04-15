@@ -28,12 +28,13 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Time List</h4>
-
+                            <h4 class="mb-sm-0 font-size-18">Activity Feed</h4>
+                            <h4 id="digitalClock" class="clock"></h4>
+                            @include('clock_js')
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Time</a></li>
-                                    <li class="breadcrumb-item active">Time List</li>
+                                    <li class="breadcrumb-item active">Activity Feed</li>
                                 </ol>
                             </div>
 
@@ -49,9 +50,6 @@
                                 <div class="d-flex align-items-center">
                                     <h5 class="mb-0 card-title flex-grow-1">Activity Feed Count: {{ $totalactivityfeed }}</h5>
                                     <div class="flex-shrink-0">
-                                        @canany('create-time')
-                                        <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add ??</a>
-                                        @endcanany
                                         <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 

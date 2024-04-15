@@ -67,8 +67,16 @@
             <ul class="nav">
               <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
               <li class="scroll-to-section"><a href="#apply">Apply Now</a></li>
-              <!-- <li class="scroll-to-section"><a href="#courses">Courses</a></li> -->
               <li class="scroll-to-section"><a href="#contact">Contact Us</a></li>
+              <li class="scroll-to-section"><a href="{{ route('whosevehicle') }}">Find Whose Vehicle</a></li>
+              @guest
+              <li><a href="{{ route('login') }}"> Log in </a></li>
+              @if (Route::has('register'))
+              <li><a href="{{ route('register') }}"> Register </a></li>
+              @endif
+              @else
+              <li><a href="{{ url('/home') }}"> You are Logged in as {{ auth()->user()->name }}</a></li>
+              @endguest
             </ul>
             <a class='menu-trigger'>
               <span>Menu</span>

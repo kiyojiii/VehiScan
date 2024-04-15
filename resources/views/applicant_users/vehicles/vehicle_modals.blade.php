@@ -13,18 +13,18 @@
 </div>
 
 <script>
-// JavaScript/jQuery code
-$(document).ready(function() {
-    // Add click event listener to each image element with the class 'viewImage'
-    $('.viewImage').on('click', function() {
-        // Get the URL of the clicked image from the 'data-image-url' attribute
-        var imageUrl = $(this).data('image-url');
-        // Set the 'src' attribute of the modal image to the clicked image URL
-        $('#viewImage').attr('src', imageUrl);
-        // Open the modal
-        $('#viewImageModal').modal('show');
+    // JavaScript/jQuery code
+    $(document).ready(function() {
+        // Add click event listener to each image element with the class 'viewImage'
+        $('.viewImage').on('click', function() {
+            // Get the URL of the clicked image from the 'data-image-url' attribute
+            var imageUrl = $(this).data('image-url');
+            // Set the 'src' attribute of the modal image to the clicked image URL
+            $('#viewImage').attr('src', imageUrl);
+            // Open the modal
+            $('#viewImageModal').modal('show');
+        });
     });
-});
 </script>
 
 <!-- View Modal -->
@@ -51,35 +51,43 @@ $(document).ready(function() {
                             <label for="position">Driver ID</label>
                             <input type="text" name="view_driver_id" id="view_driver_id" class="form-control" placeholder="Driver ID" readonly>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label for="position">Driver Name</label>
                             <input type="text" name="view_driver_name" id="view_driver_name" class="form-control" value="{{ $vehicles->driver->driver_name ?? 'N/A' }}" placeholder="Driver Name" readonly>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="owner_name" class="form-label">Owner Name</label>
+                            <input type="text" class="form-control" id="view_owner_name" name="view_owner_name" readonly>
+                        </div>
+                        <div class="col-md-3">
                             <label for="owner_address" class="form-label">Owner Address</label>
                             <input type="text" class="form-control" id="view_owner_address" name="view_owner_address" readonly>
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                             <input type="text" class="form-control" id="view_plate_number" name="view_plate_number" readonly>
                         </div>
-                        <div class="col-md-3">
-                            <label for="vehicle_make" class="form-label">Vehicle Make (e.g Ford Everest)</label>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="vehicle_make" class="form-label">Vehicle Make <br> (e.g Ford)</label>
                             <input type="text" class="form-control" id="view_vehicle_make" name="view_vehicle_make" readonly>
                         </div>
                         <div class="col-md-2">
-                            <label for="year_model" class="form-label">Year Model (e.g 2022)</label>
+                            <label for="vehicle_category" class="form-label">Vehicle Category <br> (e.g Car)</label>
+                            <input type="text" class="form-control" id="view_vehicle_category" name="view_vehicle_category" readonly>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="year_model" class="form-label">Year Model <br> (e.g Everest 2022)</label>
                             <input type="text" class="form-control" id="view_year_model" name="view_year_model" readonly>
                         </div>
                         <div class="col-md-2">
-                            <label for="color" class="form-label">Color (e.g Black)</label>
-                            <input type="text" class="form-control" id="view_color" name="view_color" readonly>
+                            <label for="body_type" class="form-label">Body Type <br> (e.g SUV)</label>
+                            <input type="text" class="form-control" id="view_body_type" name="view_body_type" readonly>
                         </div>
                         <div class="col-md-2">
-                            <label for="body_type" class="form-label">Body Type (e.g SUV)</label>
-                            <input type="text" class="form-control" id="view_body_type" name="view_body_type" readonly>
+                            <label for="color" class="form-label">Color <br> (e.g Black)</label>
+                            <input type="text" class="form-control" id="view_color" name="view_color" readonly>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -165,35 +173,55 @@ $(document).ready(function() {
                             <label for="position">Driver ID</label>
                             <input type="text" name="driver_id" id="driver_id" class="form-control" placeholder="Driver ID" readonly>
                         </div>
-                        <div class="col-md">
+                        <div class="col-md-3">
                             <label for="position">Driver Name</label>
                             <input type="text" name="driver_name" id="driver_name" class="form-control" value="{{ $vehicles->driver->driver_name ?? 'N/A' }}" placeholder="Driver Name" readonly>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label for="owner_name" class="form-label">Owner Name</label>
+                            <input type="text" class="form-control" id="owner_name" name="owner_name">
+                        </div>
+                        <div class="col-md-3">
                             <label for="owner_address" class="form-label">Owner Address</label>
                             <input type="text" class="form-control" id="owner_address" name="owner_address">
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-3">
                             <label for="plate_number" class="form-label">Plate Number (e.g ABC 123)</label>
                             <input type="text" class="form-control" id="plate_number" name="plate_number">
                         </div>
-                        <div class="col-md-3">
-                            <label for="vehicle_make" class="form-label">Vehicle Make (e.g Ford Everest)</label>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <label for="vehicle_make" class="form-label">Vehicle Make <br> (e.g Ford)</label>
                             <input type="text" class="form-control" id="vehicle_make" name="vehicle_make">
                         </div>
                         <div class="col-md-2">
-                            <label for="year_model" class="form-label">Year Model (e.g 2022)</label>
+                            <label for="vehicle_category" class="form-label">Vehicle Category <br> (e.g Car)</label>
+                            <input type="text" class="form-control" id="vehicle_category" name="vehicle_category">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="year_model" class="form-label">Year Model <br> (e.g Vios E 2022)</label>
                             <input type="text" class="form-control" id="year_model" name="year_model">
                         </div>
-                        <div class="col mb-2">
-                            <label for="color" class="form-label">Color (e.g Black)</label>
-                            <input type="text" class="form-control" id="color" name="color">
+                        <div class="col-md-2">
+                            <label for="body_type" class="form-label">Body Type <br> (e.g Sedan)</label>
+                            <input type="text" class="form-control" id="body_type" name="body_type">
                         </div>
                         <div class="col-md-2">
-                            <label for="body_type" class="form-label">Body Type (e.g SUV)</label>
-                            <input type="text" class="form-control" id="body_type" name="body_type">
+                            <label for="color" class="form-label">Color <br> (e.g Black)</label>
+                            <input type="text" class="form-control" id="color" name="color">
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label for="registration_status" class="form-label">Registration Status</label>
+                            <input type="text" class="form-control" id="registration_status" name="registration_status">
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label for="approval_status" class="form-label">Approval Status</label>
+                            <input type="text" class="form-control" id="approval_status" name="approval_status">
+                        </div>
+                        <div class="col-md-2" style="display: none;">
+                            <label for="reason" class="form-label">Reason</label>
+                            <input type="text" class="form-control" id="reason" name="reason">
                         </div>
                     </div>
                     <div class="row mb-3">
