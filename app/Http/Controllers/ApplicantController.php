@@ -84,7 +84,7 @@ class ApplicantController extends Controller
 
     public function manage()
     {
-        $applicantcount = Applicant::count();
+        $applicantcount = Applicant::all()->count();
         $role_status = Statuses::all();
         $appointments = Appointment::all();
         $vehicles = Vehicle::all();
@@ -101,7 +101,7 @@ class ApplicantController extends Controller
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>Serial No.</th>
+                <th>Serial</th>
                 <th>ID No.</th>
                 <th>Name</th>
                 <th class="text-center">Vehicle</th>
@@ -1043,7 +1043,7 @@ class ApplicantController extends Controller
             $output .= '<table class="table table-striped align-middle">
             <thead>
               <tr>
-                <th>Serial No.</th>
+                <th>Serial</th>
                 <th>ID No.</th>
                 <th>Applicant</th>
                 <th>Vehicle</th>
