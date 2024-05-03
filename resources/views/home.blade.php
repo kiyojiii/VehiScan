@@ -315,7 +315,7 @@
                                             </div>
 
                                             <div>
-                                                <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light btn-sm">View Details <i class="mdi mdi-chevron-right ms-1"></i></a>
+                                                <a href="{{ route('analytics') }}" class="btn btn-primary waves-effect waves-light btn-sm">View Details <i class="mdi mdi-chevron-right ms-1"></i></a>
                                             </div>
 
                                             <div class="mt-4">

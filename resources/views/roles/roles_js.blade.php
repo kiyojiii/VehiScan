@@ -102,6 +102,7 @@
         $('#start_date').val('');
         $('#end_date').val('');
         refreshTable();
+        refreshTable();
     });
 
     // Function to refresh the table content
@@ -121,6 +122,10 @@
     $(document).ready(function() {
     // Function to refresh the table
     $('#refresh_table').on('click', function() {
+        $('#searchInput').val('');
+        $('#start_date').val('');
+        $('#end_date').val('');
+        refreshTable();
         refreshTable();
     });
 

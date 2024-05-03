@@ -156,6 +156,7 @@ $(document).ready(function() {
         $('#end_date').val('');
         $('.role-checkbox').prop('checked', false); // Uncheck all checkboxes
         refreshTable();
+        refreshTable();
     });
 
     // Function to refresh the table content
@@ -176,6 +177,11 @@ $(document).ready(function() {
     $(document).ready(function() {
         // Function to refresh the table
         $('#refresh_table').on('click', function() {
+            $('#searchInput').val('');
+            $('#start_date').val('');
+            $('#end_date').val('');
+            $('.role-checkbox').prop('checked', false); // Uncheck all checkboxes
+            refreshTable();
             refreshTable();
         });
 

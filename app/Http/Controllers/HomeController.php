@@ -1339,7 +1339,7 @@ class HomeController extends Controller
             ];
 
             // Create the vehicle record
-            Vehicle::create($vehicleData);
+            $vehicle = Vehicle::create($vehicleData);
 
             // After creating the vehicle record
             $qrCodeFileName = 'qr_' . $vehicle->vehicle_code . '.png'; // Generate a unique filename for the QR code image

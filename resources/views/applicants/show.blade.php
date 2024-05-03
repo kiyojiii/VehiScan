@@ -41,7 +41,7 @@
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                             <h4 class="mb-sm-0 font-size-18">Applicant Details</h4>
-
+                            <a href="javascript:window.print()" class="btn btn-success waves-effect waves-light me-1"><i class="fa fa-print"></i></a>
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Applicants</a></li>
@@ -61,6 +61,10 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h5 class="fw-semibold me-3">Overview</h5>
                                     <div class="dropdown">
+                                        <a href="{{ route('print', ['id' => $owners->id ?? 'N/A']) }}" class="btn btn-sm btn-success" target="_blank">
+                                            <i class="fa fa-print"></i> Print Documents
+                                        </a>
+
                                         <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                             Action <i class="fas fa-cog"></i>
                                         </button>
@@ -202,6 +206,7 @@
                             </div>
                         </div>
                     </div><!--end col-->
+
                     <div class="col-xl-7">
                         <div class="card">
                             <div class="card-body border-bottom">
@@ -454,18 +459,18 @@
                             </div>
                         </div><!--end col-->
                     </div><!--end row-->
+                </div><!--end main row-->
+            </div> <!-- container-fluid -->
+        </div><!-- End Page-content -->
+    </div><!-- end main content-->
+    <!-- Modals -->
+    @include('applicants.edit_owner')
+    @include('applicants.edit_vehicle')
+    @include('applicants.edit_driver')
+    @include('applicants.show_modals')
 
-                </div> <!-- container-fluid -->
-            </div><!-- End Page-content -->
-
-            <!-- Modals -->
-            @include('applicants.edit_owner')
-            @include('applicants.edit_vehicle')
-            @include('applicants.edit_driver')
-            @include('applicants.show_modals')
-
-            <!-- JS -->
-            @include('applicants.show_js')
+    <!-- JS -->
+    @include('applicants.show_js')
 
 </body>
 

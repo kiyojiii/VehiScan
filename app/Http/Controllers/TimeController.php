@@ -166,7 +166,7 @@ class TimeController extends Controller
         if ($request->ajax()) {
             // Find the vehicle by vehicle code
             $vehicle = Vehicle::where('vehicle_code', $request->record)->first();
-
+    
             // If vehicle found
             if ($vehicle) {
                 // Check if approval_status is 'Inactive'
@@ -174,31 +174,31 @@ class TimeController extends Controller
                     // Approval status is Inactive, return specific error
                     return response()->json(['error' => 'Vehicle Approval is Inactive'], 400);
                 }
-
+    
                 // Check if registration_status is 'Inactive'
                 if ($vehicle->registration_status === 'Inactive') {
                     // Registration status is Inactive, return specific error
                     return response()->json(['error' => 'Vehicle Registration is Inactive'], 400);
                 }
-
+    
                 // Check if both approval_status and registration_status are 'Pending'
                 if ($vehicle->approval_status === 'Pending') {
                     // Both statuses are Pending, return specific error
                     return response()->json(['error' => 'Vehicle Approval is Still Pending'], 400);
                 }
-
+    
                 // Check if both approval_status and registration_status are 'Pending'
                 if ($vehicle->registration_status === 'Pending') {
                     // Both statuses are Pending, return specific error
                     return response()->json(['error' => 'Vehicle Registration is Still Pending'], 400);
                 }
-
+    
                 // Check if there's a recent time_in record for the vehicle
                 $recentTimeIn = Time::where('vehicle_id', $vehicle->id)
                     ->whereNull('time_out')
                     ->latest('time_in')
                     ->first();
-
+    
                 // If no recent time_in record, create a new time_in record
                 if (!$recentTimeIn) {
                     Time::create([
@@ -207,18 +207,24 @@ class TimeController extends Controller
                     ]);
                     // Create vehicle record for time in
                     $this->createVehicleRecord($vehicle->id, true);
-
-                    // Return success message with status
-                    return response()->json(['status' => 'timed_in']);
+    
+                    // Return success message with status and plate number
+                    return response()->json([
+                        'status' => 'timed_in',
+                        'plate_number' => $vehicle->plate_number
+                    ]);
                 }
                 // If there's a recent time_in record without time_out, update it to time_out
                 else {
                     $recentTimeIn->update(['time_out' => now()]);
                     // Create vehicle record for time out
                     $this->createVehicleRecord($vehicle->id, false);
-
-                    // Return success message with status
-                    return response()->json(['status' => 'timed_out']);
+    
+                    // Return success message with status and plate number
+                    return response()->json([
+                        'status' => 'timed_out',
+                        'plate_number' => $vehicle->plate_number
+                    ]);
                 }
             }
             // If vehicle not found

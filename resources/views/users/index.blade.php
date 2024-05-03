@@ -110,22 +110,22 @@
                                                 <button class="btn btn-primary" type="button" id="set_today_start">Today</button>
                                             </div>
                                         </div>
-                                        <div class="col-xxl-1 col-lg-3">
+                                        <div class="col-sm-2 col-sm-3">
                                             <label>End Date:</label>
                                             <div class="input-group">
                                                 <input type="date" name="end_date" class="form-control" id="end_date">
                                                 <button class="btn btn-primary" type="button" id="set_today_end">Today</button>
                                             </div>
                                         </div>
-                                        <div class="col-xxl-2 col-md-1 d-grid">
+                                        <div class="col-xxl-1 col-md-1 d-grid">
                                             <label>&nbsp;</label>
                                             <button type="button" class="btn btn-primary" id="showCheckboxesBtn">Roles</button>
                                         </div>
-                                        <div class="col-xxl-2 col-md-1 d-grid">
+                                        <div class="col-xxl-1 col-md-1 d-grid">
                                             <label>&nbsp;</label>
                                             <button type="submit" class="btn btn-primary">Filter</button>
                                         </div>
-                                        <div class="col-xxl-2 col-md-1 d-grid">
+                                        <div class="col-xxl-1 col-md-1 d-grid">
                                             <label>&nbsp;</label>
                                             <button class="btn btn-secondary" type="button" id="clear_filter">Clear</button>
                                         </div>

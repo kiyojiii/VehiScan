@@ -22,6 +22,7 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PrintController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Models\Applicant;
 use App\Models\Driver;
@@ -283,6 +284,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports', [ReportController::class, 'index'])->name('reports');
     Route::get('/fetchMonthlyVehicle', [ReportController::class, 'fetchMonthlyVehicle'])->name('fetchMonthlyVehicle');
     Route::get('/fetchTodayVehicle', [ReportController::class, 'fetchTodayVehicle'])->name('fetchTodayVehicle');
+
+    #PRINT DOCUMENTS
+    Route::get('print/{id}', [PrintController::class, 'index'])->name('print');
 });
 
 #TEST

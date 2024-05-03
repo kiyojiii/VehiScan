@@ -78,25 +78,25 @@
                                             <label>Search:</label>
                                             <input type="search" name="search" class="form-control" id="searchInput" placeholder="Search for ...">
                                         </div>
-                                        <div class="col-xxl-2 col-lg-3">
+                                        <div class="col-sm-2 col-sm-3">
                                             <label>Start Date:</label>
                                             <div class="input-group">
                                                 <input type="date" name="start_date" class="form-control" id="start_date">
                                                 <button class="btn btn-primary" type="button" id="set_today_start">Today</button>
                                             </div>
                                         </div>
-                                        <div class="col-xxl-2 col-lg-3">
+                                        <div class="col-sm-2 col-sm-3">
                                             <label>End Date:</label>
                                             <div class="input-group">
                                                 <input type="date" name="end_date" class="form-control" id="end_date">
                                                 <button class="btn btn-primary" type="button" id="set_today_end">Today</button>
                                             </div>
                                         </div>
-                                        <div class="col-xxl-2 col-lg-1 d-grid">
+                                        <div class="col-xxl-1 col-lg-1 d-grid">
                                             <label>&nbsp;</label>
                                             <button type="submit" class="btn btn-primary">Filter</button>
                                         </div>
-                                        <div class="col-xxl-2 col-lg-1 d-grid">
+                                        <div class="col-xxl-1 col-lg-1 d-grid">
                                             <label>&nbsp;</label>
                                             <button class="btn btn-secondary" type="button" id="clear_filter">Clear</button>
                                         </div>

@@ -25,66 +25,83 @@
 
     $(document).ready(function() {
         $('#record').on('keyup', function() {
-            clearTimeout(typingTimer);
-            typingTimer = setTimeout(function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function() {
             // Get the input value
             var query = $('#record').val();
             // Remove any non-numeric characters from the input
             query = query.replace(/\D/g, ''); // Replace non-digits with an empty string
-                $.ajax({
-                    url: "record",
-                    type: "GET",
-                    data: {
-                        'record': query
-                    },
-                    success: function(response) {
-                        if (response.status === 'timed_in') {
-                            fetchVehicleRecords();
-                            toastr.options = {
-                                "progressBar": true,
-                                "closeButton": true,
-                                "toastClass": "toastr-success" // Use custom class for success messages
-                            };
-                            toastr.success('Timed In Successfully!', {
-                                timeOut: 5000
-                            });
-                        } else if (response.status === 'timed_out') {
-                            fetchVehicleRecords();
-                            toastr.options = {
-                                "progressBar": true,
-                                "closeButton": true,
-                            };
-                            toastr.success('Timed Out Successfully!', {
-                                timeOut: 5000
-                            });
-                        }
-                        // Clear the record bar
-                        clearRecord();
-                    },
-                    error: function(xhr, status, error) {
-                        if (xhr.responseJSON && xhr.responseJSON.error) {
-                            toastr.options = {
-                                "progressBar": true,
-                                "closeButton": true,
-                            };
-                            toastr.warning(xhr.responseJSON.error, {
-                                timeOut: 5000
-                            });
-                        } else {
-                            toastr.options = {
-                                "progressBar": true,
-                                "closeButton": true,
-                            };
-                            toastr.error('Vehicle Code Not Found', {
-                                timeOut: 5000
-                            });
-                        }
-                        // Clear the record bar
-                        clearRecord();
+            $.ajax({
+                url: "record",
+                type: "GET",
+                data: {
+                    'record': query
+                },
+                success: function(response) {
+                    if (response.status === 'timed_out') {
+                        // Vehicle is already timed in, so prompt for time out
+                        Swal.fire({
+                            title: response.plate_number,
+                            text: 'Vehicle is already timed in. Do you want to time out?',
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonText: 'Time Out',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetchVehicleRecords();
+                                Swal.fire({
+                                    title: 'Timed Out Successfully!',
+                                    icon: 'success',
+                                    timer: 3000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        });
+                    } else if (response.status === 'timed_in') {
+                        // Vehicle is already timed out, so prompt for time in
+                        Swal.fire({
+                            title: response.plate_number,
+                            text: 'Vehicle is not timed in yet. Do you want to time in?',
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonText: 'Time In',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetchVehicleRecords();
+                                Swal.fire({
+                                    title: 'Timed In Successfully!',
+                                    icon: 'success',
+                                    timer: 3000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        });
                     }
-                });
-            }, doneTypingInterval);
-        });
+                    // Clear the record bar
+                    clearRecord();
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        Swal.fire({
+                            title: 'Warning',
+                            text: xhr.responseJSON.error,
+                            icon: 'warning'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Vehicle Code Not Found',
+                            icon: 'error'
+                        });
+                    }
+                    // Clear the record bar
+                    clearRecord();
+                }
+            });
+        }, doneTypingInterval);
+    });
 
         // Function to fetch vehicle records via AJAX
         function fetchVehicleRecords() {

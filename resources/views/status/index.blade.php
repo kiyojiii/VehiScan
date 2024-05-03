@@ -55,14 +55,14 @@
                                     @canany('create-status')
                                         <a class="btn btn-primary my-2" onClick="add()" href="javascript:void(0)"><i class="bi bi-plus-circle"></i> Add Role Status</a>
                                     @endcan   
-                                        <a href="#!" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
+                                        <a href="javascript:location.reload(true)" class="btn btn-light"><i class="mdi mdi-refresh"></i></a>
                                         <div class="dropdown d-inline-block">
 
                                             <button type="menu" class="btn btn-success" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-vertical"></i></button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('owners.index') }}">Owners</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('vehicles.index') }}">Vehicles</a></li>
+                                                <li><a class="dropdown-item" href="{{ route('drivers.index') }}">Drivers</a></li>
                                             </ul>
                                         </div>
                                     </div>
